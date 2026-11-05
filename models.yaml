@@ -1,0 +1,53 @@
+# models.yaml: the only place a model or provider URL is named. Code uses the ids below.
+#
+# Prices: for 0G they come from the live catalog (router-api.0g.ai/v1/models, pricing_usd),
+# fetched at run time and stored with each report. A price written here overrides the catalog.
+# A model with no price has cost None: never a guess.
+#
+# reasoning_off: the request fields that switch the model's hidden thinking off. Checked by a real
+# call on 6 Nov 2026 (qwen3.7-flash: 233 output tokens -> 3 for the same answer).
+#
+# explicit_cache: the model accepts cache_control marks, so the stable start of a prompt is
+# billed at the cached price on the next call. Set only after a real call showed it.
+#
+# cheaper: models on the SAME provider that model routing may try for a step. Routing never
+# crosses providers.
+
+providers:
+  zerog:
+    base_url: https://router-api.0g.ai/v1
+    key_env: [0G_API_KEY, ZG_API_KEY]
+    catalog_url: https://router-api.0g.ai/v1/models
+  groq:
+    base_url: https://api.groq.com/openai/v1
+    key_env: [GROQ_API_KEY, GROQ_API_KEY-2]   # rotated per call
+
+models:
+  zg-main:
+    provider: zerog
+    tag: qwen3.8-flash
+    reasoning_off: { enable_thinking: false }
+    explicit_cache: true    # 6 Nov 2026: 3,030 of 3,046 tokens cached, billed 88% less
+    cached_price_ratio: 0.111   # fitted from 565 billed calls: $0.0213 vs $0.1917 per M input tokens
+    cheaper: [zg-lite]
+  zg-lite:
+    provider: zerog
+    tag: qwen3.7-flash
+    reasoning_off: { enable_thinking: false }
+  groq-qwen:
+    provider: groq
+    tag: qwen/qwen3.8-27b
+    price_per_mtok: { in: 0.80, out: 4.00 }   # console.groq.com/docs/models, 6 Nov 2026
+    # 6 Nov 2026: about a third of maths tasks crashed because Groq rejected garbled tool calls
+    # ("tool call validation failed"). Not used as a baseline for tool-using agents.
+  groq-main:
+    provider: groq
+    tag: openai/gpt-oss-120b
+    price_per_mtok: { in: 0.15, out: 0.60 }   # console.groq.com/docs/models, 6 Nov 2026
+    reasoning_off: { reasoning_effort: low }  # gpt-oss cannot switch reasoning fully off
+    cheaper: [groq-lite]
+  groq-lite:
+    provider: groq
+    tag: openai/gpt-oss-20b
+    price_per_mtok: { in: 0.075, out: 0.30 }  # console.groq.com/docs/models, 6 Nov 2026
+    reasoning_off: { reasoning_effort: low }

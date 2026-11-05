@@ -1,0 +1,32 @@
+[project]
+name = "synapse0g"
+version = "0.1.0"
+description = "Optimizer for AI agents: fewer tokens, lower cost, faster runs, checked on your own tasks before anything ships."
+requires-python = ">=3.11"
+dependencies = ["openai>=1.40", "pyyaml>=6"]
+
+[project.optional-dependencies]
+agents = ["langgraph>=1.0", "langchain-openai>=0.3"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+synapse0g = "synapse0g.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["synapse0g*"]
+
+[tool.ruff]
+extend-exclude = ["data"]
+line-length = 140
+
+[tool.pytest.ini_options]
+markers = ["live: needs real provider keys and spends real credits"]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]
