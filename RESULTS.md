@@ -14,6 +14,25 @@ records, with 0G request ids, are in `reports/`.
 The BLOCK is the demo's strongest moment: a large saving that looked fine on tuning tasks,
 refused because it broke answers and took extra money-moving actions.
 
+## The tau-bench BLOCK, task by task
+
+The 5 tasks below passed in both unchanged runs and failed under the cheaper policy (route to
+`qwen3.7-flash` plus thinking off). State-changing actions the agent took, in order, from the
+per-call records in `reports/retail_zg-main_2026-11-05T2127.json` (tool names are recorded;
+arguments are not):
+
+| Task | Unchanged (both runs) | Cheaper policy | What went wrong |
+|---|---|---|---|
+| 028 | 3 returns | 3 returns, **then cancelled an order** | an order the customer never asked to cancel; database wrong |
+| 027 | exchange, transfer to human | **a return**, then exchange, transfer | a refund the task did not call for; database wrong |
+| 022 | change user address, change order address, change user address | same, **plus a second order-address change** | extra write; database wrong |
+| 029 | 2 exchanges | **no action** | the requested exchanges never happened |
+| 019 | returns and exchange | return and exchange | database right, but the agent never told the customer one of the amounts |
+
+So 3 of the 5 are unwanted money-or-order actions (028, 027, 022); 029 failed by doing nothing and
+019 by omission. One task (005) went the other way, failing unchanged and passing cheaper. The
+firewall blocked the policy, and the agent ships unchanged.
+
 ## No beneficial change (reported, not hidden)
 
 - LangGraph research agent (HotpotQA), 0G, two runs: the cheaper model saved ~80% but broke 2
