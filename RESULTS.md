@@ -9,6 +9,7 @@ records, with 0G request ids, are in `reports/`.
 | Agent | Provider | Tasks | Result | Firewall |
 |---|---|---|---|---|
 | **Supplier-check app** (plain LangGraph chain, 3 lines added): graph passes + per-call policy | 0G `qwen3.8-flash` | 20 held-out | **3.48x faster (median per task, 55.5 → 15.4 s), 72% cheaper billed (95% CI 71–74%), 20/20 → 20/20** | APPROVE |
+| **Procurement agent** (plain Python, no framework, 2 lines added): per-call policy found by the search | 0G `qwen3.8-flash` | 18 held-out | **4.5x faster (median per task, 136.3 → 30.2 s), 87.5% cheaper billed (95% CI 86–89%), 13.5/18 → 15/18** | APPROVE |
 | Research workflow graph (HotpotQA): plan, search each sub-question in parallel, summarise, answer | 0G `qwen3.8-flash` | 20 held-out | **1.99x faster (median per task, 11.87 → 6.00 s), 18% cheaper, 11% fewer tokens, 19/20 → 19/20** | APPROVE |
 | LangGraph maths agent (GSM8K) | Groq `gpt-oss-120b` | 12 held-out | **77.5% cheaper (95% CI 71–82%), 63% faster, 48% fewer tokens, 12/12 → 12/12** | APPROVE |
 | tau-bench retail (refunds, exchanges) | 0G `qwen3.8-flash` | 30 held-out | 70% cheaper and 24% faster, but **broke 5 tasks** (29 → 25) and made **more irreversible actions** (37 → 42) | **BLOCK** |
@@ -51,6 +52,41 @@ someone already knows which steps are independent, and none of the cost saving. 
 requests carry 0G's bill. An earlier run of the same study (06T0652) had its call-level search
 voided by connection errors on our own local endpoint (fixed: its listen backlog was 5); its graph
 result was 1.99x faster and 22% cheaper, APPROVE, and is kept in `reports/`.
+
+## The procurement agent (plain Python)
+
+`examples/procurement_agent.py` is an ordinary Python function, no framework: read the policy and
+the quotations (PDF, spreadsheet, email), read the request, extract each quotation with source
+references, check every offer against the policy **in code**, have the model explain the choice,
+draft the purchase request, file it for approval. Filing is `external`: comparison runs never file
+anything. Tasks: 36 generated purchase requests (`synapse0g/agents/procurement_desk.py`), right
+outcomes computed by code; 8 tuning, 18 held-out. Report: `reports/procurement_zg-main_2026-11-06T1310.json`.
+
+| Held-out, 18 requests | as written (mean of 2 runs) | hand-parallel (thread pool) | synapse0g |
+|---|---|---|---|
+| passed | 13.5 | 14 | **15** |
+| median time per task | 136.3 s | 62.1 s | **30.2 s** |
+| billed cost, all 18 | $0.1205 | $0.1182 | **$0.0151** |
+| hidden reasoning tokens | 149,247 | n/a | **3,815** |
+
+What synapse0g found, by itself, on the tuning tasks (each kept only after an APPROVE against a control):
+
+- quotation extraction: switch hidden reasoning off, and route to `qwen3.7-flash` (89% of its
+  output tokens were hidden reasoning);
+- the recommendation: switch hidden reasoning off;
+- reading the request: routing to the smaller model was **refused** (it made the step slower).
+
+The compiled graph (requirements and every quotation read in parallel) was **not shipped**. Its
+tuning check was BLOCKed: one request, PR-003, passed in both unchanged runs and failed in the
+compiled one. The same request had failed both unchanged runs and passed compiled in the study
+before, so it is the model's noise on that request, not the graph; but with 8 tuning tasks the
+firewall cannot tell, and its rule is to refuse. The held-out arm is therefore the agent as
+written plus the per-call policy, and all of its speed comes from that policy.
+
+The first study (`..._2026-11-06T1203.json`) found two bugs, both fixed with regression tests: a
+race when two parallel steps wrote the same cache blob (it crashed one compiled run), and the agent
+crashing on a shipping cost written as "Free delivery" (now read as 0; an unreadable number makes
+the offer incomplete). Its held-out result was also APPROVE: 17/18 vs 12.5/18, 76% cheaper, 70% faster.
 
 ## The tau-bench BLOCK, task by task
 
@@ -98,7 +134,7 @@ firewall blocked the policy, and the agent ships unchanged.
 
 ## Spend
 
-0G: $1.50 billed for the call-level runs, about $0.25 for the workflow-graph runs, $0.74 for the two supplier-app studies. Groq: $0.27.
+0G: $1.50 billed for the call-level runs, about $0.25 for the workflow-graph runs, $0.74 for the two supplier-app studies, $1.60 for the two procurement studies ($0.83 + $0.77). Groq: $0.27.
 
 ## Third-party benchmarks
 

@@ -7,6 +7,8 @@ import History from './components/History.jsx'
 import Workflows from './components/Workflows.jsx'
 import Connect from './pages/Connect.jsx'
 import Recorded from './pages/Recorded.jsx'
+import PaidAgent from './pages/PaidAgent.jsx'
+import LiveRun from './pages/LiveRun.jsx'
 
 function FeedPage() {
   const { data, error, isLoading } = useFeed()
@@ -30,7 +32,7 @@ export default function App() {
   const page = useView((v) => v.page)
   return (
     <Shell>
-      {page === 'recorded' ? <Recorded /> : <FeedPage />}
+      {page === 'recorded' ? <Recorded /> : page === 'agent' ? <PaidAgent /> : page === 'live' ? <LiveRun /> : <FeedPage />}
     </Shell>
   )
 }

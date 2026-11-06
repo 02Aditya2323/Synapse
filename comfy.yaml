@@ -1,0 +1,29 @@
+# comfy.yaml: the paid agent's public identifiers on 0G mainnet. No secrets here.
+# The inference key and the Router management key live in .env (ZG_API_KEY, ZG_MANAGEMENT_KEY).
+#
+# Filled in as each step happens (see docs/COMFY.md). Until then every field is null and the
+# dashboard says the step has not happened: nothing is shown in its place.
+
+network:
+  chain_id: 16661
+  rpc: https://evmrpc.0g.ai
+  explorer: https://chainscan.0g.ai
+
+# from comfy.fun/docs/build/integrate, checked on chain on 6 Nov 2026
+contracts:
+  launcher: "0x2F74d603f7B7D8B7BFc78ef04E09905B862bE86a"
+  hook: "0x809ACD73Ac30b4E2D2dFd7d35b1FDA850DCd4334"
+  pool_manager: "0xAabD31f24914B48dAEA998e69683225E289d08b0"
+  splitter: "0x500AcfBb2199D35ab1Aa87736665D76c56bf633e"
+  locker: "0x4CD6492b23933FA14Ee12eB4d0a46F5626F3Cbcb"
+  first_block: 45552804
+
+agent_id: null        # from `comfy-cli agent register --complete <request id>`
+owner: null           # the wallet that claimed the agent and launched the token
+token: null           # the Synapse token's address, from the launch
+pool_id: null         # from the token's Launched event; found from `token` when null
+launch_tx: null
+token_page: null      # the token's comfy.fun page
+
+# Wallets the team controls. Their trades show the mechanics but are never counted as earnings.
+team_wallets: []

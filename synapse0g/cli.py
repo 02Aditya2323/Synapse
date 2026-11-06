@@ -137,6 +137,16 @@ def bench(args) -> int:
         upstream.BUDGET.cap_usd = args.cap
     registry = load_registry()
     model = registry.model(args.model)
+    if args.agent == "procurement":
+        from synapse0g import study
+        from synapse0g.agents.procurement import spec
+
+        doc = study.run(spec(args.calib, args.test), registry, model_id=args.model, workers=args.workers,
+                        min_gain=args.min_gain, max_trials=args.max_trials, out=args.out)
+        print(_markdown(doc).split("## What the search tried")[0])
+        hp = doc["evaluation"]["hand_parallel"]
+        print(f"hand-parallel: {hp['passed']}/{hp['tasks']} passed, {hp['median_wall_s']:.2f} s median, ${hp['cost_usd']:.5f}")
+        return 0
     if args.agent == "supplier":
         from synapse0g.supplier_bench import run
 
@@ -243,6 +253,36 @@ def workflow(args) -> int:
     return 0
 
 
+def agent(args) -> int:
+    """The paid agent: run its queue, show its status, quote or submit a job, or record a deposit."""
+    from synapse0g import service
+
+    load_env()
+    queue, ledger = service.Queue(), service.Ledger()
+    a = service.Agent(queue, ledger)
+    if args.action == "status":
+        print(json.dumps(a.status(), indent=1))
+    elif args.action == "quote":
+        for size in ("full", "reduced"):
+            print(json.dumps(service.estimate(args.what or "procurement", size)))
+    elif args.action == "deposit":
+        ledger.deposit(float(args.what), "manual deposit (stands in for 0G compute credit until the launchpad is connected)")
+        print(json.dumps(a.status(), indent=1))
+    elif args.action == "submit":
+        kind, _, target = (args.what or "").partition(":")
+        spec = {"agent": target} if kind == "study" else {"path": target}
+        job = service.submit(queue, kind, spec)
+        print(json.dumps({"id": job.id, "kind": job.kind, "quote": job.quote}, indent=1))
+    elif args.action == "run":
+        print("agent running; status:", json.dumps(a.status()))
+        if args.once:
+            job = a.step()
+            print(json.dumps(job.__dict__ if job else {"note": "nothing to run"}, indent=1, default=str)[:3000])
+        else:
+            a.run_forever()
+    return 0
+
+
 def ui(args) -> int:
     from synapse0g.server import serve
 
@@ -260,11 +300,16 @@ def main(argv: list[str] | None = None) -> int:
                    choices=["research_fanout", "code_review", "rag_qa", "math_tools", "shop_ops"])
     w.add_argument("rest", nargs=argparse.REMAINDER, help="for bench: the bench driver's own options, e.g. --split calib --n 10")
     w.set_defaults(fn=workflow)
+    ag = sub.add_parser("agent", help="the paid optimization agent: status, quote, deposit, submit, run")
+    ag.add_argument("action", choices=["status", "quote", "deposit", "submit", "run"])
+    ag.add_argument("what", nargs="?", help="quote: agent name; deposit: USD; submit: study:<agent> or inspect:<path>")
+    ag.add_argument("--once", action="store_true", help="run: one job, then stop")
+    ag.set_defaults(fn=agent)
     u = sub.add_parser("ui", help="serve the dashboard and its data")
     u.add_argument("--port", type=int, default=8000)
     u.set_defaults(fn=ui)
     b = sub.add_parser("bench")
-    b.add_argument("--agent", choices=["research", "math", "retail", "supplier"], required=True)
+    b.add_argument("--agent", choices=["research", "math", "retail", "supplier", "procurement"], required=True)
     b.add_argument("--user-model", default="zg-main", help="retail only: the simulated customer's model (never optimized)")
     b.add_argument("--model", required=True)
     b.add_argument("--calib", type=int, default=30)

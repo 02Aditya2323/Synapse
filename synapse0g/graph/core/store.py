@@ -223,7 +223,8 @@ class Store:
         path = self._blob_path(digest)
         if not path.exists():
             path.parent.mkdir(parents=True, exist_ok=True)
-            tmp = path.with_suffix(".tmp")
+            # a temp name of its own: two threads may write the same blob at once
+            tmp = path.with_suffix(f".{os.getpid()}.{threading.get_ident()}.tmp")
             tmp.write_text(canonical(value), encoding="utf-8")
             os.replace(tmp, path)
         return digest

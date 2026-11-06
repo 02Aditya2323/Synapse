@@ -131,7 +131,27 @@ def check_supplier(task: Task, answer: str) -> bool:
         return False
 
 
-CHECKERS = {"math": check_math, "research": check_research, "retail": check_retail, "supplier": check_supplier}
+def check_procurement(task: Task, answer: str) -> bool:
+    """Right outcome (buy / ask for clarification / no eligible offer), right supplier, landed cost to
+    the rupee, and a justification that names the supplier it recommends."""
+    try:
+        draft = json.loads(answer or "{}")
+    except json.JSONDecodeError:
+        return False
+    want, got = json.loads(task.gold), draft.get("decision") or {}
+    if got.get("status") != want["status"]:
+        return False
+    if want["status"] != "selected":
+        return True
+    try:
+        close = abs(float(got.get("landed_total")) - want["landed_total"]) <= 1.0
+    except (TypeError, ValueError):
+        return False
+    return got.get("supplier") == want["supplier"] and close and want["supplier"].lower() in (draft.get("justification") or "").lower()
+
+
+CHECKERS = {"math": check_math, "research": check_research, "retail": check_retail, "supplier": check_supplier,
+            "procurement": check_procurement}
 
 
 def _download(url: str, path: Path) -> None:

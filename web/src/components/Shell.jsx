@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { BarChart3, Boxes, History, Plug, Radio } from 'lucide-react'
+import { BarChart3, Boxes, History, Plug, Radio, Wallet, Zap } from 'lucide-react'
 import { useView } from '../store.js'
 import { useHealth } from '../api.js'
 
@@ -18,6 +18,7 @@ export function Glyph({ size = 22 }) {
 }
 
 const NAV = [
+  { page: 'live', label: 'Live run', icon: Zap },
   { page: 'overview', label: 'Results', icon: BarChart3, also: ['result'] },
   { page: 'connect', label: 'Connect an agent', icon: Plug },
   { page: 'recorded', label: 'Recorded runs', icon: Radio },
@@ -76,6 +77,8 @@ export default function Shell({ children }) {
         <nav className="flex-1 px-3 py-3 space-y-0.5">
           <div className="px-3 pt-1 pb-1.5 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--ghost)]">Compiler</div>
           {NAV.map((item) => <NavItem key={item.page} item={item} />)}
+          <div className="px-3 pt-4 pb-1.5 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--ghost)]">Paid agent</div>
+          <NavItem item={{ page: 'agent', label: 'Funding and jobs', icon: Wallet }} />
         </nav>
         <HealthLine />
       </aside>

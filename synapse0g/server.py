@@ -6,6 +6,13 @@
   POST /api/map     {"code": ...} or {"path": ...}: the agent's graph before and after the passes (nothing runs)
   GET /api/observed           runs recorded by synapse0g.wrap, newest first
   GET /api/observed/<run_id>  one of them: its lifted graph, the passes and the measurements
+  GET /api/agent              the paid agent: balance, budget mode, queue, quotes
+  GET /api/live/tasks         held-out supplier requests a live run can use
+  POST /api/live              {"task": id, "cold": bool}: start a live run (live.py)
+  GET /api/live/<id>?since=n  its events from n on, as they happen
+  GET /api/funding            the funding loop, each stage read from its source (funding.py)
+  GET /api/jobs, /api/jobs/<id>   jobs and their results
+  POST /api/jobs              {"kind": "inspect"|"study", "spec": {...}}: a quoted job, queued
   anything else     the built dashboard from web/dist, if it has been built
 """
 
@@ -47,6 +54,38 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, {"samples": samples()})
             if path == "/api/observed":
                 return self._json(200, {"runs": showcase.observed_runs()})
+            if path == "/api/agent":
+                from synapse0g import service
+
+                agent = service.Agent(service.Queue(), service.Ledger())
+                return self._json(200, {**agent.status(), "balance_source": "local ledger (stand-in until the Router account is read)",
+                                        "quotes": {m: service.estimate("procurement", m) for m in service.SIZES},
+                                        "ledger": service.Ledger().entries(20)})
+            if path == "/api/live/tasks":
+                from synapse0g import live
+
+                return self._json(200, {"tasks": live.tasks()})
+            if path.startswith("/api/live/"):
+                from urllib.parse import parse_qs, urlparse
+
+                from synapse0g import live
+
+                run = live.RUNS.get(path.rsplit("/", 1)[-1])
+                since = int((parse_qs(urlparse(self.path).query).get("since") or ["0"])[0])
+                return self._json(200, run.since(since)) if run else self._json(404, {"error": "no such live run"})
+            if path == "/api/funding":
+                from synapse0g import funding, service
+
+                return self._json(200, funding.snapshot(spent=service.inference_receipts()))
+            if path == "/api/jobs":
+                from synapse0g import service
+
+                return self._json(200, {"jobs": [j.__dict__ for j in reversed(service.Queue().all())]})
+            if path.startswith("/api/jobs/"):
+                from synapse0g import service
+
+                job = service.Queue().get(path.rsplit("/", 1)[-1])
+                return self._json(200, job.__dict__) if job else self._json(404, {"error": "no such job"})
             if path.startswith("/api/observed/"):
                 run = showcase.observed_run(path.rsplit("/", 1)[-1])
                 return self._json(200, run) if run else self._json(404, {"error": "no such recorded run"})
@@ -64,6 +103,19 @@ class Handler(BaseHTTPRequestHandler):
             if length > 1_000_000:
                 return self._json(413, {"error": "request too large"})
             body = json.loads(self.rfile.read(length) or b"{}")
+            if path == "/api/live":
+                from synapse0g import live
+
+                try:
+                    run = live.start(body.get("task"), bool(body.get("cold")))
+                except RuntimeError as e:
+                    return self._json(409, {"error": str(e)})
+                return self._json(200, {"id": run.id, "task_id": run.task_id})
+            if path == "/api/jobs":
+                from synapse0g import service
+
+                job = service.submit(service.Queue(), body.get("kind", ""), body.get("spec") or {})
+                return self._json(201, job.__dict__)
             if path == "/api/map":
                 from synapse0g.mapping import inspect_code
 

@@ -1,0 +1,3242 @@
+[
+ {
+  "id": "PR-000",
+  "category": "monitor",
+  "quantity": 15,
+  "max_unit_price": 12200,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_shree.pdf",
+   "quotation_2_om.xlsx",
+   "quotation_3_kaveri.txt",
+   "quotation_4_rathi.pdf"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Om Sai Enterprises",
+   "landed_total": 203019.0
+  },
+  "facts": [
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/2138/26-27",
+    "item": "Samsung S27R650 27-inch monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 25,
+    "unit_price": 10650.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 17,
+    "valid_until": "2026-11-28",
+    "payment_terms": "50% advance, 50% on delivery",
+    "fault": "advance",
+    "fmt": "pdf",
+    "file": "quotation_1_shree.pdf"
+   },
+   {
+    "supplier": "Om Sai Enterprises",
+    "quote_no": "Q/6941/26-27",
+    "item": "Dell P2723D 27-inch QHD monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 20,
+    "unit_price": 11470.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 17,
+    "valid_until": "2026-12-16",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_2_om.xlsx"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/9357/26-27",
+    "item": "LG 27QN600 27-inch IPS monitor",
+    "specs": {
+     "screen_size_in": 28,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 13050.0,
+    "gst_included": true,
+    "shipping": 4000.0,
+    "delivery_days": 21,
+    "valid_until": "2026-11-01",
+    "payment_terms": "Net 15 days",
+    "fault": "expired",
+    "fmt": "email",
+    "file": "quotation_3_kaveri.txt"
+   },
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/4550/26-27",
+    "item": "Acer KA272 27-inch monitor",
+    "specs": {
+     "screen_size_in": 28,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 11050.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 26,
+    "valid_until": "2026-11-19",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "delivery",
+    "fmt": "pdf",
+    "file": "quotation_4_rathi.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-001",
+  "category": "laptop",
+  "quantity": 6,
+  "max_unit_price": 75400,
+  "needed_within_days": 7,
+  "files": [
+   "quotation_1_galaxy.xlsx",
+   "quotation_2_sunrise.txt",
+   "quotation_3_pioneer.pdf",
+   "quotation_4_coastal.xlsx"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Sunrise Infotech",
+   "landed_total": 500697.6
+  },
+  "facts": [
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/5874/26-27",
+    "item": "ASUS ExpertBook B1",
+    "specs": {
+     "ram_gb": 16,
+     "storage_gb": 512
+    },
+    "refurbished": false,
+    "quantity_available": 3,
+    "unit_price": 56680.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 6,
+    "valid_until": "2026-11-23",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "quantity",
+    "fmt": "xlsx",
+    "file": "quotation_1_galaxy.xlsx"
+   },
+   {
+    "supplier": "Sunrise Infotech",
+    "quote_no": "Q/3846/26-27",
+    "item": "Lenovo ThinkPad E14 Gen 5",
+    "specs": {
+     "ram_gb": 17,
+     "storage_gb": 512
+    },
+    "refurbished": false,
+    "quantity_available": 16,
+    "unit_price": 70720.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 3,
+    "valid_until": "2026-12-11",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_2_sunrise.txt"
+   },
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/9020/26-27",
+    "item": "Dell Latitude 3440",
+    "specs": {
+     "ram_gb": 8,
+     "storage_gb": 516
+    },
+    "refurbished": false,
+    "quantity_available": 36,
+    "unit_price": 63520.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 6,
+    "valid_until": "2026-11-17",
+    "payment_terms": "100% on delivery",
+    "fault": "spec",
+    "fmt": "pdf",
+    "file": "quotation_3_pioneer.pdf"
+   },
+   {
+    "supplier": "Coastal IT Services",
+    "quote_no": "Q/2307/26-27",
+    "item": "HP ProBook 440 G10",
+    "specs": {
+     "ram_gb": 16,
+     "storage_gb": 520
+    },
+    "refurbished": false,
+    "quantity_available": 16,
+    "unit_price": 63030.0,
+    "gst_included": false,
+    "shipping": 500.0,
+    "delivery_days": 5,
+    "valid_until": "2026-10-28",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "expired",
+    "fmt": "xlsx",
+    "file": "quotation_4_coastal.xlsx"
+   }
+  ]
+ },
+ {
+  "id": "PR-002",
+  "category": "chair",
+  "quantity": 8,
+  "max_unit_price": 10500,
+  "needed_within_days": 7,
+  "files": [
+   "quotation_1_pioneer.txt",
+   "quotation_2_om.pdf",
+   "quotation_3_vardhman.xlsx",
+   "quotation_4_galaxy.txt"
+  ],
+  "answer": {
+   "status": "needs_clarification",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/4876/26-27",
+    "item": "Featherlite Optima ergonomic chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 18,
+    "unit_price": 8360.0,
+    "gst_included": false,
+    "shipping": 500.0,
+    "delivery_days": 2,
+    "valid_until": null,
+    "payment_terms": "Net 15 days",
+    "fault": "missing",
+    "fmt": "email",
+    "file": "quotation_1_pioneer.txt"
+   },
+   {
+    "supplier": "Om Sai Enterprises",
+    "quote_no": "Q/7525/26-27",
+    "item": "Godrej Interio Motion chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 38,
+    "unit_price": 8620.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 1,
+    "valid_until": "2026-10-22",
+    "payment_terms": "100% on delivery",
+    "fault": "expired",
+    "fmt": "pdf",
+    "file": "quotation_2_om.pdf"
+   },
+   {
+    "supplier": "Vardhman Office Solutions",
+    "quote_no": "Q/7577/26-27",
+    "item": "Featherlite Optima ergonomic chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 4
+    },
+    "refurbished": false,
+    "quantity_available": 38,
+    "unit_price": 13230.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 1,
+    "valid_until": "2026-11-23",
+    "payment_terms": "Net 15 days",
+    "fault": "price",
+    "fmt": "xlsx",
+    "file": "quotation_3_vardhman.xlsx"
+   },
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/9101/26-27",
+    "item": "Godrej Interio Motion chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 10,
+    "unit_price": 10480.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 7,
+    "valid_until": null,
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "missing",
+    "fmt": "email",
+    "file": "quotation_4_galaxy.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-003",
+  "category": "printer",
+  "quantity": 20,
+  "max_unit_price": 24800,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_metro.pdf",
+   "quotation_2_om.xlsx",
+   "quotation_3_coastal.txt"
+  ],
+  "answer": {
+   "status": "no_eligible_offer",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/1511/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 31
+    },
+    "refurbished": false,
+    "quantity_available": 22,
+    "unit_price": 25770.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 21,
+    "valid_until": "2026-12-15",
+    "payment_terms": "100% on delivery",
+    "fault": "price",
+    "fmt": "pdf",
+    "file": "quotation_1_metro.pdf"
+   },
+   {
+    "supplier": "Om Sai Enterprises",
+    "quote_no": "Q/7285/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 31
+    },
+    "refurbished": false,
+    "quantity_available": 25,
+    "unit_price": 31050.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 21,
+    "valid_until": "2026-11-28",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "price",
+    "fmt": "xlsx",
+    "file": "quotation_2_om.xlsx"
+   },
+   {
+    "supplier": "Coastal IT Services",
+    "quote_no": "Q/5579/26-27",
+    "item": "HP LaserJet Pro 4003dn",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 18,
+    "unit_price": 23280.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 17,
+    "valid_until": "2026-12-07",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "quantity",
+    "fmt": "email",
+    "file": "quotation_3_coastal.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-004",
+  "category": "ups",
+  "quantity": 10,
+  "max_unit_price": 9000,
+  "needed_within_days": 5,
+  "files": [
+   "quotation_1_pioneer.xlsx",
+   "quotation_2_metro.txt",
+   "quotation_3_rathi.pdf"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Metro Business Supplies",
+   "landed_total": 85700.0
+  },
+  "facts": [
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/9202/26-27",
+    "item": "APC Back-UPS BX1600C",
+    "specs": {
+     "capacity_va": 1000
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 8640.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 1,
+    "valid_until": "2026-11-11",
+    "payment_terms": "Net 15 days",
+    "fault": "spec",
+    "fmt": "xlsx",
+    "file": "quotation_1_pioneer.xlsx"
+   },
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/6728/26-27",
+    "item": "Luminous LD1600 UPS",
+    "specs": {
+     "capacity_va": 1504
+    },
+    "refurbished": false,
+    "quantity_available": 20,
+    "unit_price": 8450.0,
+    "gst_included": true,
+    "shipping": 1200.0,
+    "delivery_days": 3,
+    "valid_until": "2026-12-08",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_2_metro.txt"
+   },
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/3575/26-27",
+    "item": "Luminous LD1600 UPS",
+    "specs": {
+     "capacity_va": 1500
+    },
+    "refurbished": false,
+    "quantity_available": 40,
+    "unit_price": 7570.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 3,
+    "valid_until": "2026-11-30",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "none",
+    "fmt": "pdf",
+    "file": "quotation_3_rathi.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-005",
+  "category": "headset",
+  "quantity": 25,
+  "max_unit_price": 4000,
+  "needed_within_days": 10,
+  "files": [
+   "quotation_1_arihant.txt",
+   "quotation_2_vardhman.pdf",
+   "quotation_3_kaveri.xlsx",
+   "quotation_4_blueline.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Arihant Digital",
+   "landed_total": 94565.0
+  },
+  "facts": [
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/1546/26-27",
+    "item": "Poly Voyager 4320",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 2
+    },
+    "refurbished": false,
+    "quantity_available": 55,
+    "unit_price": 3070.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 10,
+    "valid_until": "2026-11-17",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_1_arihant.txt"
+   },
+   {
+    "supplier": "Vardhman Office Solutions",
+    "quote_no": "Q/2429/26-27",
+    "item": "Poly Voyager 4320",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 1
+    },
+    "refurbished": false,
+    "quantity_available": 55,
+    "unit_price": 3260.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 5,
+    "valid_until": "2026-10-25",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "expired",
+    "fmt": "pdf",
+    "file": "quotation_2_vardhman.pdf"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/8999/26-27",
+    "item": "Poly Voyager 4320",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 1
+    },
+    "refurbished": false,
+    "quantity_available": 25,
+    "unit_price": 3660.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 10,
+    "valid_until": "2026-12-06",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_3_kaveri.xlsx"
+   },
+   {
+    "supplier": "BlueLine Workspace",
+    "quote_no": "Q/4240/26-27",
+    "item": "Logitech Zone Vibe 100",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 2
+    },
+    "refurbished": true,
+    "quantity_available": 30,
+    "unit_price": 3300.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 9,
+    "valid_until": "2026-12-02",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "refurbished",
+    "fmt": "email",
+    "file": "quotation_4_blueline.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-006",
+  "category": "projector",
+  "quantity": 3,
+  "max_unit_price": 48900,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_pioneer.pdf",
+   "quotation_2_rathi.xlsx",
+   "quotation_3_prakash.txt"
+  ],
+  "answer": {
+   "status": "needs_clarification",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/9366/26-27",
+    "item": "Epson EB-E01",
+    "specs": {
+     "brightness_lumens": 3000
+    },
+    "refurbished": false,
+    "quantity_available": 5,
+    "unit_price": 45260.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 20,
+    "valid_until": "2026-12-12",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "spec",
+    "fmt": "pdf",
+    "file": "quotation_1_pioneer.pdf"
+   },
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/4919/26-27",
+    "item": "Epson EB-E01",
+    "specs": {
+     "brightness_lumens": 3500
+    },
+    "refurbished": false,
+    "quantity_available": 1,
+    "unit_price": 45060.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 19,
+    "valid_until": "2026-11-26",
+    "payment_terms": "100% on delivery",
+    "fault": "quantity",
+    "fmt": "xlsx",
+    "file": "quotation_2_rathi.xlsx"
+   },
+   {
+    "supplier": "Prakash IT World",
+    "quote_no": "Q/2015/26-27",
+    "item": "ViewSonic PA503X",
+    "specs": {
+     "brightness_lumens": 3508
+    },
+    "refurbished": false,
+    "quantity_available": 13,
+    "unit_price": 45150.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 16,
+    "valid_until": null,
+    "payment_terms": "Net 15 days",
+    "fault": "missing",
+    "fmt": "email",
+    "file": "quotation_3_prakash.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-007",
+  "category": "desk",
+  "quantity": 12,
+  "max_unit_price": 16000,
+  "needed_within_days": 7,
+  "files": [
+   "quotation_1_shree.xlsx",
+   "quotation_2_rathi.txt",
+   "quotation_3_kaveri.pdf",
+   "quotation_4_sunrise.xlsx"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Sunrise Infotech",
+   "landed_total": 197760.0
+  },
+  "facts": [
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/2659/26-27",
+    "item": "Godrej Interio Slimline desk",
+    "specs": {
+     "width_cm": 120
+    },
+    "refurbished": false,
+    "quantity_available": 14,
+    "unit_price": 13210.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 5,
+    "valid_until": "2026-12-02",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "spec",
+    "fmt": "xlsx",
+    "file": "quotation_1_shree.xlsx"
+   },
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/5146/26-27",
+    "item": "Nilkamal Freedom desk",
+    "specs": {
+     "width_cm": 140
+    },
+    "refurbished": false,
+    "quantity_available": 10,
+    "unit_price": 14860.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 1,
+    "valid_until": "2026-12-16",
+    "payment_terms": "100% on delivery",
+    "fault": "quantity",
+    "fmt": "email",
+    "file": "quotation_2_rathi.txt"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/6894/26-27",
+    "item": "Godrej Interio Slimline desk",
+    "specs": {
+     "width_cm": 120
+    },
+    "refurbished": false,
+    "quantity_available": 12,
+    "unit_price": 15250.0,
+    "gst_included": true,
+    "shipping": 500.0,
+    "delivery_days": 3,
+    "valid_until": "2026-11-23",
+    "payment_terms": "Net 15 days",
+    "fault": "spec",
+    "fmt": "pdf",
+    "file": "quotation_3_kaveri.pdf"
+   },
+   {
+    "supplier": "Sunrise Infotech",
+    "quote_no": "Q/2124/26-27",
+    "item": "Featherlite Edge desk",
+    "specs": {
+     "width_cm": 144
+    },
+    "refurbished": false,
+    "quantity_available": 17,
+    "unit_price": 16480.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 1,
+    "valid_until": "2026-12-12",
+    "payment_terms": "Net 15 days",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_4_sunrise.xlsx"
+   }
+  ]
+ },
+ {
+  "id": "PR-008",
+  "category": "monitor",
+  "quantity": 15,
+  "max_unit_price": 11700,
+  "needed_within_days": 14,
+  "files": [
+   "quotation_1_pioneer.txt",
+   "quotation_2_kaveri.pdf",
+   "quotation_3_shree.xlsx",
+   "quotation_4_rathi.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Shree Balaji Traders",
+   "landed_total": 202250.0
+  },
+  "facts": [
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/5099/26-27",
+    "item": "Samsung S27R650 27-inch monitor",
+    "specs": {
+     "screen_size_in": 28,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 10680.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 13,
+    "valid_until": "2026-10-28",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "expired",
+    "fmt": "email",
+    "file": "quotation_1_pioneer.txt"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/9846/26-27",
+    "item": "LG 27QN600 27-inch IPS monitor",
+    "specs": {
+     "screen_size_in": 28,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 14,
+    "unit_price": 9950.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 14,
+    "valid_until": "2026-11-21",
+    "payment_terms": "Net 15 days",
+    "fault": "quantity",
+    "fmt": "pdf",
+    "file": "quotation_2_kaveri.pdf"
+   },
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/2776/26-27",
+    "item": "Samsung S27R650 27-inch monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 20,
+    "unit_price": 13450.0,
+    "gst_included": true,
+    "shipping": 500.0,
+    "delivery_days": 9,
+    "valid_until": "2026-11-15",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_3_shree.xlsx"
+   },
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/6937/26-27",
+    "item": "BenQ GW2790Q 27-inch monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 45,
+    "unit_price": 11220.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 19,
+    "valid_until": "2026-11-26",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "delivery",
+    "fmt": "email",
+    "file": "quotation_4_rathi.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-009",
+  "category": "laptop",
+  "quantity": 10,
+  "max_unit_price": 73700,
+  "needed_within_days": 5,
+  "files": [
+   "quotation_1_technova.pdf",
+   "quotation_2_galaxy.xlsx",
+   "quotation_3_metro.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Metro Business Supplies",
+   "landed_total": 835106.0
+  },
+  "facts": [
+   {
+    "supplier": "TechNova Distributors",
+    "quote_no": "Q/3319/26-27",
+    "item": "HP ProBook 440 G10",
+    "specs": {
+     "ram_gb": 17,
+     "storage_gb": 516
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 70390.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 2,
+    "valid_until": "2026-10-26",
+    "payment_terms": "Net 15 days",
+    "fault": "expired",
+    "fmt": "pdf",
+    "file": "quotation_1_technova.pdf"
+   },
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/3520/26-27",
+    "item": "Lenovo ThinkPad E14 Gen 5",
+    "specs": {
+     "ram_gb": 16,
+     "storage_gb": 520
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 65320.0,
+    "gst_included": true,
+    "shipping": 4000.0,
+    "delivery_days": 7,
+    "valid_until": "2026-11-09",
+    "payment_terms": "Net 15 days",
+    "fault": "delivery",
+    "fmt": "xlsx",
+    "file": "quotation_2_galaxy.xlsx"
+   },
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/9189/26-27",
+    "item": "ASUS ExpertBook B1",
+    "specs": {
+     "ram_gb": 17,
+     "storage_gb": 512
+    },
+    "refurbished": false,
+    "quantity_available": 40,
+    "unit_price": 70670.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 1,
+    "valid_until": "2026-11-28",
+    "payment_terms": "Net 15 days",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_3_metro.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-010",
+  "category": "chair",
+  "quantity": 8,
+  "max_unit_price": 10200,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_blueline.xlsx",
+   "quotation_2_prakash.txt",
+   "quotation_3_sunrise.pdf"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Prakash IT World",
+   "landed_total": 90624.0
+  },
+  "facts": [
+   {
+    "supplier": "BlueLine Workspace",
+    "quote_no": "Q/7946/26-27",
+    "item": "Green Soul Seoul office chair",
+    "specs": {
+     "lumbar_support": "fixed",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 10,
+    "unit_price": 8320.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 20,
+    "valid_until": "2026-12-11",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "spec",
+    "fmt": "xlsx",
+    "file": "quotation_1_blueline.xlsx"
+   },
+   {
+    "supplier": "Prakash IT World",
+    "quote_no": "Q/7090/26-27",
+    "item": "Green Soul Seoul office chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 4
+    },
+    "refurbished": false,
+    "quantity_available": 10,
+    "unit_price": 9600.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 21,
+    "valid_until": "2026-11-26",
+    "payment_terms": "Net 15 days",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_2_prakash.txt"
+   },
+   {
+    "supplier": "Sunrise Infotech",
+    "quote_no": "Q/6828/26-27",
+    "item": "Featherlite Optima ergonomic chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 10,
+    "unit_price": 8730.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 21,
+    "valid_until": "2026-11-02",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "expired",
+    "fmt": "pdf",
+    "file": "quotation_3_sunrise.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-011",
+  "category": "printer",
+  "quantity": 15,
+  "max_unit_price": 24700,
+  "needed_within_days": 7,
+  "files": [
+   "quotation_1_kaveri.txt",
+   "quotation_2_blueline.pdf",
+   "quotation_3_metro.xlsx",
+   "quotation_4_galaxy.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Kaveri Computers",
+   "landed_total": 330400.0
+  },
+  "facts": [
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/3830/26-27",
+    "item": "HP LaserJet Pro 4003dn",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 45,
+    "unit_price": 21760.0,
+    "gst_included": true,
+    "shipping": 4000.0,
+    "delivery_days": 6,
+    "valid_until": "2026-11-20",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_1_kaveri.txt"
+   },
+   {
+    "supplier": "BlueLine Workspace",
+    "quote_no": "Q/6137/26-27",
+    "item": "Canon imageCLASS LBP246dw",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 31
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 23050.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 2,
+    "valid_until": "2026-11-05",
+    "payment_terms": "Net 15 days",
+    "fault": "expired",
+    "fmt": "pdf",
+    "file": "quotation_2_blueline.pdf"
+   },
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/2662/26-27",
+    "item": "Canon imageCLASS LBP246dw",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 22410.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 12,
+    "valid_until": "2026-11-24",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "delivery",
+    "fmt": "xlsx",
+    "file": "quotation_3_metro.xlsx"
+   },
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/1710/26-27",
+    "item": "HP LaserJet Pro 4003dn",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 20,
+    "unit_price": 21460.0,
+    "gst_included": true,
+    "shipping": 500.0,
+    "delivery_days": 3,
+    "valid_until": "2026-11-04",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "expired",
+    "fmt": "email",
+    "file": "quotation_4_galaxy.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-012",
+  "category": "ups",
+  "quantity": 20,
+  "max_unit_price": 9300,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_pioneer.pdf",
+   "quotation_2_rathi.xlsx",
+   "quotation_3_shree.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Pioneer Corporate Supplies",
+   "landed_total": 200156.0
+  },
+  "facts": [
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/7112/26-27",
+    "item": "Luminous LD1600 UPS",
+    "specs": {
+     "capacity_va": 1504
+    },
+    "refurbished": false,
+    "quantity_available": 30,
+    "unit_price": 8460.0,
+    "gst_included": false,
+    "shipping": 500.0,
+    "delivery_days": 17,
+    "valid_until": "2026-11-22",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "pdf",
+    "file": "quotation_1_pioneer.pdf"
+   },
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/4874/26-27",
+    "item": "Luminous LD1600 UPS",
+    "specs": {
+     "capacity_va": 1500
+    },
+    "refurbished": false,
+    "quantity_available": 20,
+    "unit_price": 7740.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 15,
+    "valid_until": "2026-11-02",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "expired",
+    "fmt": "xlsx",
+    "file": "quotation_2_rathi.xlsx"
+   },
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/1493/26-27",
+    "item": "APC Back-UPS BX1600C",
+    "specs": {
+     "capacity_va": 1504
+    },
+    "refurbished": false,
+    "quantity_available": 12,
+    "unit_price": 8250.0,
+    "gst_included": true,
+    "shipping": 1200.0,
+    "delivery_days": 20,
+    "valid_until": "2026-12-08",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "quantity",
+    "fmt": "email",
+    "file": "quotation_3_shree.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-013",
+  "category": "headset",
+  "quantity": 6,
+  "max_unit_price": 3600,
+  "needed_within_days": 7,
+  "files": [
+   "quotation_1_shree.xlsx",
+   "quotation_2_sunrise.txt",
+   "quotation_3_coastal.pdf"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Sunrise Infotech",
+   "landed_total": 24720.0
+  },
+  "facts": [
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/5640/26-27",
+    "item": "Logitech Zone Vibe 100",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 1
+    },
+    "refurbished": false,
+    "quantity_available": 3,
+    "unit_price": 2900.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 1,
+    "valid_until": "2026-11-14",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "quantity",
+    "fmt": "xlsx",
+    "file": "quotation_1_shree.xlsx"
+   },
+   {
+    "supplier": "Sunrise Infotech",
+    "quote_no": "Q/7052/26-27",
+    "item": "Jabra Evolve2 40",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 1
+    },
+    "refurbished": false,
+    "quantity_available": 16,
+    "unit_price": 4120.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 5,
+    "valid_until": "2026-11-14",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_2_sunrise.txt"
+   },
+   {
+    "supplier": "Coastal IT Services",
+    "quote_no": "Q/4258/26-27",
+    "item": "Poly Voyager 4320",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 1
+    },
+    "refurbished": false,
+    "quantity_available": 6,
+    "unit_price": 3830.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 7,
+    "valid_until": "2026-11-16",
+    "payment_terms": "100% on delivery",
+    "fault": "price",
+    "fmt": "pdf",
+    "file": "quotation_3_coastal.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-014",
+  "category": "projector",
+  "quantity": 5,
+  "max_unit_price": 48600,
+  "needed_within_days": 10,
+  "files": [
+   "quotation_1_pioneer.txt",
+   "quotation_2_coastal.pdf",
+   "quotation_3_technova.xlsx",
+   "quotation_4_prakash.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Prakash IT World",
+   "landed_total": 223850.0
+  },
+  "facts": [
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/6783/26-27",
+    "item": "ViewSonic PA503X",
+    "specs": {
+     "brightness_lumens": 3500
+    },
+    "refurbished": false,
+    "quantity_available": 5,
+    "unit_price": 41920.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 7,
+    "valid_until": "2026-11-22",
+    "payment_terms": "Full payment before dispatch",
+    "fault": "advance",
+    "fmt": "email",
+    "file": "quotation_1_pioneer.txt"
+   },
+   {
+    "supplier": "Coastal IT Services",
+    "quote_no": "Q/5350/26-27",
+    "item": "BenQ MW560",
+    "specs": {
+     "brightness_lumens": 3504
+    },
+    "refurbished": false,
+    "quantity_available": 35,
+    "unit_price": 50410.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 4,
+    "valid_until": "2026-11-16",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "price",
+    "fmt": "pdf",
+    "file": "quotation_2_coastal.pdf"
+   },
+   {
+    "supplier": "TechNova Distributors",
+    "quote_no": "Q/1752/26-27",
+    "item": "ViewSonic PA503X",
+    "specs": {
+     "brightness_lumens": 3500
+    },
+    "refurbished": false,
+    "quantity_available": 10,
+    "unit_price": 40160.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 7,
+    "valid_until": "2026-11-17",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_3_technova.xlsx"
+   },
+   {
+    "supplier": "Prakash IT World",
+    "quote_no": "Q/9504/26-27",
+    "item": "ViewSonic PA503X",
+    "specs": {
+     "brightness_lumens": 3500
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 44270.0,
+    "gst_included": true,
+    "shipping": 2500.0,
+    "delivery_days": 6,
+    "valid_until": "2026-11-22",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_4_prakash.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-015",
+  "category": "desk",
+  "quantity": 12,
+  "max_unit_price": 14600,
+  "needed_within_days": 14,
+  "files": [
+   "quotation_1_vardhman.pdf",
+   "quotation_2_pioneer.xlsx",
+   "quotation_3_arihant.txt"
+  ],
+  "answer": {
+   "status": "no_eligible_offer",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Vardhman Office Solutions",
+    "quote_no": "Q/8314/26-27",
+    "item": "Featherlite Edge desk",
+    "specs": {
+     "width_cm": 120
+    },
+    "refurbished": false,
+    "quantity_available": 12,
+    "unit_price": 13260.0,
+    "gst_included": false,
+    "shipping": 500.0,
+    "delivery_days": 9,
+    "valid_until": "2026-11-27",
+    "payment_terms": "100% on delivery",
+    "fault": "spec",
+    "fmt": "pdf",
+    "file": "quotation_1_vardhman.pdf"
+   },
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/2446/26-27",
+    "item": "Nilkamal Freedom desk",
+    "specs": {
+     "width_cm": 140
+    },
+    "refurbished": false,
+    "quantity_available": 12,
+    "unit_price": 13900.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 11,
+    "valid_until": "2026-10-20",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "expired",
+    "fmt": "xlsx",
+    "file": "quotation_2_pioneer.xlsx"
+   },
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/5119/26-27",
+    "item": "Godrej Interio Slimline desk",
+    "specs": {
+     "width_cm": 144
+    },
+    "refurbished": false,
+    "quantity_available": 42,
+    "unit_price": 17830.0,
+    "gst_included": true,
+    "shipping": 4000.0,
+    "delivery_days": 14,
+    "valid_until": "2026-11-11",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "price",
+    "fmt": "email",
+    "file": "quotation_3_arihant.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-016",
+  "category": "monitor",
+  "quantity": 4,
+  "max_unit_price": 12700,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_shree.xlsx",
+   "quotation_2_arihant.txt",
+   "quotation_3_vardhman.pdf"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Shree Balaji Traders",
+   "landed_total": 47464.0
+  },
+  "facts": [
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/9840/26-27",
+    "item": "BenQ GW2790Q 27-inch monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 34,
+    "unit_price": 9950.0,
+    "gst_included": false,
+    "shipping": 500.0,
+    "delivery_days": 21,
+    "valid_until": "2026-12-03",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_1_shree.xlsx"
+   },
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/2421/26-27",
+    "item": "LG 27QN600 27-inch IPS monitor",
+    "specs": {
+     "screen_size_in": 28,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 14,
+    "unit_price": 9830.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 17,
+    "valid_until": "2026-12-10",
+    "payment_terms": "Full payment before dispatch",
+    "fault": "advance",
+    "fmt": "email",
+    "file": "quotation_2_arihant.txt"
+   },
+   {
+    "supplier": "Vardhman Office Solutions",
+    "quote_no": "Q/9865/26-27",
+    "item": "BenQ GW2790Q 27-inch monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 9,
+    "unit_price": 11350.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 21,
+    "valid_until": "2026-12-14",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "pdf",
+    "file": "quotation_3_vardhman.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-017",
+  "category": "laptop",
+  "quantity": 10,
+  "max_unit_price": 74100,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_shree.txt",
+   "quotation_2_metro.pdf",
+   "quotation_3_vardhman.xlsx",
+   "quotation_4_pioneer.txt"
+  ],
+  "answer": {
+   "status": "no_eligible_offer",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/7202/26-27",
+    "item": "Dell Latitude 3440",
+    "specs": {
+     "ram_gb": 17,
+     "storage_gb": 512
+    },
+    "refurbished": false,
+    "quantity_available": 5,
+    "unit_price": 82670.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 15,
+    "valid_until": "2026-11-23",
+    "payment_terms": "100% on delivery",
+    "fault": "quantity",
+    "fmt": "email",
+    "file": "quotation_1_shree.txt"
+   },
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/5582/26-27",
+    "item": "Lenovo ThinkPad E14 Gen 5",
+    "specs": {
+     "ram_gb": 16,
+     "storage_gb": 516
+    },
+    "refurbished": false,
+    "quantity_available": 8,
+    "unit_price": 65190.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 16,
+    "valid_until": "2026-11-27",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "quantity",
+    "fmt": "pdf",
+    "file": "quotation_2_metro.pdf"
+   },
+   {
+    "supplier": "Vardhman Office Solutions",
+    "quote_no": "Q/4769/26-27",
+    "item": "HP ProBook 440 G10",
+    "specs": {
+     "ram_gb": 16,
+     "storage_gb": 516
+    },
+    "refurbished": false,
+    "quantity_available": 10,
+    "unit_price": 62930.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 19,
+    "valid_until": "2026-12-10",
+    "payment_terms": "Full payment before dispatch",
+    "fault": "advance",
+    "fmt": "xlsx",
+    "file": "quotation_3_vardhman.xlsx"
+   },
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/7342/26-27",
+    "item": "ASUS ExpertBook B1",
+    "specs": {
+     "ram_gb": 17,
+     "storage_gb": 512
+    },
+    "refurbished": false,
+    "quantity_available": 10,
+    "unit_price": 67610.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 17,
+    "valid_until": "2026-11-28",
+    "payment_terms": "100% advance with purchase order",
+    "fault": "advance",
+    "fmt": "email",
+    "file": "quotation_4_pioneer.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-018",
+  "category": "chair",
+  "quantity": 25,
+  "max_unit_price": 10600,
+  "needed_within_days": 14,
+  "files": [
+   "quotation_1_vardhman.pdf",
+   "quotation_2_technova.xlsx",
+   "quotation_3_shree.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Vardhman Office Solutions",
+   "landed_total": 237790.0
+  },
+  "facts": [
+   {
+    "supplier": "Vardhman Office Solutions",
+    "quote_no": "Q/4753/26-27",
+    "item": "Green Soul Seoul office chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 4
+    },
+    "refurbished": false,
+    "quantity_available": 25,
+    "unit_price": 8020.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 12,
+    "valid_until": "2026-11-18",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "pdf",
+    "file": "quotation_1_vardhman.pdf"
+   },
+   {
+    "supplier": "TechNova Distributors",
+    "quote_no": "Q/8793/26-27",
+    "item": "Godrej Interio Motion chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 55,
+    "unit_price": 9310.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 12,
+    "valid_until": "2026-11-17",
+    "payment_terms": "100% advance with purchase order",
+    "fault": "advance",
+    "fmt": "xlsx",
+    "file": "quotation_2_technova.xlsx"
+   },
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/7763/26-27",
+    "item": "Godrej Interio Motion chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 30,
+    "unit_price": 8740.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 11,
+    "valid_until": "2026-11-27",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_3_shree.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-019",
+  "category": "printer",
+  "quantity": 15,
+  "max_unit_price": 23200,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_galaxy.xlsx",
+   "quotation_2_shree.txt",
+   "quotation_3_metro.pdf",
+   "quotation_4_prakash.xlsx"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Prakash IT World",
+   "landed_total": 318350.0
+  },
+  "facts": [
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/5260/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 25,
+    "unit_price": 22800.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 19,
+    "valid_until": "2026-11-29",
+    "payment_terms": "Net 15 days",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_1_galaxy.xlsx"
+   },
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/4206/26-27",
+    "item": "HP LaserJet Pro 4003dn",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 45,
+    "unit_price": 22500.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 20,
+    "valid_until": "2026-12-02",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_2_shree.txt"
+   },
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/6926/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 17,
+    "unit_price": 22210.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 21,
+    "valid_until": "2026-11-09",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "pdf",
+    "file": "quotation_3_metro.pdf"
+   },
+   {
+    "supplier": "Prakash IT World",
+    "quote_no": "Q/4693/26-27",
+    "item": "Canon imageCLASS LBP246dw",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 17,
+    "unit_price": 21190.0,
+    "gst_included": true,
+    "shipping": 500.0,
+    "delivery_days": 20,
+    "valid_until": "2026-11-29",
+    "payment_terms": "Net 15 days",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_4_prakash.xlsx"
+   }
+  ]
+ },
+ {
+  "id": "PR-020",
+  "category": "ups",
+  "quantity": 20,
+  "max_unit_price": 9300,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_vardhman.txt",
+   "quotation_2_galaxy.pdf",
+   "quotation_3_sunrise.xlsx",
+   "quotation_4_pioneer.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Galaxy Office Mart",
+   "landed_total": 174640.0
+  },
+  "facts": [
+   {
+    "supplier": "Vardhman Office Solutions",
+    "quote_no": "Q/7052/26-27",
+    "item": "Luminous LD1600 UPS",
+    "specs": {
+     "capacity_va": 1504
+    },
+    "refurbished": false,
+    "quantity_available": 50,
+    "unit_price": 9040.0,
+    "gst_included": true,
+    "shipping": 1200.0,
+    "delivery_days": 20,
+    "valid_until": "2026-10-30",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "expired",
+    "fmt": "email",
+    "file": "quotation_1_vardhman.txt"
+   },
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/7391/26-27",
+    "item": "APC Back-UPS BX1600C",
+    "specs": {
+     "capacity_va": 1508
+    },
+    "refurbished": false,
+    "quantity_available": 50,
+    "unit_price": 7400.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 17,
+    "valid_until": "2026-11-20",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "pdf",
+    "file": "quotation_2_galaxy.pdf"
+   },
+   {
+    "supplier": "Sunrise Infotech",
+    "quote_no": "Q/3887/26-27",
+    "item": "Luminous LD1600 UPS",
+    "specs": {
+     "capacity_va": 1504
+    },
+    "refurbished": false,
+    "quantity_available": 25,
+    "unit_price": 7660.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 15,
+    "valid_until": "2026-11-17",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_3_sunrise.xlsx"
+   },
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/6819/26-27",
+    "item": "APC Back-UPS BX1600C",
+    "specs": {
+     "capacity_va": 1508
+    },
+    "refurbished": false,
+    "quantity_available": 22,
+    "unit_price": 7260.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 18,
+    "valid_until": "2026-12-10",
+    "payment_terms": "50% advance, 50% on delivery",
+    "fault": "advance",
+    "fmt": "email",
+    "file": "quotation_4_pioneer.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-021",
+  "category": "headset",
+  "quantity": 15,
+  "max_unit_price": 3900,
+  "needed_within_days": 7,
+  "files": [
+   "quotation_1_metro.pdf",
+   "quotation_2_kaveri.xlsx",
+   "quotation_3_galaxy.txt"
+  ],
+  "answer": {
+   "status": "no_eligible_offer",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/5966/26-27",
+    "item": "Logitech Zone Vibe 100",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 0
+    },
+    "refurbished": false,
+    "quantity_available": 45,
+    "unit_price": 3690.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 4,
+    "valid_until": "2026-12-16",
+    "payment_terms": "Net 15 days",
+    "fault": "spec",
+    "fmt": "pdf",
+    "file": "quotation_1_metro.pdf"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/4996/26-27",
+    "item": "Poly Voyager 4320",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 2
+    },
+    "refurbished": false,
+    "quantity_available": 45,
+    "unit_price": 4110.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 6,
+    "valid_until": "2026-12-06",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "price",
+    "fmt": "xlsx",
+    "file": "quotation_2_kaveri.xlsx"
+   },
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/3620/26-27",
+    "item": "Jabra Evolve2 40",
+    "specs": {
+     "noise_cancelling": "none",
+     "warranty_years": 1
+    },
+    "refurbished": false,
+    "quantity_available": 25,
+    "unit_price": 4190.0,
+    "gst_included": true,
+    "shipping": 2500.0,
+    "delivery_days": 5,
+    "valid_until": "2026-11-25",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "spec",
+    "fmt": "email",
+    "file": "quotation_3_galaxy.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-022",
+  "category": "projector",
+  "quantity": 6,
+  "max_unit_price": 47600,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_galaxy.xlsx",
+   "quotation_2_kaveri.txt",
+   "quotation_3_prakash.pdf"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Galaxy Office Mart",
+   "landed_total": 283054.8
+  },
+  "facts": [
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/4529/26-27",
+    "item": "ViewSonic PA503X",
+    "specs": {
+     "brightness_lumens": 3508
+    },
+    "refurbished": false,
+    "quantity_available": 11,
+    "unit_price": 39810.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 19,
+    "valid_until": "2026-12-10",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_1_galaxy.xlsx"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/2047/26-27",
+    "item": "BenQ MW560",
+    "specs": {
+     "brightness_lumens": 3504
+    },
+    "refurbished": false,
+    "quantity_available": 8,
+    "unit_price": 50290.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 23,
+    "valid_until": "2026-11-14",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "delivery",
+    "fmt": "email",
+    "file": "quotation_2_kaveri.txt"
+   },
+   {
+    "supplier": "Prakash IT World",
+    "quote_no": "Q/3270/26-27",
+    "item": "ViewSonic PA503X",
+    "specs": {
+     "brightness_lumens": 3500
+    },
+    "refurbished": false,
+    "quantity_available": 11,
+    "unit_price": 52480.0,
+    "gst_included": false,
+    "shipping": 500.0,
+    "delivery_days": 21,
+    "valid_until": "2026-11-16",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "price",
+    "fmt": "pdf",
+    "file": "quotation_3_prakash.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-023",
+  "category": "desk",
+  "quantity": 4,
+  "max_unit_price": 15200,
+  "needed_within_days": 10,
+  "files": [
+   "quotation_1_blueline.txt",
+   "quotation_2_sunrise.pdf",
+   "quotation_3_om.xlsx"
+  ],
+  "answer": {
+   "status": "needs_clarification",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "BlueLine Workspace",
+    "quote_no": "Q/5109/26-27",
+    "item": "Featherlite Edge desk",
+    "specs": {
+     "width_cm": null
+    },
+    "refurbished": false,
+    "quantity_available": 4,
+    "unit_price": 12190.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 4,
+    "valid_until": "2026-12-03",
+    "payment_terms": "Net 15 days",
+    "fault": "missing",
+    "fmt": "email",
+    "file": "quotation_1_blueline.txt"
+   },
+   {
+    "supplier": "Sunrise Infotech",
+    "quote_no": "Q/8983/26-27",
+    "item": "Godrej Interio Slimline desk",
+    "specs": {
+     "width_cm": 140
+    },
+    "refurbished": true,
+    "quantity_available": 4,
+    "unit_price": 15450.0,
+    "gst_included": true,
+    "shipping": 2500.0,
+    "delivery_days": 10,
+    "valid_until": "2026-11-18",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "refurbished",
+    "fmt": "pdf",
+    "file": "quotation_2_sunrise.pdf"
+   },
+   {
+    "supplier": "Om Sai Enterprises",
+    "quote_no": "Q/2801/26-27",
+    "item": "Featherlite Edge desk",
+    "specs": {
+     "width_cm": 148
+    },
+    "refurbished": false,
+    "quantity_available": 34,
+    "unit_price": 17330.0,
+    "gst_included": true,
+    "shipping": 2500.0,
+    "delivery_days": 12,
+    "valid_until": "2026-11-17",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "delivery",
+    "fmt": "xlsx",
+    "file": "quotation_3_om.xlsx"
+   }
+  ]
+ },
+ {
+  "id": "PR-024",
+  "category": "monitor",
+  "quantity": 15,
+  "max_unit_price": 12600,
+  "needed_within_days": 10,
+  "files": [
+   "quotation_1_galaxy.pdf",
+   "quotation_2_coastal.xlsx",
+   "quotation_3_pioneer.txt",
+   "quotation_4_technova.pdf"
+  ],
+  "answer": {
+   "status": "needs_clarification",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/8969/26-27",
+    "item": "LG 27QN600 27-inch IPS monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 17,
+    "unit_price": 10620.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 15,
+    "valid_until": "2026-12-11",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "delivery",
+    "fmt": "pdf",
+    "file": "quotation_1_galaxy.pdf"
+   },
+   {
+    "supplier": "Coastal IT Services",
+    "quote_no": "Q/5492/26-27",
+    "item": "LG 27QN600 27-inch IPS monitor",
+    "specs": {
+     "screen_size_in": 28,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 17,
+    "unit_price": 11560.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 19,
+    "valid_until": "2026-11-27",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "delivery",
+    "fmt": "xlsx",
+    "file": "quotation_2_coastal.xlsx"
+   },
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/2628/26-27",
+    "item": "LG 27QN600 27-inch IPS monitor",
+    "specs": {
+     "screen_size_in": 24,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 45,
+    "unit_price": 9920.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 9,
+    "valid_until": "2026-12-06",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "spec",
+    "fmt": "email",
+    "file": "quotation_3_pioneer.txt"
+   },
+   {
+    "supplier": "TechNova Distributors",
+    "quote_no": "Q/6073/26-27",
+    "item": "Samsung S27R650 27-inch monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 17,
+    "unit_price": 12250.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 9,
+    "valid_until": null,
+    "payment_terms": "100% on delivery",
+    "fault": "missing",
+    "fmt": "pdf",
+    "file": "quotation_4_technova.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-025",
+  "category": "laptop",
+  "quantity": 6,
+  "max_unit_price": 68200,
+  "needed_within_days": 14,
+  "files": [
+   "quotation_1_coastal.xlsx",
+   "quotation_2_arihant.txt",
+   "quotation_3_kaveri.pdf",
+   "quotation_4_rathi.xlsx"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Rathi Systems",
+   "landed_total": 403139.6
+  },
+  "facts": [
+   {
+    "supplier": "Coastal IT Services",
+    "quote_no": "Q/3206/26-27",
+    "item": "Dell Latitude 3440",
+    "specs": {
+     "ram_gb": 16,
+     "storage_gb": 520
+    },
+    "refurbished": true,
+    "quantity_available": 16,
+    "unit_price": 67240.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 11,
+    "valid_until": "2026-12-05",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "refurbished",
+    "fmt": "xlsx",
+    "file": "quotation_1_coastal.xlsx"
+   },
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/8364/26-27",
+    "item": "Dell Latitude 3440",
+    "specs": {
+     "ram_gb": 17,
+     "storage_gb": 520
+    },
+    "refurbished": false,
+    "quantity_available": 36,
+    "unit_price": 65550.0,
+    "gst_included": true,
+    "shipping": 4000.0,
+    "delivery_days": 14,
+    "valid_until": "2026-10-26",
+    "payment_terms": "Net 15 days",
+    "fault": "expired",
+    "fmt": "email",
+    "file": "quotation_2_arihant.txt"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/6172/26-27",
+    "item": "Dell Latitude 3440",
+    "specs": {
+     "ram_gb": 16,
+     "storage_gb": 520
+    },
+    "refurbished": false,
+    "quantity_available": 5,
+    "unit_price": 61670.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 10,
+    "valid_until": "2026-11-15",
+    "payment_terms": "100% on delivery",
+    "fault": "quantity",
+    "fmt": "pdf",
+    "file": "quotation_3_kaveri.pdf"
+   },
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/7914/26-27",
+    "item": "Lenovo ThinkPad E14 Gen 5",
+    "specs": {
+     "ram_gb": 17,
+     "storage_gb": 516
+    },
+    "refurbished": false,
+    "quantity_available": 36,
+    "unit_price": 56870.0,
+    "gst_included": false,
+    "shipping": 500.0,
+    "delivery_days": 14,
+    "valid_until": "2026-12-13",
+    "payment_terms": "Net 15 days",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_4_rathi.xlsx"
+   }
+  ]
+ },
+ {
+  "id": "PR-026",
+  "category": "chair",
+  "quantity": 6,
+  "max_unit_price": 10600,
+  "needed_within_days": 5,
+  "files": [
+   "quotation_1_arihant.txt",
+   "quotation_2_kaveri.pdf",
+   "quotation_3_rathi.xlsx",
+   "quotation_4_metro.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Metro Business Supplies",
+   "landed_total": 57680.0
+  },
+  "facts": [
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/2681/26-27",
+    "item": "Godrej Interio Motion chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": true,
+    "quantity_available": 36,
+    "unit_price": 10000.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 2,
+    "valid_until": "2026-11-23",
+    "payment_terms": "100% on delivery",
+    "fault": "refurbished",
+    "fmt": "email",
+    "file": "quotation_1_arihant.txt"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/4236/26-27",
+    "item": "Green Soul Seoul office chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 4
+    },
+    "refurbished": false,
+    "quantity_available": 36,
+    "unit_price": 7790.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 1,
+    "valid_until": "2026-12-12",
+    "payment_terms": "50% advance, 50% on delivery",
+    "fault": "advance",
+    "fmt": "pdf",
+    "file": "quotation_2_kaveri.pdf"
+   },
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/9954/26-27",
+    "item": "Godrej Interio Motion chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 8,
+    "unit_price": 9250.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 1,
+    "valid_until": "2026-12-10",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_3_rathi.xlsx"
+   },
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/8529/26-27",
+    "item": "Green Soul Seoul office chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 4
+    },
+    "refurbished": false,
+    "quantity_available": 16,
+    "unit_price": 9530.0,
+    "gst_included": true,
+    "shipping": 500.0,
+    "delivery_days": 3,
+    "valid_until": "2026-11-10",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_4_metro.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-027",
+  "category": "printer",
+  "quantity": 15,
+  "max_unit_price": 23300,
+  "needed_within_days": 14,
+  "files": [
+   "quotation_1_sunrise.pdf",
+   "quotation_2_om.xlsx",
+   "quotation_3_blueline.txt",
+   "quotation_4_arihant.pdf"
+  ],
+  "answer": {
+   "status": "needs_clarification",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Sunrise Infotech",
+    "quote_no": "Q/1601/26-27",
+    "item": "Canon imageCLASS LBP246dw",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": null
+    },
+    "refurbished": false,
+    "quantity_available": 17,
+    "unit_price": 19540.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 8,
+    "valid_until": "2026-12-11",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "missing",
+    "fmt": "pdf",
+    "file": "quotation_1_sunrise.pdf"
+   },
+   {
+    "supplier": "Om Sai Enterprises",
+    "quote_no": "Q/3814/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 20,
+    "unit_price": 18220.0,
+    "gst_included": false,
+    "shipping": 500.0,
+    "delivery_days": 16,
+    "valid_until": "2026-11-12",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "delivery",
+    "fmt": "xlsx",
+    "file": "quotation_2_om.xlsx"
+   },
+   {
+    "supplier": "BlueLine Workspace",
+    "quote_no": "Q/4237/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 31
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 20240.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 11,
+    "valid_until": "2026-10-24",
+    "payment_terms": "100% on delivery",
+    "fault": "expired",
+    "fmt": "email",
+    "file": "quotation_3_blueline.txt"
+   },
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/1649/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 14,
+    "unit_price": 24890.0,
+    "gst_included": true,
+    "shipping": 2500.0,
+    "delivery_days": 14,
+    "valid_until": "2026-12-11",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "quantity",
+    "fmt": "pdf",
+    "file": "quotation_4_arihant.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-028",
+  "category": "ups",
+  "quantity": 15,
+  "max_unit_price": 8800,
+  "needed_within_days": 5,
+  "files": [
+   "quotation_1_rathi.xlsx",
+   "quotation_2_arihant.txt",
+   "quotation_3_galaxy.pdf",
+   "quotation_4_kaveri.xlsx"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Arihant Digital",
+   "landed_total": 134095.0
+  },
+  "facts": [
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/4741/26-27",
+    "item": "Luminous LD1600 UPS",
+    "specs": {
+     "capacity_va": 1504
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 8650.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 3,
+    "valid_until": "2026-12-04",
+    "payment_terms": "100% advance with purchase order",
+    "fault": "advance",
+    "fmt": "xlsx",
+    "file": "quotation_1_rathi.xlsx"
+   },
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/7933/26-27",
+    "item": "APC Back-UPS BX1600C",
+    "specs": {
+     "capacity_va": 1500
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 7350.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 5,
+    "valid_until": "2026-12-05",
+    "payment_terms": "Net 15 days",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_2_arihant.txt"
+   },
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/2777/26-27",
+    "item": "APC Back-UPS BX1600C",
+    "specs": {
+     "capacity_va": 1000
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 8030.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 4,
+    "valid_until": "2026-12-05",
+    "payment_terms": "Net 15 days",
+    "fault": "spec",
+    "fmt": "pdf",
+    "file": "quotation_3_galaxy.pdf"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/3151/26-27",
+    "item": "Microtek UPS EB1600",
+    "specs": {
+     "capacity_va": 1504
+    },
+    "refurbished": false,
+    "quantity_available": 14,
+    "unit_price": 7690.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 4,
+    "valid_until": "2026-12-05",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "quantity",
+    "fmt": "xlsx",
+    "file": "quotation_4_kaveri.xlsx"
+   }
+  ]
+ },
+ {
+  "id": "PR-029",
+  "category": "headset",
+  "quantity": 4,
+  "max_unit_price": 3600,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_rathi.txt",
+   "quotation_2_coastal.pdf",
+   "quotation_3_arihant.xlsx"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Rathi Systems",
+   "landed_total": 16188.0
+  },
+  "facts": [
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/1331/26-27",
+    "item": "Logitech Zone Vibe 100",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 1
+    },
+    "refurbished": false,
+    "quantity_available": 6,
+    "unit_price": 2900.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 18,
+    "valid_until": "2026-12-10",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_1_rathi.txt"
+   },
+   {
+    "supplier": "Coastal IT Services",
+    "quote_no": "Q/6204/26-27",
+    "item": "Logitech Zone Vibe 100",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 1
+    },
+    "refurbished": false,
+    "quantity_available": 34,
+    "unit_price": 4670.0,
+    "gst_included": true,
+    "shipping": 4000.0,
+    "delivery_days": 16,
+    "valid_until": "2026-12-07",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "price",
+    "fmt": "pdf",
+    "file": "quotation_2_coastal.pdf"
+   },
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/9165/26-27",
+    "item": "Jabra Evolve2 40",
+    "specs": {
+     "noise_cancelling": "active",
+     "warranty_years": 1
+    },
+    "refurbished": false,
+    "quantity_available": 9,
+    "unit_price": 3500.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 17,
+    "valid_until": "2026-12-05",
+    "payment_terms": "Net 15 days",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_3_arihant.xlsx"
+   }
+  ]
+ },
+ {
+  "id": "PR-030",
+  "category": "projector",
+  "quantity": 6,
+  "max_unit_price": 48800,
+  "needed_within_days": 21,
+  "files": [
+   "quotation_1_vardhman.pdf",
+   "quotation_2_kaveri.xlsx",
+   "quotation_3_metro.txt"
+  ],
+  "answer": {
+   "status": "no_eligible_offer",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Vardhman Office Solutions",
+    "quote_no": "Q/5445/26-27",
+    "item": "Epson EB-E01",
+    "specs": {
+     "brightness_lumens": 3000
+    },
+    "refurbished": false,
+    "quantity_available": 16,
+    "unit_price": 49100.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 17,
+    "valid_until": "2026-12-08",
+    "payment_terms": "100% on delivery",
+    "fault": "spec",
+    "fmt": "pdf",
+    "file": "quotation_1_vardhman.pdf"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/8416/26-27",
+    "item": "BenQ MW560",
+    "specs": {
+     "brightness_lumens": 3504
+    },
+    "refurbished": false,
+    "quantity_available": 4,
+    "unit_price": 46130.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 17,
+    "valid_until": "2026-11-25",
+    "payment_terms": "Net 15 days",
+    "fault": "quantity",
+    "fmt": "xlsx",
+    "file": "quotation_2_kaveri.xlsx"
+   },
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/5701/26-27",
+    "item": "Epson EB-E01",
+    "specs": {
+     "brightness_lumens": 3000
+    },
+    "refurbished": false,
+    "quantity_available": 8,
+    "unit_price": 52140.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 16,
+    "valid_until": "2026-11-10",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "spec",
+    "fmt": "email",
+    "file": "quotation_3_metro.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-031",
+  "category": "desk",
+  "quantity": 12,
+  "max_unit_price": 15200,
+  "needed_within_days": 14,
+  "files": [
+   "quotation_1_technova.xlsx",
+   "quotation_2_shree.txt",
+   "quotation_3_pioneer.pdf"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Pioneer Corporate Supplies",
+   "landed_total": 174203.2
+  },
+  "facts": [
+   {
+    "supplier": "TechNova Distributors",
+    "quote_no": "Q/4315/26-27",
+    "item": "Godrej Interio Slimline desk",
+    "specs": {
+     "width_cm": 140
+    },
+    "refurbished": false,
+    "quantity_available": 7,
+    "unit_price": 12620.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 13,
+    "valid_until": "2026-12-06",
+    "payment_terms": "Net 15 days",
+    "fault": "quantity",
+    "fmt": "xlsx",
+    "file": "quotation_1_technova.xlsx"
+   },
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/2989/26-27",
+    "item": "Godrej Interio Slimline desk",
+    "specs": {
+     "width_cm": 140
+    },
+    "refurbished": false,
+    "quantity_available": 42,
+    "unit_price": 13910.0,
+    "gst_included": true,
+    "shipping": 2500.0,
+    "delivery_days": 23,
+    "valid_until": "2026-12-12",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "delivery",
+    "fmt": "email",
+    "file": "quotation_2_shree.txt"
+   },
+   {
+    "supplier": "Pioneer Corporate Supplies",
+    "quote_no": "Q/2592/26-27",
+    "item": "Featherlite Edge desk",
+    "specs": {
+     "width_cm": 140
+    },
+    "refurbished": false,
+    "quantity_available": 22,
+    "unit_price": 12020.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 8,
+    "valid_until": "2026-11-24",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "pdf",
+    "file": "quotation_3_pioneer.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-032",
+  "category": "monitor",
+  "quantity": 4,
+  "max_unit_price": 11700,
+  "needed_within_days": 10,
+  "files": [
+   "quotation_1_kaveri.txt",
+   "quotation_2_arihant.pdf",
+   "quotation_3_vardhman.xlsx",
+   "quotation_4_rathi.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Kaveri Computers",
+   "landed_total": 50586.4
+  },
+  "facts": [
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/3086/26-27",
+    "item": "Samsung S27R650 27-inch monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 9,
+    "unit_price": 9870.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 9,
+    "valid_until": "2026-11-27",
+    "payment_terms": "100% on delivery",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_1_kaveri.txt"
+   },
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/7158/26-27",
+    "item": "LG 27QN600 27-inch IPS monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 6,
+    "unit_price": 9620.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 9,
+    "valid_until": "2026-12-02",
+    "payment_terms": "100% advance with purchase order",
+    "fault": "advance",
+    "fmt": "pdf",
+    "file": "quotation_2_arihant.pdf"
+   },
+   {
+    "supplier": "Vardhman Office Solutions",
+    "quote_no": "Q/9411/26-27",
+    "item": "Acer KA272 27-inch monitor",
+    "specs": {
+     "screen_size_in": 28,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 6,
+    "unit_price": 9740.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 9,
+    "valid_until": "2026-11-13",
+    "payment_terms": "50% advance, 50% on delivery",
+    "fault": "advance",
+    "fmt": "xlsx",
+    "file": "quotation_3_vardhman.xlsx"
+   },
+   {
+    "supplier": "Rathi Systems",
+    "quote_no": "Q/9279/26-27",
+    "item": "Dell P2723D 27-inch QHD monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 34,
+    "unit_price": 10610.0,
+    "gst_included": false,
+    "shipping": 2500.0,
+    "delivery_days": 8,
+    "valid_until": "2026-12-13",
+    "payment_terms": "Net 15 days",
+    "fault": "none",
+    "fmt": "email",
+    "file": "quotation_4_rathi.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-033",
+  "category": "laptop",
+  "quantity": 5,
+  "max_unit_price": 68000,
+  "needed_within_days": 14,
+  "files": [
+   "quotation_1_arihant.pdf",
+   "quotation_2_om.xlsx",
+   "quotation_3_technova.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "Arihant Digital",
+   "landed_total": 401810.0
+  },
+  "facts": [
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/3674/26-27",
+    "item": "Lenovo ThinkPad E14 Gen 5",
+    "specs": {
+     "ram_gb": 17,
+     "storage_gb": 516
+    },
+    "refurbished": false,
+    "quantity_available": 10,
+    "unit_price": 67900.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 11,
+    "valid_until": "2026-12-01",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "none",
+    "fmt": "pdf",
+    "file": "quotation_1_arihant.pdf"
+   },
+   {
+    "supplier": "Om Sai Enterprises",
+    "quote_no": "Q/5410/26-27",
+    "item": "Lenovo ThinkPad E14 Gen 5",
+    "specs": {
+     "ram_gb": 16,
+     "storage_gb": 512
+    },
+    "refurbished": false,
+    "quantity_available": 3,
+    "unit_price": 61780.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 13,
+    "valid_until": "2026-12-07",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "quantity",
+    "fmt": "xlsx",
+    "file": "quotation_2_om.xlsx"
+   },
+   {
+    "supplier": "TechNova Distributors",
+    "quote_no": "Q/6863/26-27",
+    "item": "Lenovo ThinkPad E14 Gen 5",
+    "specs": {
+     "ram_gb": 17,
+     "storage_gb": 520
+    },
+    "refurbished": false,
+    "quantity_available": 7,
+    "unit_price": 79890.0,
+    "gst_included": true,
+    "shipping": 2500.0,
+    "delivery_days": 14,
+    "valid_until": "2026-12-04",
+    "payment_terms": "Full payment before dispatch",
+    "fault": "advance",
+    "fmt": "email",
+    "file": "quotation_3_technova.txt"
+   }
+  ]
+ },
+ {
+  "id": "PR-034",
+  "category": "chair",
+  "quantity": 8,
+  "max_unit_price": 9900,
+  "needed_within_days": 7,
+  "files": [
+   "quotation_1_arihant.xlsx",
+   "quotation_2_metro.txt",
+   "quotation_3_kaveri.pdf"
+  ],
+  "answer": {
+   "status": "no_eligible_offer",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Arihant Digital",
+    "quote_no": "Q/4480/26-27",
+    "item": "Godrej Interio Motion chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 5,
+    "unit_price": 9040.0,
+    "gst_included": false,
+    "shipping": 1200.0,
+    "delivery_days": 2,
+    "valid_until": "2026-11-14",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "quantity",
+    "fmt": "xlsx",
+    "file": "quotation_1_arihant.xlsx"
+   },
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/6474/26-27",
+    "item": "Green Soul Seoul office chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 3
+    },
+    "refurbished": false,
+    "quantity_available": 8,
+    "unit_price": 7810.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 5,
+    "valid_until": "2026-11-03",
+    "payment_terms": "30% advance with order, 70% on delivery",
+    "fault": "expired",
+    "fmt": "email",
+    "file": "quotation_2_metro.txt"
+   },
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/2061/26-27",
+    "item": "Godrej Interio Motion chair",
+    "specs": {
+     "lumbar_support": "adjustable",
+     "warranty_years": 4
+    },
+    "refurbished": false,
+    "quantity_available": 4,
+    "unit_price": 10920.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 4,
+    "valid_until": "2026-12-15",
+    "payment_terms": "100% on delivery",
+    "fault": "quantity",
+    "fmt": "pdf",
+    "file": "quotation_3_kaveri.pdf"
+   }
+  ]
+ },
+ {
+  "id": "PR-035",
+  "category": "printer",
+  "quantity": 25,
+  "max_unit_price": 24100,
+  "needed_within_days": 5,
+  "files": [
+   "quotation_1_kaveri.txt",
+   "quotation_2_blueline.pdf",
+   "quotation_3_galaxy.xlsx"
+  ],
+  "answer": {
+   "status": "no_eligible_offer",
+   "supplier": null,
+   "landed_total": null
+  },
+  "facts": [
+   {
+    "supplier": "Kaveri Computers",
+    "quote_no": "Q/6548/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 19,
+    "unit_price": 20420.0,
+    "gst_included": false,
+    "shipping": 4000.0,
+    "delivery_days": 5,
+    "valid_until": "2026-11-30",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "quantity",
+    "fmt": "email",
+    "file": "quotation_1_kaveri.txt"
+   },
+   {
+    "supplier": "BlueLine Workspace",
+    "quote_no": "Q/3719/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "manual",
+     "pages_per_minute": 31
+    },
+    "refurbished": false,
+    "quantity_available": 30,
+    "unit_price": 26670.0,
+    "gst_included": true,
+    "shipping": 1200.0,
+    "delivery_days": 5,
+    "valid_until": "2026-11-24",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "spec",
+    "fmt": "pdf",
+    "file": "quotation_2_blueline.pdf"
+   },
+   {
+    "supplier": "Galaxy Office Mart",
+    "quote_no": "Q/7016/26-27",
+    "item": "Brother HL-L5210DN",
+    "specs": {
+     "duplex": "automatic",
+     "pages_per_minute": 30
+    },
+    "refurbished": false,
+    "quantity_available": 35,
+    "unit_price": 19460.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 5,
+    "valid_until": "2026-10-28",
+    "payment_terms": "100% on delivery",
+    "fault": "expired",
+    "fmt": "xlsx",
+    "file": "quotation_3_galaxy.xlsx"
+   }
+  ]
+ },
+ {
+  "id": "PR-DEMO",
+  "category": "monitor",
+  "quantity": 15,
+  "max_unit_price": 12000,
+  "needed_within_days": 7,
+  "files": [
+   "quotation_1_shree.pdf",
+   "quotation_2_technova.xlsx",
+   "quotation_3_metro.txt"
+  ],
+  "answer": {
+   "status": "selected",
+   "supplier": "TechNova Distributors",
+   "landed_total": 195600.0
+  },
+  "facts": [
+   {
+    "supplier": "Shree Balaji Traders",
+    "quote_no": "Q/4471/26-27",
+    "item": "Dell P2723D 27-inch QHD monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 40,
+    "unit_price": 11400.0,
+    "gst_included": false,
+    "shipping": 1500.0,
+    "delivery_days": 5,
+    "valid_until": "2026-11-20",
+    "payment_terms": "Net 30 days from delivery",
+    "fault": "none",
+    "fmt": "pdf",
+    "file": "quotation_1_shree.pdf"
+   },
+   {
+    "supplier": "TechNova Distributors",
+    "quote_no": "Q/2208/26-27",
+    "item": "LG 27QN600 27-inch IPS monitor",
+    "specs": {
+     "screen_size_in": 27,
+     "resolution": "2560x1440"
+    },
+    "refurbished": false,
+    "quantity_available": 15,
+    "unit_price": 13040.0,
+    "gst_included": true,
+    "shipping": 0.0,
+    "delivery_days": 4,
+    "valid_until": "2026-11-16",
+    "payment_terms": "20% advance, balance on delivery",
+    "fault": "none",
+    "fmt": "xlsx",
+    "file": "quotation_2_technova.xlsx"
+   },
+   {
+    "supplier": "Metro Business Supplies",
+    "quote_no": "Q/9310/26-27",
+    "item": "Samsung S24C450 24-inch monitor",
+    "specs": {
+     "screen_size_in": 24,
+     "resolution": "1920x1080"
+    },
+    "refurbished": false,
+    "quantity_available": 50,
+    "unit_price": 8900.0,
+    "gst_included": false,
+    "shipping": 0.0,
+    "delivery_days": 3,
+    "valid_until": "2026-11-26",
+    "payment_terms": "100% on delivery",
+    "fault": "spec",
+    "fmt": "email",
+    "file": "quotation_3_metro.txt"
+   }
+  ]
+ }
+]

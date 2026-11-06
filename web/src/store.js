@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 
 // The page lives in the URL hash, so every screen has a link:
-// #/result/<id>  #/connect  #/recorded/<run_id>  #/workflows/<name>  #/history
-const PAGES = new Set(['result', 'connect', 'recorded', 'workflows', 'history'])
+// #/agent  #/result/<id>  #/connect  #/recorded/<run_id>  #/workflows/<name>  #/history
+const PAGES = new Set(['result', 'connect', 'recorded', 'workflows', 'history', 'agent', 'live'])
 
 function fromHash() {
   const [, page, id] = (window.location.hash || '').replace(/^#/, '').split('/')

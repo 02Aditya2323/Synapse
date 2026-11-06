@@ -8,11 +8,13 @@ implementation, rather than a future design or a claim about implementation orig
 ## Pages and navigation
 
 The console shell (`web/src/components/Shell.jsx`) has a fixed-width, sticky sidebar
-with the SYNAPSE0G wordmark, a branching signal glyph, five navigation entries, and
+with the SYNAPSE0G wordmark, a branching signal glyph, six compiler navigation entries and a separate Funding and jobs entry, and
 an API connection indicator. Selection is highlighted with an orange marker.
 
 | Page | Purpose |
 | --- | --- |
+| Live run | Run the supplier app as written and compiled on 0G, with call events, two live lanes, a shared-clock timeline, and measured outcomes. |
+| Funding and jobs | Inspect funding evidence, the local service ledger, budget modes, and queued jobs. |
 | Results | Lead with the compiled supplier-check study and show research, maths, and blocked retail results. Open a result for its detailed evidence. |
 | Connect an agent | Inspect pasted Python or a local path, choose a sample agent, or read the client wrapping and LangGraph compilation examples. |
 | Recorded runs | Inspect calls captured by the wrapper, repeated calls, graph transformations, and estimated opportunities. |
@@ -80,6 +82,11 @@ numbers from a different study.
 
 | Endpoint | Use |
 | --- | --- |
+| `/api/live/tasks` | Held-out supplier requests for live runs |
+| `/api/live` (POST) | Start a request, optionally cold |
+| `/api/live/:id?since=n` | Poll incremental run events |
+| `/api/agent`, `/api/jobs` | Service status and job queue; POST jobs to submit work |
+| `/api/funding` | Funding stages and their available evidence |
 | `/api/feed` | Featured results, workflow data, and history |
 | `/api/health` | API status, polled every 15 seconds |
 | `/api/samples` | Sample agent source for inspection |
@@ -103,3 +110,30 @@ verdict meanings, readable units, graph legends, and the distinction between est
 and measurements. Review the affected page and its loading/error states when changing
 layout or interaction. Documentation-only changes should not alter agent execution,
 optimization passes, or saved benchmark evidence.
+
+## Live runs and funding
+
+The Live run page (`web/src/pages/LiveRun.jsx`) polls incremental events from
+`synapse0g/live.py`. The baseline uses an empty call policy; the compiled arm uses
+the saved supplier study's selected call policy. Both run concurrently on the same
+request. The compiled graph is reused within the server process; “start cold” clears
+the live step cache and recompiles. Compilation has its own calls and timing.
+The compiled arm runs in benchmark mode and skips the irreversible order step;
+the baseline may place an order in the synthetic test marketplace.
+
+A live request is a demonstration, not a new held-out firewall study. The interface
+shows the saved study verdict separately from the current request's measurements.
+Event delivery uses polling, not a server-sent-event connection. Environment loading
+for these provider calls happens inside the live worker.
+
+Funding and jobs (`web/src/pages/PaidAgent.jsx`) distinguishes token identity,
+trades, fee splits, delivered credit, spendable credit, and inference receipts.
+Unconfigured or unreadable stages remain explicit. The job service currently uses
+a local ledger; the end-to-end token-to-compute integration is not established by
+the dashboard alone. See [COMFY.md](COMFY.md) for recorded integration findings and
+remaining deployment work. External platform names identify integrations, not the
+origin of this project's dashboard.
+
+The repository also supports a plain-Python procurement agent and its saved studies.
+Its document fixtures, supported compilation shapes, and measured results are
+described in the README and RESULTS.md; the Live run page remains the supplier demo.

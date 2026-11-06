@@ -1,0 +1,39 @@
+ACME Workplace Services Pvt. Ltd. - Purchasing Policy (rev. 4, applies from 1 April 2026)
+
+1. Scope. Applies to every purchase of equipment and furniture for our offices. Services and
+software licences follow the IT procurement policy instead.
+
+2. Minimum specifications. An offer is acceptable only if the product meets the minimum for its
+category:
+   - Monitors: screen size at least 27 inches and resolution at least 2560x1440 (QHD).
+   - Laptops: at least 16 GB RAM and at least 512 GB SSD storage.
+   - Office chairs: adjustable lumbar support and a warranty of at least 3 years.
+   - Laser printers: automatic duplex printing and at least 30 pages per minute.
+   - UPS units: capacity of at least 1500 VA.
+   - Headsets: active noise cancelling and a warranty of at least 1 year.
+   - Projectors: brightness of at least 3500 lumens.
+   - Desks: width of at least 140 cm.
+   Refurbished or used goods are never acceptable.
+
+3. Eligibility. An offer may be selected only if, on the order date:
+   3.1 the quotation is still valid (not past its expiry date);
+   3.2 the supplier can supply the full quantity requested (no split orders);
+   3.3 delivery is within the number of days the requester needs;
+   3.4 the unit price before GST does not exceed the maximum unit price in the request;
+   3.5 no more than 30% of the order value is payable before delivery.
+
+4. Prices. Unless a quotation states that its prices include GST, add GST at 18% to the unit
+price. Landed cost = unit price including GST x quantity + the supplier's shipping charge.
+
+5. Choosing. Among eligible offers, select the lowest landed cost. If two are equal, select the
+faster delivery.
+
+6. Missing information. An offer that does not state its price, quantity available, delivery time,
+validity, payment terms or a required specification cannot be selected. If no complete offer is
+eligible but some offer is incomplete, ask the suppliers for clarification instead of choosing.
+If no offer is eligible at all, report that the request needs manual sourcing.
+
+7. Approval. Purchase requests above INR 5,00,000 landed cost also need the finance director's
+approval. Every purchase request is approved by a person before it is sent.
+
+8. Travel and expenses are covered by the T&E policy and do not affect purchasing.

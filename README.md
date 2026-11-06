@@ -59,6 +59,66 @@ app as written against the compiled one on held-out tasks, with the firewall dec
 Graphs with conditional edges, cycles or reducer state keys are refused with a message, not
 approximated.
 
+## Compile a plain Python agent
+
+No framework needed ([examples/procurement_agent.py](examples/procurement_agent.py)):
+
+```python
+from synapse0g.openai import OpenAI                       # was: from openai import OpenAI
+app = synapse0g.compile(handle_request, effects=EFFECTS)  # handle_request is an ordinary function
+draft = app.invoke(request=..., policy_path=..., quotation_paths=...)
+```
+
+The entry function's own statements become the graph, each a call to a function in the same file.
+`[extract_quotation(d) for d in documents]` becomes a map whose items run side by side. Each step's
+effect is inferred from what its code calls (an unrecognised call makes it `external`, the safe
+default) and `EFFECTS` overrides that where the developer knows better. A loop, branch or computed
+value in the entry function is refused with its line number. A step declared `pure` and `seeded` is
+cached by its arguments within a `cache_scope` (a customer, a team) and the agent's source, so the
+same document read for the same customer under the same prompt is read once.
+
+## The procurement agent
+
+An office manager asks for 15 monitors at most Rs 12,000 each within seven days, and three supplier
+quotations arrive as a PDF, a spreadsheet and an email. The agent reads the request and the company
+purchasing policy, reads each quotation with references to its page, row or line, checks every
+offer against the policy in code (expiry, stock, delivery, price before GST, advance payment,
+specifications, refurbished goods), has the model explain the choice, drafts the purchase request
+with its evidence and files it for a person's approval. A missing price or date makes an offer
+incomplete, never a guess. Approval submits it once; a second approval changes nothing.
+
+36 scenarios plus the demo (`synapse0g/agents/procurement_data/`), with right outcomes computed by
+code from the facts behind the documents. `synapse0g bench --agent procurement` measures it.
+
+Measured on 0G, 18 held-out requests: 4.5x faster per task (136 → 30 s), 87.5% cheaper billed,
+15/18 passed vs 13.5/18 as written; firewall APPROVE. The parallel graph was refused on its tuning
+check (one noisy request); details in [RESULTS.md](RESULTS.md).
+
+## synapse0g as a paid agent
+
+`synapse0g agent` runs synapse0g as a service that optimizes other people's agents and pays for its
+own model calls:
+
+```bash
+synapse0g agent quote procurement           # what a study costs: runs x calls x cost per call (measured)
+synapse0g agent submit study:procurement    # or inspect:<path> for any agent's code (free, static)
+synapse0g agent status                      # balance and budget mode
+synapse0g agent run                         # work through the queue
+```
+
+Before each job it reads its balance and chooses a mode: **full** study, **reduced** study (fewer tasks
+and trials, said so in the result), **static** (inspect jobs only; studies wait, with the reason), or
+**paused**. Every study runs under a hard cap of at most the balance above a reserve. The balance comes
+from a local ledger today (`synapse0g agent deposit`); the agent's 0G compute account replaces it
+when the launchpad is connected. API: `GET /api/agent`, `GET/POST /api/jobs`.
+
+Funding comes through comfy, 0G's token launchpad: trades of the agent's token pay fees, a compute
+share of them becomes 0G compute credit, and the agent's model calls spend it.
+`synapse0g/funding.py` reads every stage from where it happens (the chain, the 0G Router, the
+agent's own billed calls) and the dashboard's **Funding and jobs** page (`#/agent`) shows it; a
+stage that has not happened says so. Setup steps and what was checked on chain: [docs/COMFY.md](docs/COMFY.md).
+API: `GET /api/funding`.
+
 ## How a technique gets approved
 
 `synapse0g bench` runs the whole loop:
@@ -109,7 +169,8 @@ synapse0g ui                # http://127.0.0.1:8000
 # or, while editing the UI:  synapse0g ui  and, in web/,  npm run dev  (http://localhost:5173)
 ```
 
-Pages: **Results** (the supplier-check app compiled on 0G, then the three earlier results),
+Pages: **Live run** (race the supplier app as written and compiled on real 0G calls),
+**Funding and jobs** (funding evidence and the service queue), **Results** (the supplier-check app compiled on 0G, then the three earlier results),
 **Connect an agent** (paste code to see its graph; the wrap and compile snippets), **Recorded runs**
 (apps wrapped with `synapse0g.wrap`), **Workflows** and **Run history**. Every graph is the
 engine's own SIR graph: as written above, after the passes below, each step coloured by its effect,

@@ -53,7 +53,7 @@ PURE_METHOD = re.compile(r"\.(get|join|split|strip|lower|upper|replace|format|it
                          r"|index|find|group|match|search|sub|findall|dumps|loads|load)$")
 READ_SQL = re.compile(r"^\s*select\b", re.I)
 # A function's own name is evidence. A body that shows nothing is not proof of nothing, and "send_x" means it.
-EFFECT_NAME = re.compile(r"^_?(send|post|publish|notify|save|write|upload|delete|remove|update|create|insert|email|"
+EFFECT_NAME = re.compile(r"^_?(send|post|publish|notify|save|write|upload|delete|remove|update|create|insert|email|submit|"
                          r"deploy|merge|push|commit|book|cancel|order|buy|sell)(_|$)", re.I)
 EFFECT_MODULES = {"smtplib", "subprocess", "shutil", "socket", "ftplib", "paramiko", "boto3", "stripe", "twilio",
                   "sendgrid", "psycopg2", "pymongo", "sqlite3", "sqlalchemy", "redis"}
@@ -70,6 +70,7 @@ class Func:
     is_model: bool = False
     evidence: list[str] = field(default_factory=list)
     calls: list[str] = field(default_factory=list)
+    declared: dict = field(default_factory=dict)  # what the developer stated, which wins over inference
 
 
 def _call_name(call: ast.Call) -> str:
@@ -135,7 +136,7 @@ def scan_python(root: Path) -> dict[str, Func]:
     funcs: dict[str, Func] = {}
     files = [root] if root.is_file() else sorted(root.rglob("*.py"))
     for path in files:
-        if SKIP_DIRS & set(path.parts):
+        if not root.is_file() and SKIP_DIRS & set(path.relative_to(root).parts):  # a named file is always read
             continue
         try:
             tree = ast.parse(path.read_text(encoding="utf-8", errors="replace"))
@@ -235,11 +236,14 @@ def _declare(func: Func):
     body.__name__ = func.name
     body.__signature__ = inspect.Signature(  # the DSL reads argument names from here
         [inspect.Parameter(p, inspect.Parameter.POSITIONAL_OR_KEYWORD) for p in func.params])
-    effect = Effect(func.effect)
-    determinism = "stochastic" if func.is_model else "deterministic"
-    extra: dict[str, Any] = {"staleness_s": 300.0} if effect is Effect.READ else {}
+    d = func.declared
+    effect = Effect(str(d.get("effect", func.effect)))
+    determinism = d.get("determinism") or ("stochastic" if func.is_model else "deterministic")
+    extra: dict[str, Any] = {"staleness_s": float(d.get("staleness_s", 300.0))} if effect is Effect.READ else {}
     if effect is Effect.WRITE:
-        extra["writes"] = [f"state.{func.name}"]
+        extra["writes"] = list(d.get("writes") or [f"state.{func.name}"])
+    if d.get("cache_key_fields") is not None:
+        extra["cache_key_fields"] = list(d["cache_key_fields"])
     return node(kind="tool", target=func.name, effect=effect, determinism=determinism, **extra)(body)
 
 
@@ -359,7 +363,7 @@ def agent_tools(root: Path, functions: list[dict]) -> list[dict]:
     tools = []
     names = {f["name"]: f for f in functions}
     for path in list(root.rglob("*.ts")) if root.is_dir() else []:
-        if SKIP_DIRS & set(path.parts):
+        if not root.is_file() and SKIP_DIRS & set(path.relative_to(root).parts):  # a named file is always read
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
         for table in re.finditer(r"(?:const|let) \w*(?:IMPLEMENTATIONS|TOOLS|HANDLERS)\w*[^=]*=\s*\{(.*?)\n\};",
