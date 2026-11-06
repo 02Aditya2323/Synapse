@@ -7,9 +7,13 @@
   GET /api/observed           runs recorded by synapse0g.wrap, newest first
   GET /api/observed/<run_id>  one of them: its lifted graph, the passes and the measurements
   GET /api/agent              the paid agent: balance, budget mode, queue, quotes
-  GET /api/live/tasks         held-out supplier requests a live run can use
-  POST /api/live              {"task": id, "cold": bool}: start a live run (live.py)
+  GET /api/live/tasks?agent=  the live agents, and that agent's held-out tasks
+  POST /api/live              {"agent": id, "task": id, "cold": bool}: start a live run (live.py)
   GET /api/live/<id>?since=n  its events from n on, as they happen
+  POST /api/pay/quote         {"payer": 0x.., "task": id}: the price of a paid run, and the transaction to send
+  POST /api/pay/confirm       {"quote": id, "tx": hash}: check the payment on chain; if it paid, the job starts
+  GET /api/pay/<quote>?since= the quote, its payment, balances, job and the job's live progress
+  GET /api/pay/history        every deposit to the agent's account, with the quote and job it paid
   GET /api/funding            the funding loop, each stage read from its source (funding.py)
   GET /api/jobs, /api/jobs/<id>   jobs and their results
   POST /api/jobs              {"kind": "inspect"|"study", "spec": {...}}: a quoted job, queued
@@ -20,8 +24,10 @@ from __future__ import annotations
 
 import json
 import mimetypes
+import threading
 import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 
 from synapse0g import showcase
 from synapse0g.registry import ROOT
@@ -35,8 +41,17 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # the page left before the answer (Back, refresh): nothing to tell it, nothing lost
+
+    def handle_one_request(self):
+        try:
+            super().handle_one_request()
+        except (BrokenPipeError, ConnectionResetError):
+            pass
 
     def _json(self, status: int, data) -> None:
         self._send(status, json.dumps(data, default=str).encode(), "application/json")
@@ -59,12 +74,16 @@ class Handler(BaseHTTPRequestHandler):
 
                 agent = service.Agent(service.Queue(), service.Ledger())
                 return self._json(200, {**agent.status(), "balance_source": "local ledger (stand-in until the Router account is read)",
+                                        "account": _paid_account(),
                                         "quotes": {m: service.estimate("procurement", m) for m in service.SIZES},
                                         "ledger": service.Ledger().entries(20)})
             if path == "/api/live/tasks":
+                from urllib.parse import parse_qs, urlparse
+
                 from synapse0g import live
 
-                return self._json(200, {"tasks": live.tasks()})
+                agent = (parse_qs(urlparse(self.path).query).get("agent") or ["supplier"])[0]
+                return self._json(200, {"agent": agent, "agents": live.agents(), "tasks": live.tasks(agent)})
             if path.startswith("/api/live/"):
                 from urllib.parse import parse_qs, urlparse
 
@@ -73,6 +92,30 @@ class Handler(BaseHTTPRequestHandler):
                 run = live.RUNS.get(path.rsplit("/", 1)[-1])
                 since = int((parse_qs(urlparse(self.path).query).get("since") or ["0"])[0])
                 return self._json(200, run.since(since)) if run else self._json(404, {"error": "no such live run"})
+            if path == "/api/pay/history":
+                return self._json(200, _desk().history())
+            if path.startswith("/api/pay/") and path.endswith("/package"):
+                desk = _desk()
+                v = desk.view(path.split("/")[3])
+                pkg = ((v.get("job") or {}).get("result") or {}).get("package")
+                if not pkg:
+                    return self._json(404, {"error": "no optimized agent for this payment yet: the job has not finished"})
+                body = (ROOT / pkg).read_bytes()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/zip" if pkg.endswith(".zip") else "application/json")
+                self.send_header("Content-Disposition", f'attachment; filename="{Path(pkg).name}"')
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return None
+            if path.startswith("/api/pay/"):
+                from urllib.parse import parse_qs, urlparse
+
+                since = int((parse_qs(urlparse(self.path).query).get("since") or ["0"])[0])
+                try:
+                    return self._json(200, _desk().view(path.rsplit("/", 1)[-1], since))
+                except KeyError:
+                    return self._json(404, {"error": "no such quote"})
             if path == "/api/funding":
                 from synapse0g import funding, service
 
@@ -107,10 +150,27 @@ class Handler(BaseHTTPRequestHandler):
                 from synapse0g import live
 
                 try:
-                    run = live.start(body.get("task"), bool(body.get("cold")))
+                    run = live.start(body.get("task"), bool(body.get("cold")), body.get("agent") or "supplier")
                 except RuntimeError as e:
                     return self._json(409, {"error": str(e)})
+                except ValueError as e:
+                    return self._json(400, {"error": str(e)})
                 return self._json(200, {"id": run.id, "task_id": run.task_id})
+            if path == "/api/pay/quote":
+                try:
+                    return self._json(200, _desk().quote(body.get("payer") or "", body.get("task") or None))
+                except ValueError as e:
+                    return self._json(400, {"error": str(e)})
+            if path == "/api/pay/resume":
+                try:
+                    return self._json(200, _desk().resume(body.get("quote") or ""))
+                except ValueError as e:
+                    return self._json(400, {"error": str(e)})
+            if path == "/api/pay/confirm":
+                tx = body.get("tx") or ""
+                if not (tx.startswith("0x") and len(tx) == 66):
+                    return self._json(400, {"error": "tx is a transaction hash: 0x followed by 64 hex characters"})
+                return self._json(200, _desk().confirm(body.get("quote") or "", tx))
             if path == "/api/jobs":
                 from synapse0g import service
 
@@ -147,7 +207,53 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
 
+_DESK: dict = {}
+_DESK_LOCK = threading.Lock()
+
+
+def _desk():
+    """The payment desk, made on first use, with its deposit watcher running beside the server."""
+    from synapse0g import payments
+
+    with _DESK_LOCK:
+        if "desk" not in _DESK:
+            desk = _DESK["desk"] = payments.Desk()
+            threading.Thread(target=desk.watch_forever, daemon=True).start()
+        return _DESK["desk"]
+
+
+def _paid_account() -> dict:
+    """The agent's own 0G account as the spend guard sees it, or why it cannot be read. Never a key."""
+    import os
+
+    from synapse0g import spend
+    from synapse0g.registry import load_registry
+
+    missing = [k for k in ("ZG_AGENT_KEY", "ZG_MANAGEMENT_KEY") if not os.environ.get(k)]
+    if missing:
+        return {"connected": False, "why": f"not connected: {', '.join(missing)} not set"}
+    try:
+        guard = spend.guard_for(load_registry().providers["zerog-agent"])
+        from synapse0g.funding import RouterAccount
+
+        cap = spend.key_cap_source(RouterAccount(os.environ["ZG_MANAGEMENT_KEY"]))
+        return {"connected": True, **guard.available(), "open_holds": len(guard.open_holds()), "key_cap": cap}
+    except Exception as e:  # shown, never hidden
+        return {"connected": False, "why": f"{type(e).__name__}: {e}"[:300]}
+
+
 def serve(port: int = 8000) -> None:
+    from synapse0g.registry import load_env
+
+    load_env()  # keys stay on the server: no endpoint returns one
+
+    def warm():  # the payment desk reads 0G's catalog and the chain: start it now, not on a page's first visit
+        try:
+            _desk()
+        except Exception as e:  # shown in the log; the pages say what failed when they ask
+            print(f"payments: the desk could not start yet: {type(e).__name__}: {e}")
+
+    threading.Thread(target=warm, daemon=True).start()
     httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     print(f"synapse0g dashboard on http://127.0.0.1:{port}  (data: /api/feed)")
     try:

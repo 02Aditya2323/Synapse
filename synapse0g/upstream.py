@@ -74,6 +74,9 @@ class CallRecord:
     cached_tokens: int | None = None
     listed_cost_usd: float | None = None  # measured tokens x the provider's listed price
     billed_usd: float | None = None  # what the provider says it charged (0G only)
+    billed_0g: float | None = None  # the same charge in 0G, when the account bills in 0G
+    hold_id: str | None = None
+    sent_at: float | None = None  # when the last attempt was sent (guarded calls; started_at includes queueing)  # the spending reservation this call went through (guarded providers)
     request_id: str | None = None
     provider_address: str | None = None
     finish_reason: str | None = None
@@ -112,6 +115,15 @@ def _retry_after(headers, text: str) -> float | None:
     return None
 
 
+# 0G's answers that more retrying cannot fix: no funds (402), a cap (403), the key's own limit (429)
+_SPEND_CODES = ("insufficient_balance", "pay_no_balance", "pay_insufficient_spendable", "pay_debt_threshold",
+                "pay_account_cap", "pay_service_cap", "credit_limit_exceeded")
+
+
+def _spend_refusal(e: ProviderError) -> bool:
+    return e.status == 402 or (e.status in (403, 429) and any(code in (e.body or "") for code in _SPEND_CODES))
+
+
 _turn: dict[str, int] = {}
 _turn_lock = threading.Lock()
 
@@ -125,7 +137,7 @@ def _next_key(provider: Provider) -> tuple[int, str]:
     return i, keys[i]
 
 
-def _post(provider: Provider, body: dict, timeout: float, key: str | None = None) -> tuple[dict, dict]:
+def _post(provider: Provider, body: dict, timeout: float, key: str | None = None, extra: dict | None = None) -> tuple[dict, dict]:
     req = urllib.request.Request(
         provider.base_url + "/chat/completions",
         data=json.dumps(body).encode(),
@@ -133,6 +145,7 @@ def _post(provider: Provider, body: dict, timeout: float, key: str | None = None
             "Authorization": "Bearer " + (key or provider.key()),
             "Content-Type": "application/json",
             "User-Agent": USER_AGENT,
+            **(extra or {}),
         },
     )
     try:
@@ -153,15 +166,39 @@ def call(provider: Provider, model: Model, body: dict, record: CallRecord, *, at
     server error: being throttled is not a broken agent, and must not turn into a crashed task.
     """
     BUDGET.check()
+    from synapse0g import spend
+
+    guard = spend.guard_for(provider)
+    if guard is not None:
+        # the agent's own account: a bounded output, few retries, and every attempt reserved first
+        if not (body.get("max_tokens") or body.get("max_completion_tokens")):
+            body = {**body, "max_tokens": provider.max_tokens or 2048}
+        attempts, rate_limit_attempts = min(attempts, 3), min(rate_limit_attempts, 4)
     timeout = float(os.environ.get("SYNAPSE0G_TIMEOUT_S", "120"))
     t0 = time.perf_counter()
     attempt = 0
     while True:
         try:
             _, key = _next_key(provider)
-            data, headers = _post(provider, body, timeout, key)
+            if guard is None:
+                data, headers = _post(provider, body, timeout, key)
+            else:
+                def send(extra, k=key):
+                    record.sent_at = time.time()  # after the slot and the reservation: when the request left
+                    return _post(provider, body, timeout, k, extra)
+
+                data, headers, hold = guard.call(model, body, send)
+                record.hold_id = hold.id
             break
+        except (spend.LowFunds, spend.CapReached) as e:
+            record.latency_s = time.perf_counter() - t0
+            record.status, record.error = "error", f"{type(e).__name__}: {e}"
+            raise
         except ProviderError as e:
+            if guard is not None and _spend_refusal(e):
+                record.latency_s = time.perf_counter() - t0
+                record.status, record.error = "error", str(e)
+                raise (spend.CapReached if e.status in (403, 429) else spend.LowFunds)(str(e)) from None
             limit = rate_limit_attempts if e.status == 429 else attempts
             retryable = e.status in (429, 500, 502, 503, 504) or e.status is None
             if not retryable or attempt >= limit - 1:
@@ -192,6 +229,8 @@ def call(provider: Provider, model: Model, body: dict, record: CallRecord, *, at
     billing = trace.get("billing") or {}
     if billing.get("total_cost_usd_micro") is not None:
         record.billed_usd = int(billing["total_cost_usd_micro"]) / 1e6
+    if billing.get("currency") == "0g" and billing.get("total_cost") is not None:
+        record.billed_0g = int(billing["total_cost"]) / 1e18
     record.request_id = trace.get("request_id") or headers.get("X-Request-Id") or data.get("id")
     record.provider_address = trace.get("provider")
     choice = (data.get("choices") or [{}])[0]

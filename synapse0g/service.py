@@ -1,6 +1,10 @@
 """synapse0g as a paid agent: it takes optimization jobs, prices them, and pays for its own calls.
 
-A job is one of two kinds:
+A job is one of three kinds:
+
+- `run`: one request through the compiled supplier-check app, every model call paid from the
+  agent's own 0G account (`agent-main`/`agent-lite`, the capped key) under a cap per job, two calls
+  at a time, each reserved first (`synapse0g.spend`). The smallest paid unit of work.
 
 - `inspect`: any agent's code, read and drawn as a graph with the passes' plan. Static: no model
   is called, so it costs nothing and runs in any budget mode.
@@ -24,6 +28,7 @@ Nothing here moves money: payment arrives later, through the launchpad.
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 import threading
 import time
@@ -40,6 +45,17 @@ MARGIN = 1.5  # price = estimated provider cost x margin
 # thresholds as multiples of the job's estimated cost
 FULL_AT, REDUCED_AT = 1.5, 0.5
 RESERVE_USD = 0.05  # never spend the last of the balance: it keeps status and inspect jobs answering
+
+# the agent's own account pays for these: the models it asks for, mapped to the same models on its key
+PAY_FROM = {"zg-main": "agent-main", "zg-lite": "agent-lite"}
+RUN_CAP_0G = float(os.environ.get("SYNAPSE0G_RUN_CAP_0G", "0.02"))
+_PAID: dict = {}  # the supplier app compiled on the agent's account, kept for later jobs
+PROGRESS: dict = {}  # job id -> live.LiveRun: a paid job's calls and steps as they happen
+
+
+class Paused(RuntimeError):
+    """The job stopped because the account or a cap refused a call: it waits, it did not fail."""
+
 
 # study sizes per mode: tuning tasks, held-out tasks, call-level trials
 SIZES = {"full": (8, 18, 6), "reduced": (4, 8, 2)}
@@ -167,6 +183,66 @@ def mode_for(available: float, job_cost: float) -> str:
     return "static"
 
 
+DELIVERIES = "deliveries"
+
+
+def deliver(job, app, policy, report_doc: dict | None, report: str | None, result: dict, *, ex=None, registry=None,
+            inputs: dict | None = None) -> str:
+    """The optimized agent, returned to the customer as code: `optimized_agent.py`, generated from the
+    optimized SIR and the approved call policy (synapse0g.codegen), beside their original code, both graphs,
+    the policy, what changed and why, and this run's evidence. A folder and a zip under data/deliveries/."""
+    from synapse0g import codegen
+    from synapse0g.agents import supplier
+
+    ex = ex or supplier.example()
+    ev = (report_doc or {}).get("evaluation", {})
+    labels = (report_doc or {}).get("steps", {})
+    refused = [{"step": t["candidate"]["step"], "label": labels.get(t["candidate"]["step"]), "technique": t["candidate"]["technique"],
+                "reasons": t["verdict"]["reasons"]} for t in (report_doc or {}).get("search", {}).get("trials", [])
+               if not t["verdict"]["approve"]]
+    ui_after, ui_before = app.after.to_ui(), app.before.to_ui()
+    nodes = [n["id"] for n in ui_after["nodes"]]
+    reasoning = {"*": dict(registry.model(ex.MODEL).reasoning_off) if registry else {}}
+    if registry:
+        reasoning.update({m.id: dict(m.reasoning_off) for m in registry.models.values() if m.reasoning_off})
+    module = Path(supplier.APP_PATH).stem
+    code = codegen.generate_langgraph(
+        module=module, state_class=ex.builder.state_schema.__name__, builder_attr="builder", ui_after=ui_after,
+        policy=policy.as_dict(), step_labels=labels, reasoning_off=reasoning, refused=refused, verdict=ev.get("verdict"),
+        job=job.id, report=report, sample_input=inputs or {}, functions=codegen.module_functions(ex, nodes))
+    protected = [n["id"] for n in ui_after["nodes"] if n.get("effect") in ("external", "irreversible")]
+    run = {k: v for k, v in result.items() if k != "package"}
+    files = {
+        "optimized_agent.py": code,
+        f"{module}.py": Path(supplier.APP_PATH).read_text(encoding="utf-8"),
+        "sir_before.json": json.dumps(ui_before, indent=1, default=str),
+        "sir_after.json": json.dumps(ui_after, indent=1, default=str),
+        "policy.json": json.dumps({"approved": policy.as_dict(), "described": policy.describe(), "refused": refused,
+                                   "from_study": report, "held_out_verdict": ev.get("verdict")}, indent=1, default=str),
+        "OPTIMIZATION.md": codegen.optimization_md(explain=app.explain(), policy_described=policy.describe(), refused=refused,
+                                                   run=run, paid={"tx": job.spec.get("payment_tx"), "quote": job.spec.get("quote")}),
+        "README.md": codegen.readme(job=job.id, module=module, applied=app.applied, protected=protected, verdict=ev.get("verdict")),
+        "input.json": json.dumps(inputs or {}, indent=1),
+        "run.json": json.dumps(run, indent=1, default=str),
+    }
+    zpath = codegen.write_pack(ROOT / "data" / DELIVERIES / f"synapse0g-optimized-{job.id}", files)
+    result["optimized_code"] = code
+    return str(zpath.relative_to(ROOT))
+
+
+def peak_overlap(records) -> int:
+    """The most calls in flight at one moment: from when each request left to when its reply came back."""
+    edges = []
+    for r in records:
+        if r.status == "ok" and r.sent_at is not None:
+            edges += [(r.sent_at, 1), (r.started_at + r.latency_s, -1)]
+    peak = live = 0
+    for _, d in sorted(edges, key=lambda e: (e[0], e[1])):
+        live += d
+        peak = max(peak, live)
+    return peak
+
+
 # ---- jobs --------------------------------------------------------------------------------------
 @dataclass
 class Job:
@@ -205,8 +281,15 @@ class Queue:
 
 
 def submit(queue: Queue, kind: str, spec: dict) -> Job:
-    if kind not in ("inspect", "study"):
-        raise ValueError("kind is inspect or study")
+    if kind not in ("inspect", "study", "run"):
+        raise ValueError("kind is inspect, study or run")
+    if kind == "run":
+        if spec.get("agent", "supplier") != "supplier":
+            raise ValueError("run jobs run the supplier-check app")
+        job = Job(id="job-" + uuid.uuid4().hex[:10], kind=kind, spec={"agent": "supplier", **spec}, created=time.time())
+        job.quote = {"cap_0g": float(spec.get("cap_0g", RUN_CAP_0G)), "note": "one supplier request, compiled, paid by the agent's account"}
+        queue.put(job)
+        return job
     if kind == "study" and spec.get("agent") not in STUDY_AGENTS:
         raise ValueError(f"study jobs need an agent with a task set: {', '.join(STUDY_AGENTS)}")
     if kind == "inspect" and not (spec.get("code") or spec.get("path")):
@@ -221,9 +304,10 @@ def submit(queue: Queue, kind: str, spec: dict) -> Job:
 class Agent:
     """Works through the queue, one job at a time, within its balance."""
 
-    def __init__(self, queue: Queue, balance: Balance, registry=None, log=print):
+    def __init__(self, queue: Queue, balance: Balance, registry=None, log=print, guard=None):
         self.queue, self.balance, self.log = queue, balance, log
         self.registry = registry
+        self.guard = guard  # the agent's own account (synapse0g.spend.Guard); run jobs need it
 
     def status(self) -> dict:
         available = self.balance.available_usd()
@@ -240,6 +324,12 @@ class Agent:
                 continue
             if job.kind == "inspect":
                 return self._run(job, "static")
+            if job.kind == "run":
+                if self.guard is None:
+                    job.status, job.note = "waiting", "the agent's 0G account is not connected (ZG_AGENT_KEY, ZG_MANAGEMENT_KEY)"
+                    self.queue.put(job)
+                    continue
+                return self._run(job, "paid")
             available = self.balance.available_usd()
             mode = mode_for(available, job.quote["provider_usd"])
             if mode in ("full", "reduced"):
@@ -258,14 +348,115 @@ class Agent:
                 from synapse0g.mapping import inspect_code
 
                 job.result = inspect_code(code=job.spec.get("code"), path=job.spec.get("path"), entry=job.spec.get("entry"))
+            elif job.kind == "run":
+                job.result = self._paid_run(job)
             else:
                 job.result, job.spent_usd = self._study(job, mode)
-            job.status = "done"
+            job.status, job.note = "done", ""
+        except Paused as e:  # low funds or a cap: the job waits for credit, nothing crashed
+            job.status, job.note = "waiting", str(e)
         except Exception as e:  # recorded on the job, never swallowed
             job.status, job.note = "failed", f"{type(e).__name__}: {e}"
             traceback.print_exc()
         self.queue.put(job)
         return job
+
+    def _paid_run(self, job: Job) -> dict:
+        """One supplier request through the compiled app, paid from the agent's account under the job's cap."""
+        import synapse0g
+        from synapse0g import live
+        from synapse0g.agents import supplier
+        from synapse0g.graph.runtime.executor import ExecutionMode
+        from synapse0g.openai import routed
+        from synapse0g.proxy import Engine, Proxy
+        from synapse0g.registry import load_registry
+        from synapse0g.spend import NEURON
+        from synapse0g.tasks import CHECKERS
+
+        registry = self.registry or load_registry()
+        engine = Engine(registry)
+        ex = supplier.example()
+        tasks = {t.id: t for t in supplier.load_supplier()}
+        task = tasks[job.spec.get("task") or live.tasks()[0]["id"]]
+        rfq = json.loads(task.question)
+        policy, report_doc, report = live.policy_from_report()
+        from synapse0g.study import _passes
+        cap = int(float(job.spec.get("cap_0g", RUN_CAP_0G)) * NEURON)
+        before = len(self.guard.refusals)
+        records, compiled_now, execution = [], False, None
+        run_records: list = []
+        progress = PROGRESS[job.id] = live.LiveRun(job.id, task.id)
+        progress.emit("task", **live._describe("supplier", task), cap_0g=cap / NEURON)
+        t0 = time.perf_counter()
+        try:
+            with self.guard.for_job(job.id, cap), Proxy(engine) as px:
+                if "app" not in _PAID:  # compiling traces the app with real calls: paid by the agent too, once
+                    progress.emit("phase", phase="compile", text="Tracing your agent step by step and lifting it to SIR, "
+                                                                 "paid by the agent's account (a trace kept from before is replayed free)")
+                    # always the same sample, so the kept trace answers a later compile of the same app
+                    sample = json.loads(supplier.split("test", 1)[0].question)
+                    trace = engine.open(pay_from=PAY_FROM, replay_path=str(ROOT / "data" / "paid_trace.json"))
+                    watch = live._Watch(progress, trace, "compile")
+                    try:
+                        with routed(px.base_url, trace.id):
+                            _PAID["app"] = synapse0g.compile(ex.builder, sample={"rfq": sample}, effects=ex.EFFECTS,
+                                                             name="supplier_check", cache_dir=ROOT / "data" / "paid_cache",
+                                                             cache_scope="paid-agent")
+                    finally:
+                        watch.close()
+                        records += engine.close(trace.id).records
+                    compiled_now = True
+                app = _PAID["app"]
+                progress.emit("compiled", reused=not compiled_now, applied=app.applied, before=app.before.to_ui(),
+                              after=app.after.to_ui(), passes=_passes(app), explain=app.explain(),
+                              order=app.before.meta.get("declared_order"))
+                live_policy = {k: {"label": (report_doc or {}).get("steps", {}).get(k), "techniques": sp.techniques()}
+                               for k, sp in policy.steps.items()}
+                progress.emit("policy", report=report, steps=live_policy,
+                              held_out=(report_doc or {}).get("evaluation", {}).get("verdict"))
+                progress.emit("phase", phase="run", text="Running the optimized agent on your request, two calls at a time, "
+                                                         "paid by the agent's account")
+                session = engine.open(policy, pay_from=PAY_FROM)
+                watch = live._Watch(progress, session, "run")
+                try:
+                    with routed(px.base_url, session.id):
+                        execution = app.run({"rfq": rfq}, mode=ExecutionMode.BENCH, on_event=lambda e: progress.emit(
+                            "node", event=e["type"], **{k: v for k, v in e.items() if k != "type"}))
+                finally:
+                    watch.close()
+                    run_records = engine.close(session.id).records
+        except Exception as e:
+            refused = self.guard.refusals[before:]
+            if refused:  # refused for funds or a cap: the job waits; nothing crashed
+                progress.emit("paused", reason=refused[0][1])
+                progress.done = True
+                raise Paused(f"stopped for funds: {refused[0][1]}") from e
+            progress.emit("failed", error=f"{type(e).__name__}: {e}"[:400])
+            progress.done = True
+            raise
+        refused = self.guard.refusals[before:]
+        if refused:
+            progress.emit("paused", reason=refused[0][1])
+            progress.done = True
+            raise Paused(f"stopped for funds: {refused[0][1]}")
+        out = (execution.outputs.get("result") if execution and not execution.crashed else None) or {}
+        answer = out.get("order")
+        calls = [{"step": r.step, "model": r.tag, "account": r.provider, "request_id": r.request_id, "billed_0g": r.billed_0g,
+                  "latency_s": round(r.latency_s, 3), "started_at": r.started_at, "status": r.status, "error": r.error,
+                  "hold": r.hold_id, "compile": i < len(records)}
+                 for i, r in enumerate(records + run_records)]
+        billed = [c["billed_0g"] for c in calls if c["status"] == "ok"]
+        result = {"task": task.id, "rfq": rfq.get("rfq_id"), "report": report, "compiled_now": compiled_now,
+                "wall_s": round(time.perf_counter() - t0, 3), "crashed": execution.error if execution and execution.crashed else None,
+                "answer": answer, "passed": bool(answer) and CHECKERS["supplier"](task, json.dumps(answer)),
+                "order_placed": False, "order_note": "place_order is irreversible: stubbed in a paid run, never executed",
+                "cap_0g": cap / NEURON, "billed_0g": None if None in billed else round(sum(billed), 9),
+                "peak_overlap": peak_overlap(run_records), "calls": calls}
+        result["package"] = deliver(job, _PAID["app"], policy, report_doc, report, result, ex=ex, registry=registry,
+                                    inputs={"rfq": rfq})
+        progress.emit("result", **{k: v for k, v in result.items() if k != "calls"})
+        progress.done = True
+        return result
 
     def _study(self, job: Job, mode: str) -> tuple[dict, float]:
         from synapse0g import study, upstream

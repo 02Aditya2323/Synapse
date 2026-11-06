@@ -1,0 +1,21 @@
+# payments.yaml: how a customer pays synapse0g, with no contract of ours in between. Public values only.
+#
+# The customer calls depositFor(agent_account) on 0G's Payment Layer and the 0G lands straight in
+# the agent's compute balance, which its Router key spends. Checked on 7 Nov 2026: the contract's
+# verified source (PaymentVault, beacon implementation 0x0487f33f...) has a public
+# `depositFor(address user) payable` that needs only an amount above 0, emits
+# Deposited(address indexed from, address indexed user, uint256 amount), and has no withdrawal.
+network:
+  chain_id: 16661
+  rpc: https://evmrpc.0g.ai
+  explorer: https://chainscan.0g.ai
+
+payment_layer: "0xA3b15Bd2aD18BFB6b5f92D8AA9F444Dd59d1cE32"   # docs.0g.ai Router, Deposits & Billing
+agent_account: "0x0C811D28046a77FA27A3CaF089E79DC664CF8178"   # the 0G account ZG_AGENT_KEY spends from
+
+quote_minutes: 30          # a quote waits this long for its payment
+min_payment_0g: 0.005      # never quote less: one call can cost about this much
+# Payments from these wallets are the team's own: shown, labelled, and never counted as revenue.
+team_wallets:
+  - "0x0C811D28046a77FA27A3CaF089E79DC664CF8178"
+  - "0x35C98a0033e5DB26d9E31adb0e04bBc3bC74D0dc"

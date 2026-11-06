@@ -189,3 +189,17 @@ optimizer refused to touch and why. If the API is down,
 the page says so and shows no numbers.
 
 Dashboard design and implementation: [docs/DASHBOARD.md](docs/DASHBOARD.md).
+
+## Pay and receive generated agent code
+
+The **Pay and run** page (`#/pay`) quotes a supplier-check request, verifies its
+payment, runs the optimized supplier agent, and offers a ZIP delivery. This path
+currently uses the bundled supplier app; it is not an arbitrary agent-upload flow.
+The package contains generated Python, the original supplier source, both SIR
+graphs, the selected call policy, input, explanation, and run evidence.
+
+The generated file is lowered from the optimized SIR and policy by
+`synapse0g/codegen.py`. It reuses the source agent's step functions and requires their
+runtime dependencies, including this project's supplier modules. It is not a
+self-contained replacement for the full environment. Payment flow, spend limits,
+and delivery contents are documented in [docs/PAYMENTS.md](docs/PAYMENTS.md).

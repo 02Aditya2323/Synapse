@@ -98,11 +98,18 @@ class Chain:
     def __init__(self, rpc: str):
         self.rpc = rpc
 
-    def _call(self, method: str, params: list):
+    def _call(self, method: str, params: list, attempts: int = 4):
         body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params}).encode()
         req = urllib.request.Request(self.rpc, body, {"Content-Type": "application/json", "User-Agent": USER_AGENT})
-        with urllib.request.urlopen(req, timeout=30) as r:
-            doc = json.load(r)
+        for i in range(attempts):  # the public RPC drops connections now and then: a read is safe to repeat
+            try:
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    doc = json.load(r)
+                break
+            except (OSError, json.JSONDecodeError):
+                if i == attempts - 1:
+                    raise
+                time.sleep(1.5 * (i + 1))
         if "error" in doc:
             raise RuntimeError(f"{method}: {doc['error']}")
         return doc["result"]
@@ -146,6 +153,40 @@ class RouterAccount:
 
     def usage(self, start_date: str) -> dict:
         return self._get(f"/account/usage/stats?start_date={start_date}")
+
+    def account(self) -> dict:
+        """The account itself: its address and the currency it bills in (account:read)."""
+        return self._get("/account")
+
+    def funds(self) -> dict:
+        """What a request can be admitted against, in neuron (0G-billed accounts report wei strings).
+
+        0G admits a request when deposit + credit - pending charge, plus a share (vault_ratio) of the
+        Payment Layer vault, covers its minimum cost; /account/balance leaves the vault out, so it is
+        read here (docs: 0gfoundation.github.io/0g-router, "Admission")."""
+        doc = self._get("/account/funds")
+        router, vault = doc.get("router") or {}, doc.get("payment_layer") or {}
+        n = _neuron
+        return {"currency": doc.get("currency"), "deposit": n(router.get("deposit")), "credit": n(router.get("credit")),
+                "pending_charge": n(router.get("pending_charge")), "subtotal": n(router.get("subtotal")),
+                "payment_layer": n(vault.get("balance")), "payment_layer_read_at": vault.get("queried_at"),
+                "total": n(doc.get("total")), "raw": doc}
+
+    def api_keys(self) -> list[dict]:
+        """The account's inference keys and their caps, as 0G echoes them (keys:read). Never the key."""
+        doc = self._get("/api-keys?status=all")
+        return doc.get("data", doc.get("keys", [])) if isinstance(doc, dict) else doc
+
+    def usage_history(self, limit: int = 100) -> list[dict]:
+        doc = self._get(f"/account/usage/history?limit={limit}")
+        return doc.get("data", doc.get("records", [])) if isinstance(doc, dict) else doc
+
+
+def _neuron(value) -> int:
+    """An amount from the Router in neuron. 0G-billed accounts send wei as an integer string."""
+    if value in (None, ""):
+        return 0
+    return int(str(value).split(".")[0]) if "." not in str(value) else int(float(value) * NEURON)
 
 
 def usd_per_0g(catalog_model: dict) -> float | None:
@@ -281,3 +322,82 @@ def snapshot(cfg: dict | None = None, *, chain: Chain | None = None, account: Ro
                         calls if rises else f"{calls}, all paid from the team's own deposit: none from earned credit yet",
                         dict(spent, paid_from="earned credit and deposits" if rises else "team deposit")))
     return {"read_at": time.time(), "network": cfg["network"], "stages": [s.__dict__ for s in stages], "errors": errors}
+
+
+# ---- the read-only check before the agent spends anything ---------------------------------------
+AGENT_MODELS = ("qwen3.8-flash", "qwen3.7-flash")
+
+
+def account_check(owner: str | None = None, key_name: str | None = None) -> dict:
+    """Everything the agent's account must be before it spends, read from 0G, with what blocks it.
+
+    Needs ZG_MANAGEMENT_KEY (account:read, keys:read). Reads only; prints no key. Field names of each
+    answer are kept (`shapes`) so units can be checked against the Router reference."""
+    from synapse0g import spend
+
+    key_name = key_name or os.environ.get("ZG_AGENT_KEY_NAME", "synapse-agent")
+    out: dict = {"env": {k: bool(os.environ.get(k)) for k in ("ZG_MANAGEMENT_KEY", "ZG_AGENT_KEY")}, "blockers": [], "shapes": {}}
+    if not os.environ.get("ZG_MANAGEMENT_KEY"):
+        out["blockers"].append("ZG_MANAGEMENT_KEY is not set (a read-only mk- key with account:read and keys:read)")
+        return out
+    acct = RouterAccount(os.environ["ZG_MANAGEMENT_KEY"])
+
+    def read(name, fn):
+        try:
+            value = fn()
+            out["shapes"][name] = sorted(value) if isinstance(value, dict) else (sorted(value[0]) if value else [])
+            return value
+        except Exception as e:  # a read that fails is reported, never skipped
+            out["blockers"].append(f"{name}: {type(e).__name__}: {str(e)[:200]}")
+            return None
+
+    a = read("account", acct.account)
+    if a is not None:
+        out["account"] = {k: a.get(k) for k in ("address", "wallet_address", "billing_currency", "currency", "settlement_currency")
+                          if a.get(k) is not None}
+        currency = str(out["account"].get("billing_currency") or out["account"].get("currency")
+                       or out["account"].get("settlement_currency") or "").lower()
+        if currency and currency != "0g":
+            out["blockers"].append(f"the account bills in {currency}: comfy credit is spendable only by a 0G-billed account")
+        address = str(out["account"].get("address") or out["account"].get("wallet_address") or "").lower()
+        if owner and address and address != owner.lower():
+            out["blockers"].append(f"the account is {address}, not the owner wallet {owner.lower()}")
+    f = read("funds", acct.funds)
+    if f is not None:
+        out["funds_0g"] = {k: f[k] / NEURON for k in ("deposit", "credit", "pending_charge", "payment_layer", "total")}
+        out["funds_0g"]["admissible"] = spend.admission(f) / NEURON
+        out["funds_currency"] = f.get("currency")
+        out["shapes"]["funds.router"] = sorted(f["raw"].get("router") or {})
+        out["shapes"]["funds.payment_layer"] = sorted(f["raw"].get("payment_layer") or {})
+        if out["funds_0g"]["admissible"] < spend.MIN_COST / NEURON:
+            out["blockers"].append(f"admissible funds {out['funds_0g']['admissible']:.6f} 0G are under 0G's 0.01 minimum per request")
+    keys = read("api_keys", acct.api_keys)
+    if keys is not None:
+        mine = [k for k in keys if k.get("name") == key_name]
+        out["key"] = [{f: k.get(f) for f in ("name", "status", "credit_limit", "reset_period", "expires_at", "allowed_models",
+                                              "allowed_providers", "used", "currency")} for k in mine]
+        active = [k for k in mine if k.get("status") in (None, "active")]
+        if len(active) != 1:
+            out["blockers"].append(f"expected one active key named {key_name!r}, found {len(active)}")
+        else:
+            k = active[0]
+            if k.get("credit_limit") in (None, ""):
+                out["blockers"].append("the agent key has no credit limit")
+            extra = set(k.get("allowed_models") or []) - set(AGENT_MODELS)
+            if not k.get("allowed_models") or extra:
+                out["blockers"].append(f"the agent key should allow only {', '.join(AGENT_MODELS)}; it allows {k.get('allowed_models') or 'every model'}")
+    try:  # needed only to settle uncertain charges later: a failed read is a warning, not a blocker
+        out["usage_records"] = len(acct.usage_history(5))
+    except Exception as e:
+        out.setdefault("warnings", []).append(f"usage_history: {type(e).__name__}: {str(e)[:200]}")
+    try:
+        catalog = {m["id"]: m for m in json.load(urllib.request.urlopen(urllib.request.Request(
+            ROUTER + "/models", headers={"User-Agent": USER_AGENT}), timeout=30))["data"]}
+        out["models"] = {m: m in catalog for m in AGENT_MODELS}
+        for m in AGENT_MODELS:
+            if m not in catalog:
+                out["blockers"].append(f"{m} is not in 0G's catalog now")
+    except Exception as e:
+        out["blockers"].append(f"catalog: {type(e).__name__}: {e}")
+    out["ready"] = not out["blockers"]
+    return out

@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sys
 import time
 from functools import cache
 
@@ -30,9 +31,11 @@ APP_PATH = ROOT / "examples" / "supplier_agent.py"
 
 
 @cache
+@cache
 def example():
     spec = importlib.util.spec_from_file_location("supplier_agent", APP_PATH)
     module = importlib.util.module_from_spec(spec)
+    sys.modules["supplier_agent"] = module  # its steps can be found by module name: a compiled app can be saved
     spec.loader.exec_module(module)
     return module
 

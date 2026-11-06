@@ -258,8 +258,19 @@ def agent(args) -> int:
     from synapse0g import service
 
     load_env()
+    if args.action == "check":  # read-only: what the agent's 0G account is, and what blocks it from spending
+        from synapse0g.funding import account_check, load_config
+
+        print(json.dumps(account_check(owner=load_config().get("owner")), indent=1, default=str))
+        return 0
     queue, ledger = service.Queue(), service.Ledger()
-    a = service.Agent(queue, ledger)
+    guard = None
+    if args.paid:
+        from synapse0g import spend
+        from synapse0g.registry import load_registry
+
+        guard = spend.guard_for(load_registry().providers["zerog-agent"])
+    a = service.Agent(queue, ledger, guard=guard)
     if args.action == "status":
         print(json.dumps(a.status(), indent=1))
     elif args.action == "quote":
@@ -270,7 +281,7 @@ def agent(args) -> int:
         print(json.dumps(a.status(), indent=1))
     elif args.action == "submit":
         kind, _, target = (args.what or "").partition(":")
-        spec = {"agent": target} if kind == "study" else {"path": target}
+        spec = {"agent": target} if kind == "study" else ({"task": target or None} if kind == "run" else {"path": target})
         job = service.submit(queue, kind, spec)
         print(json.dumps({"id": job.id, "kind": job.kind, "quote": job.quote}, indent=1))
     elif args.action == "run":
@@ -301,8 +312,9 @@ def main(argv: list[str] | None = None) -> int:
     w.add_argument("rest", nargs=argparse.REMAINDER, help="for bench: the bench driver's own options, e.g. --split calib --n 10")
     w.set_defaults(fn=workflow)
     ag = sub.add_parser("agent", help="the paid optimization agent: status, quote, deposit, submit, run")
-    ag.add_argument("action", choices=["status", "quote", "deposit", "submit", "run"])
-    ag.add_argument("what", nargs="?", help="quote: agent name; deposit: USD; submit: study:<agent> or inspect:<path>")
+    ag.add_argument("action", choices=["check", "status", "quote", "deposit", "submit", "run"])
+    ag.add_argument("what", nargs="?", help="quote: agent name; deposit: USD; submit: study:<agent>, inspect:<path> or run:[task id]")
+    ag.add_argument("--paid", action="store_true", help="spend from the agent's own 0G account (ZG_AGENT_KEY), reserved per call")
     ag.add_argument("--once", action="store_true", help="run: one job, then stop")
     ag.set_defaults(fn=agent)
     u = sub.add_parser("ui", help="serve the dashboard and its data")

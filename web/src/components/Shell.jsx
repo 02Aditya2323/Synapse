@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { BarChart3, Boxes, History, Plug, Radio, Wallet, Zap } from 'lucide-react'
+import { BarChart3, Boxes, CreditCard, History, Plug, Radio, Wallet, Zap } from 'lucide-react'
 import { useView } from '../store.js'
 import { useHealth } from '../api.js'
 
@@ -78,6 +78,7 @@ export default function Shell({ children }) {
           <div className="px-3 pt-1 pb-1.5 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--ghost)]">Compiler</div>
           {NAV.map((item) => <NavItem key={item.page} item={item} />)}
           <div className="px-3 pt-4 pb-1.5 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--ghost)]">Paid agent</div>
+          <NavItem item={{ page: 'pay', label: 'Pay and run', icon: CreditCard }} />
           <NavItem item={{ page: 'agent', label: 'Funding and jobs', icon: Wallet }} />
         </nav>
         <HealthLine />

@@ -9,6 +9,7 @@ import Connect from './pages/Connect.jsx'
 import Recorded from './pages/Recorded.jsx'
 import PaidAgent from './pages/PaidAgent.jsx'
 import LiveRun from './pages/LiveRun.jsx'
+import Pay from './pages/Pay.jsx'
 
 function FeedPage() {
   const { data, error, isLoading } = useFeed()
@@ -32,7 +33,7 @@ export default function App() {
   const page = useView((v) => v.page)
   return (
     <Shell>
-      {page === 'recorded' ? <Recorded /> : page === 'agent' ? <PaidAgent /> : page === 'live' ? <LiveRun /> : <FeedPage />}
+      {page === 'recorded' ? <Recorded /> : page === 'agent' ? <PaidAgent /> : page === 'live' ? <LiveRun /> : page === 'pay' ? <Pay /> : <FeedPage />}
     </Shell>
   )
 }

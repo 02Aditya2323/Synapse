@@ -18,6 +18,15 @@ providers:
     base_url: https://router-api.0g.ai/v1
     key_env: [0G_API_KEY, ZG_API_KEY]
     catalog_url: https://router-api.0g.ai/v1/models
+  # The paid agent's own 0G account: the account comfy credits with the token's compute share. Its key
+  # is a capped Router key (ZG_AGENT_KEY) and nothing else: no fallback to the team's key. Every call
+  # reserves its worst case first (synapse0g/spend.py), so concurrent calls cannot promise the same 0G.
+  zerog-agent:
+    base_url: https://router-api.0g.ai/v1
+    key_env: [ZG_AGENT_KEY]
+    catalog_url: https://router-api.0g.ai/v1/models
+    guarded: true
+    max_tokens: 2048
   groq:
     base_url: https://api.groq.com/openai/v1
     key_env: [GROQ_API_KEY, GROQ_API_KEY-2]   # rotated per call
@@ -32,6 +41,18 @@ models:
     cheaper: [zg-lite]
   zg-lite:
     provider: zerog
+    tag: qwen3.7-flash
+    reasoning_off: { enable_thinking: false }
+  # the same two models, paid from the agent's own account
+  agent-main:
+    provider: zerog-agent
+    tag: qwen3.8-flash
+    reasoning_off: { enable_thinking: false }
+    explicit_cache: true
+    cached_price_ratio: 0.111
+    cheaper: [agent-lite]
+  agent-lite:
+    provider: zerog-agent
     tag: qwen3.7-flash
     reasoning_off: { enable_thinking: false }
   groq-qwen:

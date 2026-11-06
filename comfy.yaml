@@ -19,11 +19,13 @@ contracts:
   first_block: 45552804
 
 agent_id: null        # from `comfy-cli agent register --complete <request id>`
-owner: null           # the wallet that claimed the agent and launched the token
+owner: "0x0C811D28046a77FA27A3CaF089E79DC664CF8178"   # wallet A: claims the agent, launches the token, compute account
 token: null           # the Synapse token's address, from the launch
 pool_id: null         # from the token's Launched event; found from `token` when null
 launch_tx: null
 token_page: null      # the token's comfy.fun page
 
 # Wallets the team controls. Their trades show the mechanics but are never counted as earnings.
-team_wallets: []
+team_wallets:
+  - "0x0C811D28046a77FA27A3CaF089E79DC664CF8178"   # wallet A, the owner
+  - "0x35C98a0033e5DB26d9E31adb0e04bBc3bC74D0dc"   # wallet B, the team's test buyer

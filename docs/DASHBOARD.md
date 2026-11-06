@@ -8,12 +8,13 @@ implementation, rather than a future design or a claim about implementation orig
 ## Pages and navigation
 
 The console shell (`web/src/components/Shell.jsx`) has a fixed-width, sticky sidebar
-with the SYNAPSE0G wordmark, a branching signal glyph, six compiler navigation entries and a separate Funding and jobs entry, and
+with the SYNAPSE0G wordmark, a branching signal glyph, six compiler navigation entries and separate Pay and run and Funding and jobs entries, and
 an API connection indicator. Selection is highlighted with an orange marker.
 
 | Page | Purpose |
 | --- | --- |
 | Live run | Run the supplier app as written and compiled on 0G, with call events, two live lanes, a shared-clock timeline, and measured outcomes. |
+| Pay and run | Quote and confirm a supplier request payment, monitor the paid run, inspect generated Python, and download its delivery ZIP. |
 | Funding and jobs | Inspect funding evidence, the local service ledger, budget modes, and queued jobs. |
 | Results | Lead with the compiled supplier-check study and show research, maths, and blocked retail results. Open a result for its detailed evidence. |
 | Connect an agent | Inspect pasted Python or a local path, choose a sample agent, or read the client wrapping and LangGraph compilation examples. |
@@ -137,3 +138,21 @@ origin of this project's dashboard.
 The repository also supports a plain-Python procurement agent and its saved studies.
 Its document fixtures, supported compilation shapes, and measured results are
 described in the README and RESULTS.md; the Live run page remains the supplier demo.
+
+## Paid runs and delivery assets
+
+`web/src/pages/Pay.jsx` implements `#/pay`. It uses `/api/pay/quote`,
+`/api/pay/confirm`, `/api/pay/resume`, `/api/pay/history`, and `/api/pay/<quote>`;
+`/api/pay/<quote>/package` serves the delivery archive. Generated code appears with
+line markers for its transformations. The current paid workflow is the bundled
+supplier agent, with request selection rather than user source upload.
+
+The page displays which component enforces the key cap and distinguishes team test
+payments from customer payments. See [PAYMENTS.md](PAYMENTS.md) for the scope of the
+server-side cap, delivery dependencies, and the direct-payment flow. Comfy's token
+route remains separate and is documented as on hold in that integration guide.
+
+Token artwork is stored in `assets/synapse-token.png` and
+`assets/synapse-token-256.png`. These are token identity assets referenced by the
+comfy setup, not the console's branching SVG glyph. Their filenames alone do not
+establish authorship or licensing history.

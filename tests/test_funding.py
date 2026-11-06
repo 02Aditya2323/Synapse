@@ -56,6 +56,7 @@ class FakeAccount:
 @pytest.fixture(autouse=True)
 def _cache(tmp_path, monkeypatch):
     monkeypatch.setattr(funding, "CACHE", tmp_path / "funding_cache.json")
+    monkeypatch.delenv("ZG_MANAGEMENT_KEY", raising=False)  # hermetic: never the real account, whatever .env holds
 
 
 def _cfg(**over):

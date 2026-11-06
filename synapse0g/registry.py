@@ -43,6 +43,10 @@ class Provider:
     base_url: str
     key_env: tuple[str, ...]
     catalog_url: str | None = None
+    # guarded: the agent's own account. Every call reserves its worst case against the account and the
+    # job's cap before it is sent (synapse0g.spend), and nothing falls back to another provider's key.
+    guarded: bool = False
+    max_tokens: int | None = None  # the output cap a guarded call is held to when it names none
 
     def keys(self) -> list[str]:
         """Every key that is set, in the order models.yaml lists them. Calls rotate through them."""
@@ -69,6 +73,8 @@ class Model:
     explicit_cache: bool = False  # accepts cache_control marks on messages (checked by a real call)
     cached_price_ratio: float | None = None  # billed price of a cached input token / normal price, measured
     min_cache_tokens: int = 1024
+    neuron_in: int | None = None  # 0G's own price, in neuron (1e-18 0G) per token, from its catalog
+    neuron_out: int | None = None
 
     def cost(self, tokens_in: int | None, tokens_out: int | None) -> float | None:
         if self.price_in is None or self.price_out is None or tokens_in is None or tokens_out is None:
@@ -103,10 +109,32 @@ class Registry:
         }
 
 
+CATALOG_CACHE = ROOT / "data" / "catalog_cache.json"
+LAST_CATALOG: dict = {}  # url -> when the catalog in use was read, and whether it came from the cache
+
+
 def fetch_catalog(url: str) -> dict[str, dict]:
+    """0G's live model catalog. If it cannot be read now, the last one read is used, and says when it was
+    read (`LAST_CATALOG`): prices from an older read of 0G's own catalog, never invented ones."""
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        doc = json.load(r)
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            doc = json.load(r)
+    except (OSError, json.JSONDecodeError) as e:
+        cache = json.loads(CATALOG_CACHE.read_text(encoding="utf-8")) if CATALOG_CACHE.exists() else {}
+        if url not in cache:
+            raise
+        LAST_CATALOG[url] = {"read_at": cache[url]["read_at"], "from_cache": True, "why": f"{type(e).__name__}: {e}"[:200]}
+        doc = cache[url]["doc"]
+    else:
+        LAST_CATALOG[url] = {"read_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "from_cache": False}
+        try:
+            cache = json.loads(CATALOG_CACHE.read_text(encoding="utf-8")) if CATALOG_CACHE.exists() else {}
+            cache[url] = {"read_at": LAST_CATALOG[url]["read_at"], "doc": doc}
+            CATALOG_CACHE.parent.mkdir(parents=True, exist_ok=True)
+            CATALOG_CACHE.write_text(json.dumps(cache), encoding="utf-8")
+        except OSError as e:  # the cache is a convenience: say so and go on
+            print(f"registry: could not cache the catalog: {e}")
     return {m["id"]: m for m in doc.get("data", [])}
 
 
@@ -119,14 +147,19 @@ def load_registry(path: Path | None = None, *, catalog: dict[str, dict] | None =
             base_url=body["base_url"].rstrip("/"),
             key_env=tuple(body.get("key_env") or [f"{name.upper()}_API_KEY"]),
             catalog_url=body.get("catalog_url"),
+            guarded=bool(body.get("guarded", False)),
+            max_tokens=body.get("max_tokens"),
         )
         for name, body in (doc.get("providers") or {}).items()
     }
     catalogs: dict[str, dict[str, dict]] = {}
     fetched_at = None
+    by_url: dict[str, dict[str, dict]] = {}
     for p in providers.values():
         if p.catalog_url:
-            catalogs[p.name] = catalog if catalog is not None else fetch_catalog(p.catalog_url)
+            if p.catalog_url not in by_url:  # two providers on one Router share one read
+                by_url[p.catalog_url] = catalog if catalog is not None else fetch_catalog(p.catalog_url)
+            catalogs[p.name] = by_url[p.catalog_url]
             fetched_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
     models: dict[str, Model] = {}
@@ -135,6 +168,7 @@ def load_registry(path: Path | None = None, *, catalog: dict[str, dict] | None =
         if provider not in providers:
             raise ValueError(f"models.yaml: {mid} uses unknown provider {provider!r}")
         price_in = price_out = None
+        neuron_in = neuron_out = None
         source = "unknown"
         supported: tuple[str, ...] = ()
         listed = catalogs.get(provider, {}).get(body["tag"])
@@ -144,6 +178,11 @@ def load_registry(path: Path | None = None, *, catalog: dict[str, dict] | None =
             if usd.get("prompt") is not None and usd.get("completion") is not None:
                 price_in, price_out = float(usd["prompt"]), float(usd["completion"])
                 source = f"{provider} catalog"
+            neuron = listed.get("pricing") or {}
+            try:
+                neuron_in, neuron_out = int(neuron["prompt"]), int(neuron["completion"])
+            except (KeyError, TypeError, ValueError):
+                pass
         elif provider in catalogs:
             raise ValueError(f"models.yaml: {mid} names {body['tag']!r}, which {provider}'s catalog does not list")
         if body.get("price_per_mtok"):
@@ -163,6 +202,8 @@ def load_registry(path: Path | None = None, *, catalog: dict[str, dict] | None =
             explicit_cache=bool(body.get("explicit_cache", False)),
             cached_price_ratio=body.get("cached_price_ratio"),
             min_cache_tokens=int(body.get("min_cache_tokens", 1024)),
+            neuron_in=neuron_in,
+            neuron_out=neuron_out,
         )
     for m in models.values():
         for c in m.cheaper:

@@ -121,9 +121,11 @@ function Lane({ title, sub, graph, run, calls, summary, running, accent, stepOf,
         <span className="text-[12px] text-[var(--faint)] truncate">{sub}</span>
         <span className="ml-auto font-mono text-[20px] text-[var(--text-strong)] whitespace-nowrap"><Clock base={base} until={summary?.wall_s} running={running && !summary} /></span>
       </div>
-      <div className="relative h-[300px]">
-        {graph && <SirGraph graph={graph} layout={layout} run={run} runMode showCriticalPath={false} interactive={false} />}
-      </div>
+      {graph && (
+        <div className="relative h-[300px]">
+          <SirGraph graph={graph} layout={layout} run={run} runMode showCriticalPath={false} interactive={false} />
+        </div>
+      )}
       <div className="grid grid-cols-4 border-t border-[var(--line)] text-[12px]">
         {[['model calls', t.calls], ['tokens', n0(t.tokens)], ['hidden reasoning', n0(t.thinking)], ['0G billed', money(t.billed)]].map(([k, v]) => (
           <div key={k} className="px-4 py-2.5 border-r border-[var(--line)] last:border-r-0">
@@ -306,7 +308,7 @@ function Result({ s }) {
     <div className="panel p-6 border-l-2 !border-l-[var(--accent)]">
       <div className="flex items-center justify-between mb-5">
         <span className="eyebrow">This run · one held-out request · measured</span>
-        <span className="text-[12px] text-[var(--faint)]">{s.task.rfq.rfq_id} · {s.task.tag} on 0G</span>
+        <span className="text-[12px] text-[var(--faint)]">{s.task.label} · {s.task.tag} on 0G</span>
       </div>
       <div className="flex flex-wrap gap-12 items-end">
         <Big value={`${speed.toFixed(2)}×`} label={`faster: ${a.wall_s.toFixed(1)} s → ${c.wall_s.toFixed(1)} s`} tone="var(--accent)" />
@@ -317,8 +319,8 @@ function Result({ s }) {
             <div key={k} className="flex items-center gap-2">
               {v.passed ? <Check className="w-4 h-4 text-[var(--ok)]" /> : <X className="w-4 h-4 text-[var(--bad)]" />}
               <span className="w-24 text-[var(--muted)]">{k}</span>
-              <span className="font-mono text-[var(--text-strong)]">{v.answer?.supplier_id || 'no order'}</span>
-              <span className="text-[var(--faint)]">{v.passed ? 'right supplier' : 'wrong'}</span>
+              <span className="font-mono text-[var(--text-strong)] max-w-[260px] truncate" title={v.short || ''}>{v.short || 'no answer'}</span>
+              <span className="text-[var(--faint)]">{v.passed ? 'right answer' : 'wrong'}</span>
             </div>
           ))}
           <div className="text-[12px] text-[var(--faint)]">{same_decision ? 'same decision' : 'different decisions'}</div>
@@ -328,7 +330,7 @@ function Result({ s }) {
       {ho?.verdict && (
         <div className="mt-6 pt-4 border-t border-[var(--line)] flex flex-wrap items-center gap-4 text-[13px]">
           <ShieldCheck className="w-4 h-4 text-[var(--ok)]" />
-          <span className="text-[var(--muted)]">One request is not a verdict. On {ho.tasks} held-out requests the firewall said</span>
+          <span className="text-[var(--muted)]">One {s.task.task_noun} is not a verdict. On {ho.tasks} held-out {s.task.task_noun}s the firewall said</span>
           <Decision decision={ho.verdict.approve ? 'APPROVE' : 'BLOCK'} />
           <span className="text-[var(--muted)]">
             {ho.verdict.passes?.[0]}/{ho.tasks} → {ho.verdict.passes?.[2]}/{ho.tasks} passed · cost {Math.round(ho.verdict.cost_gain * 100)}% lower · time {Math.round(ho.verdict.latency_gain * 100)}% lower
@@ -339,10 +341,39 @@ function Result({ s }) {
   )
 }
 
-const PHASES = [['compile', 'Compile to SIR'], ['race', 'Run both on 0G'], ['result', 'Compare']]
+/** An agent whose study approved no change: it ships as written. One live run, and why nothing changed. */
+function Unchanged({ s }) {
+  const a = s.result.as_written
+  const tried = s.policy?.trials?.length || 0
+  return (
+    <div className="panel p-6 border-l-2 !border-l-[var(--line-strong)]">
+      <div className="flex items-center justify-between mb-5">
+        <span className="eyebrow">This run · one held-out {s.task.task_noun} · measured</span>
+        <span className="text-[12px] text-[var(--faint)]">{s.task.tag} on 0G</span>
+      </div>
+      <div className="flex flex-wrap gap-12 items-end">
+        <Big value="unchanged" label="no change passed the firewall, so the agent ships as written" />
+        <Big value={`${a.wall_s.toFixed(1)} s`} label={`${a.calls} model calls · ${money(a.billed_usd)} billed by 0G`} />
+        <div className="flex items-center gap-2 text-[13px]">
+          {a.passed ? <Check className="w-4 h-4 text-[var(--ok)]" /> : <X className="w-4 h-4 text-[var(--bad)]" />}
+          <span className="font-mono text-[var(--text-strong)] max-w-[300px] truncate" title={a.short || ''}>{a.short || 'no answer'}</span>
+          <span className="text-[var(--faint)]">{a.passed ? 'right answer' : 'wrong'}</span>
+        </div>
+      </div>
+      {a.error && <p className="mt-4 text-[13px] text-[var(--bad)]">{a.error}</p>}
+      <p className="mt-5 pt-4 border-t border-[var(--line)] text-[13px] text-[var(--muted)]">
+        Its study tried {tried} change{tried === 1 ? '' : 's'} on tuning {s.task.task_noun}s and the firewall refused {tried === 1 ? 'it' : 'every one'} (below).
+        Shipping nothing is a result: a change that cannot show it keeps answers right is not made.
+      </p>
+    </div>
+  )
+}
+
+const PHASES = [['compile', 'Compile to SIR'], ['race', 'Run on 0G'], ['result', 'Compare']]
 
 export default function LiveRun() {
-  const tasks = useQuery({ queryKey: ['live-tasks'], queryFn: () => call('/api/live/tasks'), staleTime: Infinity })
+  const [agent, setAgent] = useState('supplier')
+  const tasks = useQuery({ queryKey: ['live-tasks', agent], queryFn: () => call(`/api/live/tasks?agent=${agent}`), staleTime: Infinity })
   const [task, setTask] = useState('')
   const [cold, setCold] = useState(false)
   const { resultId: runId, go } = useView()
@@ -356,7 +387,7 @@ export default function LiveRun() {
   const start = async () => {
     setStartError(null)
     try {
-      const r = await call('/api/live', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ task: task || undefined, cold }) })
+      const r = await call('/api/live', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ agent, task: task || undefined, cold }) })
       go('live', r.id)
     } catch (e) { setStartError(e) }
   }
@@ -364,15 +395,20 @@ export default function LiveRun() {
   return (
     <div className="flex flex-col gap-6">
       <PageTitle eyebrow="Live · 0G mainnet · real calls" title="Watch an agent get compiled, optimized and checked">
-        The supplier-check app is an ordinary LangGraph chain. Here it is compiled to SIR, then run as written and as compiled at the same
-        moment, on the same request, on 0G. Run metrics come from this request; the labelled held-out verdict comes from the saved supplier study.
+        Pick an agent and one of its held-out tasks. It is compiled to SIR where it has a graph, then run as written and as compiled at the
+        same moment, on the same task, on 0G. Run metrics come from this task; the labelled held-out verdict comes from the agent's saved study.
       </PageTitle>
 
       <div className="panel px-5 py-4 flex flex-wrap items-center gap-4">
-        <label className="text-[13px] text-[var(--muted)]">Request</label>
+        <label className="text-[13px] text-[var(--muted)]">Agent</label>
+        <select value={agent} onChange={(e) => { setAgent(e.target.value); setTask('') }} disabled={running}
+          className="h-9 px-3 rounded-[8px] bg-[var(--bg)] border border-[var(--line-strong)] text-[13px] text-[var(--text-strong)]">
+          {(tasks.data?.agents || [{ id: 'supplier', label: 'Supplier check' }]).map((a) => <option key={a.id} value={a.id} title={a.framework}>{a.label}</option>)}
+        </select>
+        <label className="text-[13px] text-[var(--muted)]">Task</label>
         <select value={task} onChange={(e) => setTask(e.target.value)} disabled={running}
-          className="h-9 min-w-[380px] px-3 rounded-[8px] bg-[var(--bg)] border border-[var(--line-strong)] text-[13px] text-[var(--text-strong)]">
-          <option value="">{tasks.data ? 'first held-out request' : 'loading…'}</option>
+          className="h-9 min-w-[380px] max-w-[520px] px-3 rounded-[8px] bg-[var(--bg)] border border-[var(--line-strong)] text-[13px] text-[var(--text-strong)]">
+          <option value="">{tasks.isLoading ? 'loading…' : tasks.error ? 'could not load tasks' : 'first held-out task'}</option>
           {tasks.data?.tasks.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
         </select>
         <label className="flex items-center gap-2 text-[13px] text-[var(--muted)]" title="Compile again and empty the step cache">
@@ -405,10 +441,10 @@ export default function LiveRun() {
       {!runId && (
         <Card title="What happens when you press Run live">
           <ol className="grid md:grid-cols-4 gap-4 text-[13px] text-[var(--muted)] list-decimal list-inside">
-            <li>The app is traced on the request and lifted to SIR: each step, its effect, and what it really reads.</li>
-            <li>The passes rewrite the graph. Each says what it changed, or what it refused and why: placing the order is never touched.</li>
-            <li>The app as written and the compiled graph run at the same moment on 0G, with the per-step changes the firewall approved.</li>
-            <li>Time, tokens, hidden reasoning, 0G's bill and the answer, side by side. The compiled run never places the order.</li>
+            <li>The agent is lifted to SIR: each step, its effect, and what it really reads. A ReAct agent has no graph to rewrite, and the page says so.</li>
+            <li>The passes rewrite the graph. Each says what it changed, or what it refused and why: irreversible and external steps are never touched.</li>
+            <li>As written and compiled run at the same moment on 0G, with the per-step changes the firewall approved. If it approved none, the agent runs once, unchanged.</li>
+            <li>Time, tokens, hidden reasoning, 0G's bill and the answer, side by side. A compiled run never executes an irreversible or external step.</li>
           </ol>
         </Card>
       )}
@@ -441,29 +477,39 @@ export default function LiveRun() {
         </section>
       )}
 
-      {s.compiled && (
+      {s.task?.kind === 'loop' && (
+        <Card eyebrow="1 · The agent" title={s.task.framework}>
+          <p className="text-[13px] text-[var(--muted)]">{s.phase?.phase === 'compile' ? s.phase.text : 'A ReAct agent is one model step repeated with tools: no graph to rewrite. Only call-level changes apply, and only those its firewall approved.'}</p>
+        </Card>
+      )}
+
+      {(s.compiled || (s.task?.kind === 'loop' && s.armStart != null)) && (
         <section className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <span className="eyebrow">2 · Both versions, same request, same moment</span>
-            {s.task && <span className="text-[12.5px] text-[var(--muted)]">{s.task.rfq.rfq_id}: {s.task.rfq.quantity} × {s.task.rfq.item}, at most {s.task.rfq.max_unit_price} each, within {s.task.rfq.needed_within_days} days</span>}
+            <span className="eyebrow">2 · {s.policy && !Object.keys(s.policy.steps).length && !s.compiled ? `Run live, unchanged` : `Both versions, same ${s.task?.task_noun || 'task'}, same moment`}</span>
+            {s.task && <span className="text-[12.5px] text-[var(--muted)] truncate">{s.task.summary}</span>}
           </div>
-          <div className="grid xl:grid-cols-2 gap-4">
-            <Lane title="As written" sub={`${s.task?.tag} · one step after another`} graph={chain} run={s.asRun} calls={s.calls.as_written}
+          <div className={`grid gap-4 ${s.compiled || (s.policy && Object.keys(s.policy.steps).length) ? 'xl:grid-cols-2' : ''}`}>
+            <Lane title="As written" sub={`${s.task?.tag} · ${s.task?.agent === 'supplier' ? 'one step after another' : s.task?.framework}`}
+              graph={s.task?.agent === 'supplier' ? chain : s.compiled?.before} run={s.asRun} calls={s.calls.as_written}
               summary={s.arms.as_written} running={running} accent="var(--line-strong)" stepOf={s.stepOf}
-              base={s.armStart != null ? s.t - s.armStart : null} direction="LR" />
-            <Lane title="Compiled by synapse0g" sub="parallel · approved changes · order stubbed" graph={s.compiled.after} run={s.compRun}
-              calls={s.calls.compiled} summary={s.arms.compiled} running={running} accent="var(--accent)" stepOf={s.stepOf}
-              base={s.armStart != null ? s.t - s.armStart : null} />
+              base={s.armStart != null ? s.t - s.armStart : null} direction={s.task?.agent === 'supplier' ? 'LR' : undefined} />
+            {(s.compiled || (s.policy && Object.keys(s.policy.steps).length > 0)) && (
+              <Lane title="Compiled by synapse0g"
+                sub={s.task?.agent === 'supplier' ? 'parallel · approved changes · order stubbed' : s.compiled ? 'compiled graph · approved changes · external steps stubbed' : 'approved call changes'}
+                graph={s.compiled?.after} run={s.compRun} calls={s.calls.compiled} summary={s.arms.compiled} running={running}
+                accent="var(--accent)" stepOf={s.stepOf} base={s.armStart != null ? s.t - s.armStart : null} />
+            )}
           </div>
         </section>
       )}
 
-      {s.compiled && (Object.keys(s.asRun).length > 0 || Object.keys(s.compRun).length > 0) && <Timeline s={s} />}
-      {s.result && <Result s={s} />}
-      {s.result && <Steps s={s} />}
+      {s.task?.agent === 'supplier' && s.compiled && (Object.keys(s.asRun).length > 0 || Object.keys(s.compRun).length > 0) && <Timeline s={s} />}
+      {s.result && (s.result.unchanged ? <Unchanged s={s} /> : <Result s={s} />)}
+      {s.result && s.task?.agent === 'supplier' && <Steps s={s} />}
       {s.policy && s.result && <Refused policy={s.policy} />}
       {s.result && (
-        <p className="text-[12px] text-[var(--faint)] flex items-center gap-2"><Gauge className="w-3.5 h-3.5" /> Run again with another request: the graph is reused, and the policy summary, which is pure, is served from the cache. <Zap className="w-3.5 h-3.5" /> Tick “start cold” to compile from scratch.</p>
+        <p className="text-[12px] text-[var(--faint)] flex items-center gap-2"><Gauge className="w-3.5 h-3.5" /> Run again with another task: the graph is reused, and pure steps already computed are served from the cache. <Zap className="w-3.5 h-3.5" /> Tick “start cold” to compile from scratch.</p>
       )}
     </div>
   )

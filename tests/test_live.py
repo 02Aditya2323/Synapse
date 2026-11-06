@@ -17,6 +17,7 @@ from tests.test_supplier import fake_call  # noqa: E402
 @pytest.fixture(autouse=True)
 def _fake(monkeypatch, tmp_path):
     import yaml
+
     from synapse0g import registry
 
     models = yaml.safe_load((registry.ROOT / "models.yaml").read_text())["models"]
@@ -90,7 +91,7 @@ def test_simultaneous_start_requests_register_only_one_run(monkeypatch):
         run.done = True
         finished.set()
 
-    def slow_tasks():
+    def slow_tasks(agent="supplier"):
         # Widen the check/register window so an unlocked start admits competitors.
         time.sleep(0.05)
         return [{"id": "offline-request"}]
@@ -114,3 +115,36 @@ def test_simultaneous_start_requests_register_only_one_run(monkeypatch):
     finally:
         release.set()
         assert finished.wait(5)
+
+
+def test_the_procurement_agent_runs_live_compiled_and_as_written(monkeypatch):
+    from tests.test_procurement import fake_call as procurement_call
+
+    monkeypatch.setattr(upstream, "call", procurement_call)
+    monkeypatch.setattr(proxy.upstream, "call", procurement_call)
+    task = live.tasks("procurement")[0]
+    events = _finish(live.start(task["id"], cold=True, agent="procurement"), timeout=120)
+    assert not _of(events, "failed"), _of(events, "failed")
+    assert _of(events, "task")[0]["agent"] == "procurement" and _of(events, "task")[0]["summary"]
+    compiled = _of(events, "compiled")[0]
+    assert compiled["applied"] and compiled["after"]["nodes"]
+    assert {c["arm"] for c in _of(events, "call")} == {"as_written", "compiled"}  # compiling a function makes no calls
+    assert any(e["event"] == "node_stub" for e in _of(events, "node"))  # filing for approval is never executed
+    result = _of(events, "result")[0]
+    assert result["as_written"]["passed"] and result["compiled"]["passed"] and result["same_decision"]
+
+
+def test_an_agent_its_study_left_unchanged_runs_once_and_says_so():
+    task = live.tasks("research")[0]
+    events = _finish(live.start(task["id"], agent="research"), timeout=120)
+    assert not _of(events, "failed"), _of(events, "failed")
+    assert not _of(events, "compiled")  # a ReAct loop has no graph to rewrite
+    assert _of(events, "policy")[0]["steps"] == {}
+    result = _of(events, "result")[0]
+    assert result["unchanged"] and result["compiled"] is None
+    assert {c["arm"] for c in _of(events, "call")} == {"as_written"}
+
+
+def test_unknown_live_agents_are_refused():
+    with pytest.raises(ValueError, match="no live agent"):
+        live.start(agent="shopping")
