@@ -76,7 +76,7 @@ def _graph_nodes(graph: dict, other: dict | None) -> dict:
             reader = next((c for c in consumers.get(n["id"], []) if c.startswith("parse_")), None)
             label = reader.removeprefix("parse_") if reader else label
         elif n["target"] == "workflow_input":
-            label = "question + paragraphs"
+            label = "input: " + ", ".join(n.get("outputs") or [])
         region = n.get("region")
         nodes.append({
             "id": n["id"],
@@ -98,9 +98,79 @@ def _graph_nodes(graph: dict, other: dict | None) -> dict:
     return {"nodes": nodes, "edges": edges, "regions": regions}
 
 
+def compile_workflow(name: str) -> dict:
+    """Compile one of the bundled workflows with the graph engine and run its default pass
+    pipeline. Offline: no provider is called. Returns both graphs and every pass's result."""
+    from synapse0g.graph.bench.suite import GRAPHS
+    from synapse0g.graph.core.sir import Profile
+    from synapse0g.graph.passes.base import run_pipeline
+
+    graph = GRAPHS[name].graph()
+    optimized, results = run_pipeline(graph, Profile.empty(graph.id), None)
+    passes = []
+    for r in results:
+        d = r.model_dump(mode="json")
+        passes.append({k: v for k, v in d.items() if k not in ("graph", "before", "after")})
+    return {"before": graph.model_dump(mode="json"), "after": optimized.model_dump(mode="json"), "passes": passes}
+
+
+def _transforms(passes: list[dict]) -> list[dict]:
+    return [{"pass": p["pass_name"], "applied": p["applied"],
+             "changes": [t["description"] for t in p["transformations"]],
+             "findings": [f"{f['node']}: {f['message']}" for f in p["findings"]],
+             "note": (p.get("estimate") or {}).get("note")}
+            for p in passes]
+
+
+def _protections(passes: list[dict], graph: dict) -> dict[str, list[str]]:
+    """For each node whose effect forbids a transformation, what the passes refused and why."""
+    effect = {n["id"]: n["effect"] for n in graph["nodes"]}
+    out: dict[str, list[str]] = {}
+    for p in passes:
+        for f in p["findings"]:
+            if effect.get(f["node"]) in ("write", "external", "irreversible") and f["precondition"].startswith("effect"):
+                out.setdefault(f["node"], []).append(f"{p['pass_name']}: {f['message']}")
+    return out
+
+
+WORKFLOWS = {
+    "research_fanout": "Plan sub-questions, search and summarise each, answer (HotpotQA)",
+    "code_review": "Review each changed file, then merge the reviews",
+    "rag_qa": "Retrieve passages, answer from them",
+    "math_tools": "Word problems with a calculator tool (GSM8K)",
+    "shop_ops": "Customer-service agent that refunds, cancels and orders: irreversible tools",
+}
+
+
+def workflows() -> list[dict]:
+    """Every bundled workflow, compiled now by the engine, with the saved runs that measured it."""
+    runs = history()
+    out = []
+    for name, about in WORKFLOWS.items():
+        c = compile_workflow(name)
+        protected = _protections(c["passes"], c["before"])
+        before = _graph_nodes(c["before"], None)
+        after = _graph_nodes(c["after"], c["before"])
+        for g in (before, after):
+            for n in g["nodes"]:
+                n["refused"] = protected.get(n["id"], [])
+        out.append({
+            "name": name,
+            "about": about,
+            "graph_id": c["before"]["id"],
+            "nodes": len(c["before"]["nodes"]),
+            "effects": dict(Counter(n["effect"] for n in c["before"]["nodes"])),
+            "graph": {"before": before, "after": after},
+            "transforms": _transforms(c["passes"]),
+            "protected": [{"node": k, "reasons": v} for k, v in protected.items()],
+            "runs": [r for r in runs if r["agent"] == name],
+        })
+    return out
+
+
 def _graph_result(kind: str, rel: str) -> dict:
     rep = _load(rel)
-    graphs = _load("synapse_graph/research_fanout_graphs.json")
+    graphs = compile_workflow("research_fanout")
     v = rep["verdict"]
     seq = {r["task_id"]: r for r in rep["rows"]["sequential"]}
     opt = {r["task_id"]: r for r in rep["rows"]["optimized"]}
@@ -130,11 +200,7 @@ def _graph_result(kind: str, rel: str) -> dict:
     b, a = v["cold"]["before"], v["cold"]["after"]
     n = len(tasks)
     passes = (sum(1 for t in tasks if t["before"][0]), sum(1 for t in tasks if t["after"]))
-    transforms = [{"pass": p["pass_name"], "applied": p["applied"],
-                   "changes": [t["description"] for t in p["transformations"]],
-                   "findings": [f"{f['node']}: {f['message']}" for f in p["findings"]],
-                   "note": (p.get("estimate") or {}).get("note")}
-                  for p in graphs["passes"]]
+    transforms = _transforms(graphs["passes"])
     return {
         "id": "research-0g",
         "claim": kind,
@@ -426,7 +492,7 @@ def history() -> list[dict]:
 
 
 def feed() -> dict:
-    return {"featured": featured(), "history": history()}
+    return {"featured": featured(), "history": history(), "workflows": workflows()}
 
 
 def _cli() -> None:

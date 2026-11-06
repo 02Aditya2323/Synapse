@@ -6,7 +6,7 @@ docs/PASSES.md section 4.
 **Why this is the most under-appreciated pass in the catalogue.** Agent loops habitually
 append every prior step to the next model call, so token count grows quadratically in
 step count. In our recorded corpus a step at index 8 consumed the outputs of steps 0, 1,
-2, 4, 5, 6 and 7 (docs/PORTING.md section 3). Most of that was never referenced. This is
+2, 4, 5, 6 and 7. Most of that was never referenced. This is
 a measured fact from a real trace, not a constructed example, and it is the slide where
 the cost axis moves.
 

@@ -1,4 +1,4 @@
-"""Paired outcome experiments, adapted from Black Box replay/verify.py and fleet.py.
+"""Paired outcome experiments for comparing baseline and optimized runs.
 
 Verification is empirical evidence under a named relation, never a universal proof.
 """

@@ -4,7 +4,8 @@ import { create } from 'zustand'
 function fromHash() {
   const [, page, id] = (window.location.hash || '').replace(/^#/, '').split('/')
   if (page === 'result' && id) return { page: 'result', resultId: id }
-  if (page === 'history') return { page: 'history', resultId: null }
+  if (page === 'workflows') return { page, resultId: id || null }
+  if (page === 'history') return { page, resultId: null }
   return { page: 'overview', resultId: null }
 }
 

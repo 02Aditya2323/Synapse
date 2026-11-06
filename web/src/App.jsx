@@ -3,6 +3,7 @@ import { useView } from './store.js'
 import Overview from './components/Overview.jsx'
 import Result from './components/Result.jsx'
 import History from './components/History.jsx'
+import Workflows from './components/Workflows.jsx'
 
 function Nav() {
   const { page, go } = useView()
@@ -22,6 +23,7 @@ function Nav() {
         </button>
         <nav className="flex gap-1">
           {tab('overview', 'Results')}
+          {tab('workflows', 'Workflows')}
           {tab('history', 'Run history')}
         </nav>
         <span className="ml-auto text-xs text-ink-3">Every number on this page was measured on real provider calls.</span>
@@ -44,6 +46,7 @@ export default function App() {
     )
   else if (page === 'result') body = <Result r={data.featured.find((r) => r.id === resultId)} />
   else if (page === 'history') body = <History rows={data.history} />
+  else if (page === 'workflows') body = <Workflows workflows={data.workflows || []} />
   else body = <Overview featured={data.featured} />
   return (
     <div className="min-h-full">

@@ -207,6 +207,31 @@ def models(_args) -> int:
     return 0
 
 
+def workflow(args) -> int:
+    """The graph engine: compile a bundled workflow and show what the passes do, or run its bench."""
+    if args.action == "bench":
+        from synapse0g.graph.bench.suite import main as bench_main
+
+        return bench_main(["--workflow", args.name, *args.rest])
+    from synapse0g.showcase import _protections, compile_workflow
+
+    c = compile_workflow(args.name)
+    g = c["before"]
+    print(f"{args.name}: {g['id']}, {len(g['nodes'])} steps")
+    for n in g["nodes"]:
+        print(f"  {n['id']:>4}  {n['kind']:<9} {n['effect']:<12} {n['target']}" + (f"  [{n['region']}]" if n.get("region") else ""))
+    print("passes:")
+    for p in c["passes"]:
+        if p["applied"]:
+            for t in p["transformations"]:
+                print(f"  {p['pass_name']:<13} {t['description']}")
+        else:
+            print(f"  {p['pass_name']:<13} not applied: {(p['findings'][0]['message'] if p['findings'] else (p.get('estimate') or {}).get('note'))}")
+    for node, reasons in _protections(c["passes"], g).items():
+        print(f"  protected {node}: {reasons[0]}")
+    return 0
+
+
 def ui(args) -> int:
     from synapse0g.server import serve
 
@@ -218,6 +243,12 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="synapse0g")
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("models").set_defaults(fn=models)
+    w = sub.add_parser("workflow", help="the graph engine: show a bundled workflow, or bench it on real tasks")
+    w.add_argument("action", choices=["show", "bench"])
+    w.add_argument("name", nargs="?", default="research_fanout",
+                   choices=["research_fanout", "code_review", "rag_qa", "math_tools", "shop_ops"])
+    w.add_argument("rest", nargs=argparse.REMAINDER, help="for bench: the bench driver's own options, e.g. --split calib --n 10")
+    w.set_defaults(fn=workflow)
     u = sub.add_parser("ui", help="serve the dashboard and its data")
     u.add_argument("--port", type=int, default=8000)
     u.set_defaults(fn=ui)

@@ -19,7 +19,6 @@ from __future__ import annotations
 
 __version__ = "0.3.7"
 
-from synapse0g.graph.connect import wrap  # noqa: E402
 from synapse0g.graph.core.sir import (
     SIR_VERSION,
     Determinism,
@@ -37,7 +36,6 @@ from synapse0g.graph.core.sir import (
 from synapse0g.graph.frontend.dsl import agent, model, node, tool, workflow
 
 __all__ = [
-    "wrap",
     "SIR_VERSION",
     "Determinism",
     "Effect",

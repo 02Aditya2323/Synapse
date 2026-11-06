@@ -3,11 +3,11 @@ name = "synapse0g"
 version = "0.1.0"
 description = "Optimizer for AI agents: fewer tokens, lower cost, faster runs, checked on your own tasks before anything ships."
 requires-python = ">=3.11"
-dependencies = ["openai>=1.40", "pyyaml>=6"]
+dependencies = ["openai>=1.40", "pyyaml>=6", "pydantic>=2.5", "python-dotenv>=1", "psutil>=5.9", "rank-bm25>=0.2"]
 
 [project.optional-dependencies]
 agents = ["langgraph>=1.0", "langchain-openai>=0.3"]
-dev = ["pytest>=8", "ruff>=0.6"]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "ruff>=0.6"]
 
 [project.scripts]
 synapse0g = "synapse0g.cli:main"
@@ -18,6 +18,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["synapse0g*"]
+
+[tool.setuptools.package-data]
+"synapse0g.graph" = ["data/models.yaml"]
+"synapse0g.graph.bench" = ["corpus/**/*"]
 
 [tool.ruff]
 extend-exclude = ["data"]

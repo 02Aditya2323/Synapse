@@ -13,15 +13,14 @@ and the `@node` registry are the two ways to tell Synapse what a tool really doe
 both require someone to make that claim deliberately.
 
 **Data edges come from the recorded last-writer relation, not from guessing.** A step
-that read memory key `k` depends on the most recent step that wrote `k`. Black Box
-recorded `reads`, `writes` and `parents` for exactly this reason, which is why its
-traces lift richer than OpenTelemetry's.
+that read memory key `k` depends on the most recent step that wrote `k`. Recorded
+`reads`, `writes` and `parents` make these traces richer than OpenTelemetry's.
 
 Lifting one trace gives one execution path. `lift_many` folds several traces of the same
 workflow into one graph: steps that appear in every trace are unconditional, steps that
 repeat within a trace are a loop body, and steps that appear in only some traces are
 branches. That is how a static graph is recovered from dynamic evidence, and it is why
-having thousands of recorded runs (docs/PORTING.md section 3) matters.
+having a representative set of recorded runs matters.
 """
 
 from __future__ import annotations
@@ -35,7 +34,7 @@ from pydantic import BaseModel, Field
 from synapse0g.graph.core.hashing import fingerprint
 from synapse0g.graph.core.sir import Effect, Graph, Literal_, Node, NodeKind, Ref, Region
 
-#: Black Box step kinds -> SIR node kinds. `final` was a recorded marker for the step
+#: Workflow step kinds -> SIR node kinds. `final` was a recorded marker for the step
 #: that produced the answer; in SIR that is an output edge, not a kind.
 KIND_MAP: dict[str, NodeKind] = {
     "llm": "model",
@@ -49,7 +48,7 @@ KIND_MAP: dict[str, NodeKind] = {
     "control": "control",
 }
 
-#: Tool names that are irreversible wherever they appear. Inherited from Black Box's
+#: Tool names that are irreversible wherever they appear. Defined by the workflow tool policy.
 #: `money_moving_tools`, which exists because an agent once re-ran a `place_order` call
 #: during a replay. Matched as a substring, deliberately: `place_order_v2` is also an
 #: order.
@@ -60,7 +59,7 @@ MONEY_MOVING = (
 
 
 class Step(BaseModel):
-    """One recorded step. The subset of Black Box's `Step` that SIR needs.
+    """One recorded step. The subset of the workflow step that SIR needs.
 
     Importers (`frontend/importers/otel.py`, `langfuse.py`, `blackbox.py` — Radhesh's)
     normalise their formats into this, so this module never learns about a vendor.
@@ -161,7 +160,7 @@ def _last_writers(steps: list[Step]) -> dict[int, set[int]]:
     """For each step, the most recent earlier step that wrote each key it reads.
 
     This is the data-flow relation, recovered. A recorded `parents` list is used when
-    the trace has one (Black Box records it); otherwise it is reconstructed here.
+    the trace has one when recorded; otherwise it is reconstructed here.
     """
     writers: dict[str, int] = {}
     deps: dict[int, set[int]] = {}

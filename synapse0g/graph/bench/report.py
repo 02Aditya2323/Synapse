@@ -10,7 +10,7 @@ The rules this enforces: cold and warm are separate rows, the accuracy delta sit
 every saving, crashes are reported and never dropped, None prints as a dash, sample counts
 are on every aggregate, and a loss is shown. Anything not on `test` carries a banner.
 
-Confidence intervals are ported from Black Box `eval/metrics.py`.
+Confidence intervals are computed by this module.
 """
 
 from __future__ import annotations

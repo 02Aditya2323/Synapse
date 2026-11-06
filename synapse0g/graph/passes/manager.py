@@ -1,7 +1,6 @@
 """Profile-guided greedy/beam search and an optional learned pass policy.
 
-Feature allowlisting and ancestry extraction adapted from Black Box diagnosis/
-features.py and graph_data.py (7af6e69). No diagnosis labels, answer features,
+Feature allowlisting and ancestry extraction for the graph optimizer. No diagnosis labels, answer features,
 post-optimization measurements, metadata or cached flags enter the policy.
 """
 

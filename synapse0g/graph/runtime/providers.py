@@ -1,8 +1,7 @@
 """One OpenAI-style client for Groq, OpenRouter and Ollama.
 
-Ported from Black Box `blackbox/recorder/providers.py` (docs/PORTING.md item 4). What
-changed: Synapse's `models.yaml` is a nested document (`providers:` / `models:` /
-`defaults:` / `limits:`) rather than a flat list, prices moved out of `params` into a
+Provider configuration for Synapse workflows. The `models.yaml` is a nested document
+(`providers:` / `models:` / `defaults:` / `limits:`), with prices in a
 first-class `price_per_mtok`, and the key ring reads its env var name from the file
 instead of a hard-coded table.
 
@@ -40,7 +39,8 @@ try:  # .env is optional; real env vars always win
 except ImportError:  # pragma: no cover
     pass
 
-REGISTRY_PATH = Path(os.environ.get("SYNAPSE_MODELS", "models.yaml"))
+# The graph engine's registry ships with the package; SYNAPSE_MODELS points elsewhere.
+REGISTRY_PATH = Path(os.environ.get("SYNAPSE_MODELS") or Path(__file__).resolve().parent.parent / "data" / "models.yaml")
 
 
 from synapse0g.graph.runtime.rate_gate import gate_for  # noqa: E402
@@ -223,7 +223,7 @@ def is_faked(model_id: str) -> bool:
 
 # ---- clients ----------------------------------------------------------------
 class _KeyRing:
-    """Several comma-separated keys per provider, rotated on 429. The previous build
+    """Several comma-separated keys per provider, rotated on 429. This provider setup
     exhausted a free tier mid-session; rotation plus `fallback:` is what kept it alive."""
 
     def __init__(self, keys: list[str]):

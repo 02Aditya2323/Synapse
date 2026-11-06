@@ -3,8 +3,7 @@
 A model node's implementation returns its prompt and the runtime makes the call, so tokens
 are measured in one place. Many declarations may share one model id.
 
-SYNAPSE_BENCH_MODEL picks the model; the default is agent-mini because `agent-small`'s tag
-is not installed on every machine.
+SYNAPSE_BENCH_MODEL picks the model; the default is agent-zg, qwen3.8-flash on 0G.
 """
 
 from __future__ import annotations
@@ -15,7 +14,7 @@ from typing import Any
 from synapse0g.graph.core.sir import Effect, Graph, Ref, Region
 from synapse0g.graph.frontend.dsl import Handle, model, node
 
-MODEL_ID = os.environ.get("SYNAPSE_BENCH_MODEL", "agent-mini")
+MODEL_ID = os.environ.get("SYNAPSE_BENCH_MODEL", "agent-zg")
 
 
 def declare(target: str, **kw):

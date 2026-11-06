@@ -1,10 +1,7 @@
 """SQLite for graphs, executions and profiles; fingerprint-named files for large values.
 
-Ported from Black Box `blackbox/core/store.py` (docs/PORTING.md item 3), retargeted
-from runs/steps to graphs/executions/nodes/profiles. What carried over unchanged is the
-part that was hard: content-addressed blobs so identical values are written once (the
-previous build measured ~80% de-duplication on recorded save-points), and a cheap
-`revision()` that expensive API caches can key on.
+Content-addressed graph storage. Identical values are written once, and `revision()`
+provides an inexpensive key for API caches.
 
 Tables:
     graphs       one row per SIR graph, including every optimized variant
@@ -432,7 +429,7 @@ class Store:
     # ---- revision and counts ----------------------------------------------
     def revision(self) -> tuple:
         """Changes whenever anything is written. The API's response cache keys on this
-        -- the previous build took a 22.5 s status endpoint to 5 ms exactly this way."""
+        -- memoization makes repeated status checks inexpensive."""
         with self._lock:
             row = self._db.execute(
                 "SELECT (SELECT COUNT(*) FROM graphs), (SELECT COUNT(*) FROM executions), "

@@ -1,9 +1,7 @@
 """`downgrade` -- cheaper model selection.
 
 Moves a model call to a cheaper registry model. docs/PASSES.md section 5.
-Ported from Black Box `blackbox/replay/advisor.py` (docs/PORTING.md item 8), which
-already implements exactly this loop: for each model call, re-run with a cheaper model
-and keep the change only if the task still passes.
+For each model call, this pass proposes a cheaper model and keeps the change only if the task still passes.
 
 **The precondition is empirical, and this pass says so out loud.** There is no static
 argument that a smaller model can do a particular job. The precondition is "re-running
@@ -23,7 +21,7 @@ believable.
 **How it goes wrong.** Nodes downgraded together without being tested together: two
 individually safe downgrades can interact. So the pass proposes **one node at a time**,
 in order of how much that node costs, and the result note says the combination needs its
-own confirmation -- which is the same caveat the Black Box advisor carried.
+own confirmation.
 """
 
 from __future__ import annotations
@@ -90,8 +88,7 @@ def candidates(graph: Graph) -> list[Node]:
     measured cost the two methods could disagree about which node the estimate was
     about. One node is proposed per application, the application marks it, and a greedy
     manager that runs the pass repeatedly works down the list with a firewall verdict
-    between each step. That is the behaviour the Black Box advisor had, and it is why
-    each node ends up tested alone.
+    between each step. This keeps each node individually tested.
     """
     cheap = target_model(graph)
     if cheap is None:

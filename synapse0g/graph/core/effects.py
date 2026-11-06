@@ -7,7 +7,7 @@ flag, not in a benchmark, not "just for the demo".
 This module owns those predicates so passes **ask** rather than reimplement the check.
 Eleven passes each writing `if node.effect in ("external", "irreversible")` is eleven
 chances to get it wrong, and the failure mode is an agent re-sending an email or
-re-placing an order. The previous build learned this when a replay re-executed a
+re-placing an order. This safety rule matters because a replay must never re-execute a
 `place_order` call; the `irreversible` tier is that lesson promoted into the type
 system.
 

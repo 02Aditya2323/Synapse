@@ -247,12 +247,6 @@ class Scheduler:
                 "error": execution.error,
             }
         )
-        if self.mode is ExecutionMode.LIVE:
-            # Tell a person when a real run failed or refused a step (synapse/slack.py). Silent
-            # unless Slack is configured; a delivery problem is printed, never raised.
-            from synapse0g.graph.slack import live_run_ended
-
-            await asyncio.to_thread(live_run_ended, graph, execution)
         return execution
 
     # ------------------------------------------------------------ one unit

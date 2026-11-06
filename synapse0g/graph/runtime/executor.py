@@ -1,9 +1,6 @@
 """Node execution and measurement.
 
-The measurement and cache-hit bookkeeping are ported from Black Box
-`blackbox/recorder/context.py` -- the step-recording and re-use paths only
-(docs/PORTING.md item 5). `RunContext` itself, 700+ lines of agent-facing API, is
-deliberately not ported.
+This module owns node execution, measurement, and cache-hit bookkeeping.
 
 Three rules live in this file, and they are not negotiable from the outside:
 
@@ -216,12 +213,8 @@ class Executor:
         # Two locks, not one: `irreversible` needs both the mode to be LIVE *and* the
         # caller to have said so. A demo that forgets the flag places no orders.
         self.allow_irreversible = allow_irreversible and mode is ExecutionMode.LIVE
-        # The one other way to say so: a person, asked at the moment the step is reached
-        # (`synapse/slack.py`, SYNAPSE_APPROVALS=slack). Only ever consulted in a LIVE run.
-        if approver is None and mode is ExecutionMode.LIVE and not self.allow_irreversible:
-            from synapse0g.graph.slack import approver_from_env
-
-            approver = approver_from_env()
+        # The one other way to say so: a person asked at the moment the step is reached, through
+        # `approver`. Only ever consulted in a LIVE run.
         self.approver = approver if mode is ExecutionMode.LIVE else None
         self.workflow: str | None = None
         self.implementations = implementations or {}

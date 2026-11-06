@@ -43,7 +43,8 @@ from synapse0g.graph.runtime.executor import Execution, ExecutionMode, NodeRun
 from synapse0g.graph.runtime.providers import model_config, waits
 from synapse0g.graph.runtime.scheduler import run_graph_sync
 
-REPORT_DIR = Path(__file__).parent / "reports"
+# reports land beside the call-level ones, where the dashboard reads them
+REPORT_DIR = Path(os.environ.get("SYNAPSE_GRAPH_REPORTS") or Path.cwd() / "reports" / "synapse_graph")
 GRAPHS = {"research_fanout": research_fanout, "rag_qa": rag_qa, "math_tools": math_tools,
           "code_review": code_review, "shop_ops": shop_ops}
 # the most model calls one execution can make, and the runs that can reach a provider
@@ -295,7 +296,6 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--models-serial", action="store_true",
                     help="run tools concurrently but model calls one at a time, for a server whose answers "
                          "change under concurrent requests (synapse audit)")
-    ap.add_argument("--notify", action="store_true", help="send Slack, email and WhatsApp alerts about the verdict")
     ap.add_argument("--final", action="store_true", help="required for `test`, which is touched once")
     ap.add_argument("--label", default="",
                     help="names this run in its report, e.g. 'second run'; required on a test split already used")
@@ -392,11 +392,6 @@ def main(argv: list[str] | None = None) -> int:
            "ledger": ledger}
     path.write_text(json.dumps(run, indent=1, ensure_ascii=False, default=str), encoding="utf-8")
     print(f"-> {path}")
-    if args.notify:
-        from synapse0g.graph.alerts import from_verdict, send
-
-        for name, state, detail in send(from_verdict(f"{args.workflow} on {_llm.MODEL_ID}", run["verdict"])):
-            print(f"  alert {name}: {state}. {detail}")
     return 0
 
 

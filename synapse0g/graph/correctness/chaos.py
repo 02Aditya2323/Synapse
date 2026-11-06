@@ -1,4 +1,4 @@
-"""Unsafe-optimization experiments adapted from Black Box replay/chaos.py (7af6e69).
+"""Unsafe-optimization experiments for measuring optimization risk.
 
 Every row invokes a real precondition or paired execution check. Exceptions are errors,
 never 'caught'. Local deterministic handlers require no provider or live side effects.

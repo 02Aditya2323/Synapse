@@ -1,7 +1,6 @@
 """Canonical JSON and content fingerprints.
 
-Ported from Black Box `blackbox/core/hashing.py` (docs/PORTING.md item 1), with
-`step_input_hash` renamed and retargeted to a SIR `Node`.
+Canonical JSON and fingerprints for SIR nodes.
 
 The same logical call must fingerprint identically on every machine and in every
 process, or CSE, memoization and the cross-run cache all silently stop working —

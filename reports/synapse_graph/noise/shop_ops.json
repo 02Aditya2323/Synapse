@@ -1,0 +1,1 @@
+{"band": {"latency_pct": 40.02985066984505, "samples": 10, "split": "calib", "cost_pct": 82.15424356645326, "method": "p95 absolute paired relative difference"}, "graph_id": "g_shop_ops_4536063a7e", "model": "agent-zg", "formula": "abs(a-b)/max(a,b), p95"}

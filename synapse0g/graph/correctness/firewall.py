@@ -1,4 +1,4 @@
-"""Corpus regression gate, ported from Black Box replay/fleet.py at 7af6e69.
+"""Corpus regression gate for checking workflow changes.
 
 Preserves paired accounting, crash visibility and event reporting; replaces the old
 'fixes something' rule with strict correctness plus a measured performance win.

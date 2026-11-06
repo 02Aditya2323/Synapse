@@ -18,7 +18,7 @@ call touched the world.
 
 **The real example.** A recorded trading-agent run in our corpus calls
 `get_price("INFY")` twice with an identical input hash inside one execution
-(docs/PORTING.md section 3). The fix is free and provable from the recording.
+The fix is free and provable from the recording.
 
 **How it goes wrong.** `cache_key_fields` set too narrow, so two genuinely different
 calls key the same. This is the most dangerous bug in the system, because it produces a

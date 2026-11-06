@@ -25,6 +25,7 @@ function NodeCard({ data }) {
       {n.model && n.kind === 'model' && n.model !== n.label && <div className="text-[11px] text-ink-2 truncate" title={n.model}>{n.model}</div>}
       {n.parallel && <div className="text-[11px] text-after">runs per sub-question, in parallel (limit {n.parallel})</div>}
       {n.inRegion && !n.parallel && <div className="text-[11px] text-ink-3">runs per sub-question, one at a time</div>}
+      {n.branch && <div className="text-[11px] text-ink-3">runs only if the agent continues</div>}
       {n.memoized && <div className="text-[10px] text-ink-3">memoized</div>}
       {n.techniques?.length > 0 && <div className="text-[11px] text-after truncate">{n.techniques.join(' · ')}</div>}
       {s && (
@@ -35,6 +36,7 @@ function NodeCard({ data }) {
         </div>
       )}
       {n.note && <div className="text-[10px] text-ink-3 mt-0.5">{n.note}</div>}
+      {n.refused?.length > 0 && <div className="text-[10px] text-critical mt-0.5" title={n.refused.join('\n')}>protected: never cached, reordered or re-run</div>}
       <Handle type="source" position={Position.Right} className="!bg-ink-3 !border-0 !w-1.5 !h-1.5" />
     </div>
   )
@@ -60,7 +62,7 @@ function agentLayout(graph) {
 }
 
 function layout(graph) {
-  if (graph.nodes.filter((n) => n.kind === 'tool').length > 4) return agentLayout(graph)
+  if (graph.nodes.some((n) => n.id === 'agent') && graph.nodes.filter((n) => n.kind === 'tool').length > 4) return agentLayout(graph)
   const g = new dagre.graphlib.Graph()
   g.setGraph({ rankdir: 'LR', nodesep: 18, ranksep: 56 })
   g.setDefaultEdgeLabel(() => ({}))
@@ -78,7 +80,7 @@ function layout(graph) {
       id: n.id,
       type: 'card',
       position: { x: p.x - W / 2, y: p.y - H / 2 },
-      data: { node: { ...n, inRegion: !!r, parallel: r?.parallel ? r.limit : null } },
+      data: { node: { ...n, inRegion: r?.kind === 'map', branch: r?.kind === 'branch', parallel: r?.parallel ? r.limit : null } },
       draggable: false,
     }
   })
@@ -94,7 +96,7 @@ function layout(graph) {
   return { nodes, edges: flowEdges }
 }
 
-export default function Graph({ graph, height = 360 }) {
+export default function Graph({ graph, height = 360, fit = true }) {
   const { nodes, edges } = useMemo(() => layout(graph), [graph])
   return (
     <div style={{ height }} className="rounded-lg bg-surface-0 border border-line">
@@ -103,11 +105,11 @@ export default function Graph({ graph, height = 360 }) {
         edges={edges}
         nodeTypes={nodeTypes}
         fitView
-        fitViewOptions={{ padding: 0.08 }}
+        fitViewOptions={{ padding: 0.08, minZoom: fit ? 0.2 : 0.55 }}
         nodesConnectable={false}
         proOptions={{ hideAttribution: true }}
         colorMode="dark"
-        minZoom={0.2}
+        minZoom={0.15}
       >
         <Background color="#2f2f2c" gap={20} />
       </ReactFlow>
