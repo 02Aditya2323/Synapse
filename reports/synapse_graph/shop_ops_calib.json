@@ -1,0 +1,3628 @@
+{
+ "meta": {
+  "workflow": "shop_ops",
+  "split": "calib",
+  "relation": "checker",
+  "model": "agent-zg",
+  "pipeline": "memoize -> downgrade",
+  "warmup_per_task": true,
+  "models_serial": false,
+  "models_serial_by_audit": [],
+  "label": null
+ },
+ "rows": {
+  "sequential": [
+   {
+    "task_id": "shop_0000",
+    "crashed": false,
+    "wall_ms": 9194.837792005274,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O401": {
+        "customer": "Hana",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O407": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O413": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O415": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O421": {
+        "customer": "Farah",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 13,
+       "lamp": 7,
+       "water bottle": 18
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3589,
+    "tokens_out": 121,
+    "cost_usd": 0.0007589055000000001,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0003",
+    "crashed": false,
+    "wall_ms": 6756.818167006713,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O302": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O305": {
+        "customer": "Divya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O307": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O309": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O310": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 12,
+       "mug": 19,
+       "water bottle": 12
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 2294,
+    "tokens_out": 105,
+    "cost_usd": 0.00050164875,
+    "provider_calls": 5,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0006",
+    "crashed": false,
+    "wall_ms": 8436.753875008435,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O300": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O304": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O311": {
+        "customer": "Ivan",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O313": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O318": {
+        "customer": "Ivan",
+        "item": "notebook",
+        "paid": 15,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "keyboard": 75,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "keyboard": 7,
+       "notebook": 13,
+       "water bottle": 5
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 2965,
+    "tokens_out": 127,
+    "cost_usd": 0.0006431610000000001,
+    "provider_calls": 6,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0008",
+    "crashed": false,
+    "wall_ms": 5291.698790999362,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O142": {
+        "customer": "Jaya",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O146": {
+        "customer": "Asha",
+        "item": "keyboard",
+        "paid": 225,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O148": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O155": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 48,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O156": {
+        "customer": "Chen",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 11,
+       "keyboard": 4,
+       "water bottle": 13
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1622,
+    "tokens_out": 64,
+    "cost_usd": 0.0003485595,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0011",
+    "crashed": false,
+    "wall_ms": 9247.951666999143,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O752": {
+        "customer": "Emeka",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O758": {
+        "customer": "Hana",
+        "item": "headphones",
+        "paid": 120,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O764": {
+        "customer": "Ivan",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O767": {
+        "customer": "Emeka",
+        "item": "desk mat",
+        "paid": 90,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O768": {
+        "customer": "Farah",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "headphones": 60,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 13,
+       "headphones": 18,
+       "mug": 19
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3657,
+    "tokens_out": 123,
+    "cost_usd": 0.000773109,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0013",
+    "crashed": false,
+    "wall_ms": 5423.610124998959,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O404": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O410": {
+        "customer": "Asha",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O413": {
+        "customer": "Jaya",
+        "item": "lamp",
+        "paid": 125,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O418": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O422": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "lamp": 20,
+       "mug": 16
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1618,
+    "tokens_out": 64,
+    "cost_usd": 0.00034779449999999996,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0023",
+    "crashed": false,
+    "wall_ms": 5598.707624987583,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O656": {
+        "customer": "Jaya",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "shipped"
+       },
+       "O659": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O662": {
+        "customer": "Hana",
+        "item": "desk mat",
+        "paid": 54,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O673": {
+        "customer": "Emeka",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 7,
+       "notebook": 18,
+       "water bottle": 15
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1668,
+    "tokens_out": 90,
+    "cost_usd": 0.0003729375,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0025",
+    "crashed": false,
+    "wall_ms": 10864.39058301039,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O658": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "shipped"
+       },
+       "O660": {
+        "customer": "Hana",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Divya",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O667": {
+        "customer": "Jaya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O673": {
+        "customer": "Bilal",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 9,
+       "lamp": 4,
+       "mug": 18
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3638,
+    "tokens_out": 134,
+    "cost_usd": 0.0007760669999999999,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0026",
+    "crashed": false,
+    "wall_ms": 10064.965209006914,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O287": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "delivered"
+       },
+       "O292": {
+        "customer": "Chen",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O297": {
+        "customer": "Bilal",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O300": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O304": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 17,
+       "mug": 12,
+       "water bottle": 14
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3656,
+    "tokens_out": 137,
+    "cost_usd": 0.00078130725,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0027",
+    "crashed": false,
+    "wall_ms": 9445.769625002868,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O711": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 75,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O712": {
+        "customer": "Emeka",
+        "item": "keyboard",
+        "paid": 150,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O718": {
+        "customer": "Hana",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O721": {
+        "customer": "Bilal",
+        "item": "headphones",
+        "paid": 300,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O724": {
+        "customer": "Goran",
+        "item": "keyboard",
+        "paid": 375,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "lamp": 25
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "keyboard": 16,
+       "lamp": 4
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3657,
+    "tokens_out": 123,
+    "cost_usd": 0.000773109,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   }
+  ],
+  "optimized": [
+   {
+    "task_id": "shop_0000",
+    "crashed": false,
+    "wall_ms": 8959.522625009413,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O401": {
+        "customer": "Hana",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O407": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O413": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O415": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O421": {
+        "customer": "Farah",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 13,
+       "lamp": 7,
+       "water bottle": 18
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3559,
+    "tokens_out": 117,
+    "cost_usd": 0.000695739766,
+    "provider_calls": 7,
+    "cache_hits": 3,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0003",
+    "crashed": false,
+    "wall_ms": 9169.339041996864,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O302": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O305": {
+        "customer": "Divya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O307": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O309": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O310": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 12,
+       "mug": 19,
+       "water bottle": 12
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3694,
+    "tokens_out": 128,
+    "cost_usd": 0.0007233061060000001,
+    "provider_calls": 7,
+    "cache_hits": 5,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0006",
+    "crashed": false,
+    "wall_ms": 8802.605165998102,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O300": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O304": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O311": {
+        "customer": "Ivan",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O313": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O318": {
+        "customer": "Ivan",
+        "item": "notebook",
+        "paid": 15,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "keyboard": 75,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "keyboard": 7,
+       "notebook": 13,
+       "water bottle": 5
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3707,
+    "tokens_out": 148,
+    "cost_usd": 0.0007313563580000002,
+    "provider_calls": 7,
+    "cache_hits": 1,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0008",
+    "crashed": false,
+    "wall_ms": 5331.834792013979,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O142": {
+        "customer": "Jaya",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O146": {
+        "customer": "Asha",
+        "item": "keyboard",
+        "paid": 225,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O148": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O155": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 48,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O156": {
+        "customer": "Chen",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 11,
+       "keyboard": 4,
+       "water bottle": 13
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1625,
+    "tokens_out": 66,
+    "cost_usd": 0.00029513843299999997,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0011",
+    "crashed": false,
+    "wall_ms": 9404.14154199243,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O752": {
+        "customer": "Emeka",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O758": {
+        "customer": "Hana",
+        "item": "headphones",
+        "paid": 120,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O764": {
+        "customer": "Ivan",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O767": {
+        "customer": "Emeka",
+        "item": "desk mat",
+        "paid": 90,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O768": {
+        "customer": "Farah",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "headphones": 60,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 13,
+       "headphones": 18,
+       "mug": 19
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3669,
+    "tokens_out": 125,
+    "cost_usd": 0.000718336938,
+    "provider_calls": 7,
+    "cache_hits": 5,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0013",
+    "crashed": false,
+    "wall_ms": 4831.292125003529,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O404": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O410": {
+        "customer": "Asha",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O413": {
+        "customer": "Jaya",
+        "item": "lamp",
+        "paid": 125,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O418": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O422": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "lamp": 20,
+       "mug": 16
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1621,
+    "tokens_out": 66,
+    "cost_usd": 0.000294535516,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0023",
+    "crashed": false,
+    "wall_ms": 3877.1248339908198,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O656": {
+        "customer": "Jaya",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "shipped"
+       },
+       "O659": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O662": {
+        "customer": "Hana",
+        "item": "desk mat",
+        "paid": 54,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O673": {
+        "customer": "Emeka",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 7,
+       "notebook": 18,
+       "water bottle": 15
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1114,
+    "tokens_out": 59,
+    "cost_usd": 0.000195627848,
+    "provider_calls": 3,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0025",
+    "crashed": false,
+    "wall_ms": 10109.034499997506,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O658": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "shipped"
+       },
+       "O660": {
+        "customer": "Hana",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Divya",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O667": {
+        "customer": "Jaya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O673": {
+        "customer": "Bilal",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 9,
+       "lamp": 4,
+       "mug": 18
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3704,
+    "tokens_out": 145,
+    "cost_usd": 0.000729471107,
+    "provider_calls": 7,
+    "cache_hits": 5,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0026",
+    "crashed": false,
+    "wall_ms": 9483.980000004522,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O287": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "delivered"
+       },
+       "O292": {
+        "customer": "Chen",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O297": {
+        "customer": "Bilal",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O300": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O304": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 17,
+       "mug": 12,
+       "water bottle": 14
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3608,
+    "tokens_out": 130,
+    "cost_usd": 0.000709361102,
+    "provider_calls": 7,
+    "cache_hits": 5,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0027",
+    "crashed": false,
+    "wall_ms": 9671.346542003448,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O711": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 75,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O712": {
+        "customer": "Emeka",
+        "item": "keyboard",
+        "paid": 150,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O718": {
+        "customer": "Hana",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O721": {
+        "customer": "Bilal",
+        "item": "headphones",
+        "paid": 300,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O724": {
+        "customer": "Goran",
+        "item": "keyboard",
+        "paid": 375,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "lamp": 25
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "keyboard": 16,
+       "lamp": 4
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3705,
+    "tokens_out": 131,
+    "cost_usd": 0.00072592194,
+    "provider_calls": 7,
+    "cache_hits": 5,
+    "retries": 0,
+    "slept_s": 0.0
+   }
+  ],
+  "sequential_again": [
+   {
+    "task_id": "shop_0000",
+    "crashed": false,
+    "wall_ms": 10438.617874999181,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O401": {
+        "customer": "Hana",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O407": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O413": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O415": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O421": {
+        "customer": "Farah",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 13,
+       "lamp": 7,
+       "water bottle": 18
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3589,
+    "tokens_out": 121,
+    "cost_usd": 0.0007589055000000001,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0003",
+    "crashed": false,
+    "wall_ms": 5387.724250002066,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O302": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O305": {
+        "customer": "Divya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O307": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O309": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O310": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 12,
+       "mug": 19,
+       "water bottle": 12
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1697,
+    "tokens_out": 88,
+    "cost_usd": 0.00037728524999999997,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0006",
+    "crashed": false,
+    "wall_ms": 8338.066583004547,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O300": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O304": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O311": {
+        "customer": "Ivan",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O313": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O318": {
+        "customer": "Ivan",
+        "item": "notebook",
+        "paid": 15,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "keyboard": 75,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "keyboard": 7,
+       "notebook": 13,
+       "water bottle": 5
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 2965,
+    "tokens_out": 127,
+    "cost_usd": 0.0006431610000000001,
+    "provider_calls": 6,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0008",
+    "crashed": false,
+    "wall_ms": 9472.831124992808,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O142": {
+        "customer": "Jaya",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O146": {
+        "customer": "Asha",
+        "item": "keyboard",
+        "paid": 225,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O148": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O155": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 48,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O156": {
+        "customer": "Chen",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 11,
+       "keyboard": 4,
+       "water bottle": 13
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3596,
+    "tokens_out": 127,
+    "cost_usd": 0.00076383975,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0011",
+    "crashed": false,
+    "wall_ms": 9483.416207993287,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O752": {
+        "customer": "Emeka",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O758": {
+        "customer": "Hana",
+        "item": "headphones",
+        "paid": 120,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O764": {
+        "customer": "Ivan",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O767": {
+        "customer": "Emeka",
+        "item": "desk mat",
+        "paid": 90,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O768": {
+        "customer": "Farah",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "headphones": 60,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 13,
+       "headphones": 18,
+       "mug": 19
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3861,
+    "tokens_out": 156,
+    "cost_usd": 0.00083189925,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0013",
+    "crashed": false,
+    "wall_ms": 5548.782375000883,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O404": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O410": {
+        "customer": "Asha",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O413": {
+        "customer": "Jaya",
+        "item": "lamp",
+        "paid": 125,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O418": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O422": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "lamp": 20,
+       "mug": 16
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1645,
+    "tokens_out": 73,
+    "cost_usd": 0.0003583515,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0023",
+    "crashed": false,
+    "wall_ms": 5629.861291992711,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O656": {
+        "customer": "Jaya",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "shipped"
+       },
+       "O659": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O662": {
+        "customer": "Hana",
+        "item": "desk mat",
+        "paid": 54,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O673": {
+        "customer": "Emeka",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 7,
+       "notebook": 18,
+       "water bottle": 15
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1668,
+    "tokens_out": 89,
+    "cost_usd": 0.00037233825000000003,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0025",
+    "crashed": false,
+    "wall_ms": 7060.919875002583,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O658": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "shipped"
+       },
+       "O660": {
+        "customer": "Hana",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Divya",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O667": {
+        "customer": "Jaya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O673": {
+        "customer": "Bilal",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 9,
+       "lamp": 4,
+       "mug": 18
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 2239,
+    "tokens_out": 102,
+    "cost_usd": 0.00048933225,
+    "provider_calls": 5,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0026",
+    "crashed": false,
+    "wall_ms": 13812.84808300552,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O287": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "delivered"
+       },
+       "O292": {
+        "customer": "Chen",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O297": {
+        "customer": "Bilal",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O300": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O304": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 17,
+       "mug": 12,
+       "water bottle": 14
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3656,
+    "tokens_out": 137,
+    "cost_usd": 0.00078130725,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0027",
+    "crashed": false,
+    "wall_ms": 9778.742374997819,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O711": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 75,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O712": {
+        "customer": "Emeka",
+        "item": "keyboard",
+        "paid": 150,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O718": {
+        "customer": "Hana",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O721": {
+        "customer": "Bilal",
+        "item": "headphones",
+        "paid": 300,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O724": {
+        "customer": "Goran",
+        "item": "keyboard",
+        "paid": 375,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "lamp": 25
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "keyboard": 16,
+       "lamp": 4
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3657,
+    "tokens_out": 123,
+    "cost_usd": 0.000773109,
+    "provider_calls": 7,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   }
+  ],
+  "cache_only_cold": [
+   {
+    "task_id": "shop_0000",
+    "crashed": false,
+    "wall_ms": 9633.88350000605,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O401": {
+        "customer": "Hana",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O407": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O413": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O415": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O421": {
+        "customer": "Farah",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 13,
+       "lamp": 7,
+       "water bottle": 18
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3589,
+    "tokens_out": 127,
+    "cost_usd": 0.0007625010000000001,
+    "provider_calls": 7,
+    "cache_hits": 4,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0003",
+    "crashed": false,
+    "wall_ms": 9676.136624999344,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O302": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O305": {
+        "customer": "Divya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O307": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O309": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O310": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 12,
+       "mug": 19,
+       "water bottle": 12
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3664,
+    "tokens_out": 123,
+    "cost_usd": 0.00077444775,
+    "provider_calls": 7,
+    "cache_hits": 5,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0006",
+    "crashed": false,
+    "wall_ms": 8199.448708997807,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O300": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O304": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O311": {
+        "customer": "Ivan",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O313": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O318": {
+        "customer": "Ivan",
+        "item": "notebook",
+        "paid": 15,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "keyboard": 75,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "keyboard": 7,
+       "notebook": 13,
+       "water bottle": 5
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 2965,
+    "tokens_out": 127,
+    "cost_usd": 0.0006431610000000001,
+    "provider_calls": 6,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0008",
+    "crashed": false,
+    "wall_ms": 5336.972917008097,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O142": {
+        "customer": "Jaya",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O146": {
+        "customer": "Asha",
+        "item": "keyboard",
+        "paid": 225,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O148": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O155": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 48,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O156": {
+        "customer": "Chen",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 11,
+       "keyboard": 4,
+       "water bottle": 13
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1628,
+    "tokens_out": 67,
+    "cost_usd": 0.00035150474999999997,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0011",
+    "crashed": false,
+    "wall_ms": 9263.014915995882,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O752": {
+        "customer": "Emeka",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O758": {
+        "customer": "Hana",
+        "item": "headphones",
+        "paid": 120,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O764": {
+        "customer": "Ivan",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O767": {
+        "customer": "Emeka",
+        "item": "desk mat",
+        "paid": 90,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O768": {
+        "customer": "Farah",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "headphones": 60,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 13,
+       "headphones": 18,
+       "mug": 19
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3759,
+    "tokens_out": 139,
+    "cost_usd": 0.0008022045,
+    "provider_calls": 7,
+    "cache_hits": 5,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0013",
+    "crashed": false,
+    "wall_ms": 5536.856167003862,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O404": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O410": {
+        "customer": "Asha",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O413": {
+        "customer": "Jaya",
+        "item": "lamp",
+        "paid": 125,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O418": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O422": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "lamp": 20,
+       "mug": 16
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1642,
+    "tokens_out": 72,
+    "cost_usd": 0.0003571785,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0023",
+    "crashed": false,
+    "wall_ms": 6390.232417004881,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O656": {
+        "customer": "Jaya",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "shipped"
+       },
+       "O659": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O662": {
+        "customer": "Hana",
+        "item": "desk mat",
+        "paid": 54,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O673": {
+        "customer": "Emeka",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 7,
+       "notebook": 18,
+       "water bottle": 15
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 1668,
+    "tokens_out": 91,
+    "cost_usd": 0.00037353675000000003,
+    "provider_calls": 4,
+    "cache_hits": 0,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0025",
+    "crashed": false,
+    "wall_ms": 9701.271208003163,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O658": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "shipped"
+       },
+       "O660": {
+        "customer": "Hana",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Divya",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O667": {
+        "customer": "Jaya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O673": {
+        "customer": "Bilal",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 9,
+       "lamp": 4,
+       "mug": 18
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3644,
+    "tokens_out": 135,
+    "cost_usd": 0.0007778137500000001,
+    "provider_calls": 7,
+    "cache_hits": 4,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0026",
+    "crashed": false,
+    "wall_ms": 10037.327208992792,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O287": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "delivered"
+       },
+       "O292": {
+        "customer": "Chen",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O297": {
+        "customer": "Bilal",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O300": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O304": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 17,
+       "mug": 12,
+       "water bottle": 14
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3656,
+    "tokens_out": 137,
+    "cost_usd": 0.00078130725,
+    "provider_calls": 7,
+    "cache_hits": 5,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0027",
+    "crashed": false,
+    "wall_ms": 9634.474792008405,
+    "answer": {
+     "reply": "",
+     "db": {
+      "orders": {
+       "O711": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 75,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O712": {
+        "customer": "Emeka",
+        "item": "keyboard",
+        "paid": 150,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O718": {
+        "customer": "Hana",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O721": {
+        "customer": "Bilal",
+        "item": "headphones",
+        "paid": 300,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O724": {
+        "customer": "Goran",
+        "item": "keyboard",
+        "paid": 375,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "lamp": 25
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "keyboard": 16,
+       "lamp": 4
+      }
+     }
+    },
+    "passed": false,
+    "tokens_in": 3657,
+    "tokens_out": 123,
+    "cost_usd": 0.000773109,
+    "provider_calls": 7,
+    "cache_hits": 5,
+    "retries": 0,
+    "slept_s": 0.0
+   }
+  ],
+  "cache_only_warm": [
+   {
+    "task_id": "shop_0000",
+    "crashed": false,
+    "wall_ms": 115.79887500556652,
+    "answer": {
+     "db": {
+      "orders": {
+       "O401": {
+        "customer": "Hana",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O407": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O413": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O415": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O421": {
+        "customer": "Farah",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 13,
+       "lamp": 7,
+       "water bottle": 18
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 21,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0003",
+    "crashed": false,
+    "wall_ms": 107.74687500088476,
+    "answer": {
+     "db": {
+      "orders": {
+       "O302": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O305": {
+        "customer": "Divya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O307": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O309": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O310": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 12,
+       "mug": 19,
+       "water bottle": 12
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 21,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0006",
+    "crashed": false,
+    "wall_ms": 79.53804099815898,
+    "answer": {
+     "db": {
+      "orders": {
+       "O300": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O304": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O311": {
+        "customer": "Ivan",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O313": {
+        "customer": "Hana",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O318": {
+        "customer": "Ivan",
+        "item": "notebook",
+        "paid": 15,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "keyboard": 75,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "keyboard": 7,
+       "notebook": 13,
+       "water bottle": 5
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 17,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0008",
+    "crashed": false,
+    "wall_ms": 40.82433400617447,
+    "answer": {
+     "db": {
+      "orders": {
+       "O142": {
+        "customer": "Jaya",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O146": {
+        "customer": "Asha",
+        "item": "keyboard",
+        "paid": 225,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O148": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O155": {
+        "customer": "Hana",
+        "item": "water bottle",
+        "paid": 48,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O156": {
+        "customer": "Chen",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 11,
+       "keyboard": 4,
+       "water bottle": 13
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 11,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0011",
+    "crashed": false,
+    "wall_ms": 106.11604100267868,
+    "answer": {
+     "db": {
+      "orders": {
+       "O752": {
+        "customer": "Emeka",
+        "item": "mug",
+        "paid": 40,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O758": {
+        "customer": "Hana",
+        "item": "headphones",
+        "paid": 120,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O764": {
+        "customer": "Ivan",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O767": {
+        "customer": "Emeka",
+        "item": "desk mat",
+        "paid": 90,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O768": {
+        "customer": "Farah",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "headphones": 60,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 13,
+       "headphones": 18,
+       "mug": 19
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 21,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0013",
+    "crashed": false,
+    "wall_ms": 39.685707990429364,
+    "answer": {
+     "db": {
+      "orders": {
+       "O404": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O410": {
+        "customer": "Asha",
+        "item": "lamp",
+        "paid": 50,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O413": {
+        "customer": "Jaya",
+        "item": "lamp",
+        "paid": 125,
+        "qty": 5,
+        "status": "delivered"
+       },
+       "O418": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O422": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "lamp": 20,
+       "mug": 16
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 11,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0023",
+    "crashed": false,
+    "wall_ms": 39.39808299764991,
+    "answer": {
+     "db": {
+      "orders": {
+       "O656": {
+        "customer": "Jaya",
+        "item": "notebook",
+        "paid": 20,
+        "qty": 4,
+        "status": "shipped"
+       },
+       "O659": {
+        "customer": "Farah",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O662": {
+        "customer": "Hana",
+        "item": "desk mat",
+        "paid": 54,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Chen",
+        "item": "water bottle",
+        "paid": 36,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O673": {
+        "customer": "Emeka",
+        "item": "notebook",
+        "paid": 25,
+        "qty": 5,
+        "status": "placed"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "notebook": 5,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 7,
+       "notebook": 18,
+       "water bottle": 15
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 11,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0025",
+    "crashed": false,
+    "wall_ms": 104.6560840040911,
+    "answer": {
+     "db": {
+      "orders": {
+       "O658": {
+        "customer": "Asha",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "shipped"
+       },
+       "O660": {
+        "customer": "Hana",
+        "item": "mug",
+        "paid": 16,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O666": {
+        "customer": "Divya",
+        "item": "lamp",
+        "paid": 100,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O667": {
+        "customer": "Jaya",
+        "item": "backpack",
+        "paid": 200,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O673": {
+        "customer": "Bilal",
+        "item": "backpack",
+        "paid": 80,
+        "qty": 2,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "backpack": 40,
+       "lamp": 25,
+       "mug": 8
+      },
+      "refunds": [],
+      "stock": {
+       "backpack": 9,
+       "lamp": 4,
+       "mug": 18
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 21,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0026",
+    "crashed": false,
+    "wall_ms": 104.46070799662266,
+    "answer": {
+     "db": {
+      "orders": {
+       "O287": {
+        "customer": "Goran",
+        "item": "mug",
+        "paid": 32,
+        "qty": 4,
+        "status": "delivered"
+       },
+       "O292": {
+        "customer": "Chen",
+        "item": "mug",
+        "paid": 24,
+        "qty": 3,
+        "status": "placed"
+       },
+       "O297": {
+        "customer": "Bilal",
+        "item": "desk mat",
+        "paid": 72,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O300": {
+        "customer": "Emeka",
+        "item": "water bottle",
+        "paid": 24,
+        "qty": 2,
+        "status": "delivered"
+       },
+       "O304": {
+        "customer": "Divya",
+        "item": "water bottle",
+        "paid": 60,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "desk mat": 18,
+       "mug": 8,
+       "water bottle": 12
+      },
+      "refunds": [],
+      "stock": {
+       "desk mat": 17,
+       "mug": 12,
+       "water bottle": 14
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 21,
+    "retries": 0,
+    "slept_s": 0.0
+   },
+   {
+    "task_id": "shop_0027",
+    "crashed": false,
+    "wall_ms": 102.43187499872874,
+    "answer": {
+     "db": {
+      "orders": {
+       "O711": {
+        "customer": "Chen",
+        "item": "lamp",
+        "paid": 75,
+        "qty": 3,
+        "status": "delivered"
+       },
+       "O712": {
+        "customer": "Emeka",
+        "item": "keyboard",
+        "paid": 150,
+        "qty": 2,
+        "status": "placed"
+       },
+       "O718": {
+        "customer": "Hana",
+        "item": "keyboard",
+        "paid": 300,
+        "qty": 4,
+        "status": "placed"
+       },
+       "O721": {
+        "customer": "Bilal",
+        "item": "headphones",
+        "paid": 300,
+        "qty": 5,
+        "status": "placed"
+       },
+       "O724": {
+        "customer": "Goran",
+        "item": "keyboard",
+        "paid": 375,
+        "qty": 5,
+        "status": "delivered"
+       }
+      },
+      "prices": {
+       "headphones": 60,
+       "keyboard": 75,
+       "lamp": 25
+      },
+      "refunds": [],
+      "stock": {
+       "headphones": 19,
+       "keyboard": 16,
+       "lamp": 4
+      }
+     },
+     "reply": ""
+    },
+    "passed": false,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "provider_calls": 0,
+    "cache_hits": 21,
+    "retries": 0,
+    "slept_s": 0.0
+   }
+  ]
+ },
+ "verdict": {
+  "decision": "BLOCK",
+  "reason": "10 task-condition(s) had structural regressions; declared invariant failed; no measured latency or cost win above the calibrated noise band",
+  "relation": "checker",
+  "split": "calib",
+  "condition": "cold",
+  "n_tasks": 10,
+  "unchanged": 0,
+  "fixed": 0,
+  "broken": 10,
+  "crashed": 0,
+  "stochastic_breaks": 0,
+  "d_latency_pct": 2.8203352787649463,
+  "d_tokens_pct": 5.666847752274875,
+  "d_cost_pct": -4.242568680276571,
+  "noise_band_pct": 40.02985066984505,
+  "invariant_failures": [
+   "shop_0000:observable_actions_changed",
+   "shop_0003:observable_actions_changed",
+   "shop_0006:observable_actions_changed",
+   "shop_0008:observable_actions_changed",
+   "shop_0011:observable_actions_changed",
+   "shop_0013:observable_actions_changed",
+   "shop_0023:observable_actions_changed",
+   "shop_0025:observable_actions_changed",
+   "shop_0026:observable_actions_changed",
+   "shop_0027:observable_actions_changed"
+  ],
+  "cold": {
+   "samples": 10,
+   "wall_p50_ms": 9064.430833503138,
+   "wall_p95_ms": 9912.07491890018,
+   "tokens_in": 3000.6,
+   "tokens_out": 111.5,
+   "tokens": 3112.1,
+   "cost_usd": 0.0005818795114,
+   "provider_calls": 6.0,
+   "cache_hit_rate": 0.1318181818181818,
+   "partial": [],
+   "before": {
+    "samples": 10,
+    "wall_p50_ms": 8815.795833506854,
+    "wall_p95_ms": 10504.649164708826,
+    "tokens_in": 2836.4,
+    "tokens_out": 108.8,
+    "tokens": 2945.2000000000003,
+    "cost_usd": 0.0006076599,
+    "provider_calls": 5.8,
+    "cache_hit_rate": 0.0,
+    "partial": []
+   },
+   "after": {
+    "samples": 10,
+    "wall_p50_ms": 9064.430833503138,
+    "wall_p95_ms": 9912.07491890018,
+    "tokens_in": 3000.6,
+    "tokens_out": 111.5,
+    "tokens": 3112.1,
+    "cost_usd": 0.0005818795114,
+    "provider_calls": 6.0,
+    "cache_hit_rate": 0.1318181818181818,
+    "partial": []
+   },
+   "d_latency_pct": 2.8203352787649463,
+   "d_tokens_pct": 5.666847752274875,
+   "d_cost_pct": -4.242568680276571
+  },
+  "warm": null,
+  "accuracy_before": 0.0,
+  "accuracy_after": 0.0,
+  "accuracy_delta_pp": 0.0,
+  "reportable": false
+ },
+ "repeat_flips": {
+  "broke": 0,
+  "fixed": 0,
+  "tasks": 10
+ },
+ "waits": {
+  "sequential": {
+   "retries": 0,
+   "slept_s": 0.0,
+   "runs_hit": 0
+  },
+  "optimized": {
+   "retries": 0,
+   "slept_s": 0.0,
+   "runs_hit": 0
+  },
+  "sequential_again": {
+   "retries": 0,
+   "slept_s": 0.0,
+   "runs_hit": 0
+  },
+  "cache_only_cold": {
+   "retries": 0,
+   "slept_s": 0.0,
+   "runs_hit": 0
+  },
+  "cache_only_warm": {
+   "retries": 0,
+   "slept_s": 0.0,
+   "runs_hit": 0
+  }
+ },
+ "per_task": [
+  {
+   "task_id": "shop_0000",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  },
+  {
+   "task_id": "shop_0003",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  },
+  {
+   "task_id": "shop_0006",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  },
+  {
+   "task_id": "shop_0008",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  },
+  {
+   "task_id": "shop_0011",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  },
+  {
+   "task_id": "shop_0013",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  },
+  {
+   "task_id": "shop_0023",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  },
+  {
+   "task_id": "shop_0025",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  },
+  {
+   "task_id": "shop_0026",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  },
+  {
+   "task_id": "shop_0027",
+   "cold": true,
+   "repeat": 0,
+   "status": "broken",
+   "equivalent": false,
+   "before_passed": false,
+   "after_passed": false,
+   "invariant_failures": [
+    "observable_actions_changed"
+   ],
+   "error": null,
+   "sufficient": true
+  }
+ ],
+ "errors": [],
+ "if_repeat_noise_allowed": "BLOCK",
+ "proposed_net_verdict": {
+  "rule": "net-1",
+  "frozen_on": "2026-11-01",
+  "in_force": false,
+  "decision": "BLOCK",
+  "reasons": [
+   "declared invariant failed",
+   "no measured latency or cost win above the calibrated noise band",
+   "10 broken task(s) also changed side effects or failed an invariant: shop_0000, shop_0003, shop_0006, shop_0008, shop_0011",
+   "accuracy fell: 10 broken against 0 fixed",
+   "10 of 10 answers changed against 0 of 10 when the original simply ran again (p = 0.000 < 0.05): more churn than noise"
+  ],
+  "relation": "checker",
+  "split": "calib",
+  "condition": "cold",
+  "tasks": 10,
+  "fixed": 0,
+  "broken": 10,
+  "net": -10,
+  "churn": 10,
+  "repeat_churn": 0,
+  "repeat_tasks": 10,
+  "p_churn_above_repeat": 5.412544112234515e-06,
+  "p_mcnemar": 0.001953125,
+  "alpha": 0.05
+ },
+ "ledger": {
+  "spent": {
+   "runs": 61,
+   "tokens": 152887.0,
+   "cost_usd": 0.030962126613999996,
+   "wall_ms": 417098.5179190466
+  },
+  "saved_per_run": {
+   "tokens": -166.9000000000001,
+   "cost_usd": 2.5780388600000147e-05,
+   "wall_ms": 68.5282291015028
+  },
+  "break_even": {
+   "tokens": {
+    "runs": null,
+    "never": true
+   },
+   "cost": {
+    "runs": 1201,
+    "never": false
+   },
+   "wall": {
+    "runs": 6087,
+    "never": false
+   }
+  },
+  "fake_provider": false
+ }
+}

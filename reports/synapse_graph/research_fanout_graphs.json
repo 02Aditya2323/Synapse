@@ -1,0 +1,801 @@
+{
+ "before": {
+  "id": "g_research_fanout_7c13fd248a",
+  "sir_version": 1,
+  "name": "research_fanout",
+  "nodes": [
+   {
+    "id": "n_in",
+    "kind": "transform",
+    "target": "workflow_input",
+    "args": {},
+    "outputs": [
+     "question",
+     "paragraphs"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "types": {
+      "question": "str",
+      "paragraphs": "list"
+     }
+    }
+   },
+   {
+    "id": "n0",
+    "kind": "model",
+    "target": "agent-zg",
+    "args": {
+     "question": {
+      "node": "n_in",
+      "output": "question"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "seeded",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_plan_prompt"
+    }
+   },
+   {
+    "id": "n1",
+    "kind": "transform",
+    "target": "research_fanout.parse_plan",
+    "args": {
+     "text": {
+      "node": "n0",
+      "output": "value"
+     },
+     "question": {
+      "node": "n_in",
+      "output": "question"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_parse_plan"
+    }
+   },
+   {
+    "id": "n2",
+    "kind": "retrieval",
+    "target": "research_fanout.search",
+    "args": {
+     "query": {
+      "node": "n1",
+      "output": "value"
+     },
+     "paragraphs": {
+      "node": "n_in",
+      "output": "paragraphs"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "read",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": 3600.0,
+    "region": "r_map1",
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_search"
+    }
+   },
+   {
+    "id": "n3",
+    "kind": "model",
+    "target": "agent-zg",
+    "args": {
+     "question": {
+      "node": "n_in",
+      "output": "question"
+     },
+     "docs": {
+      "node": "n2",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "seeded",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": "r_map1",
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_summarize_prompt"
+    }
+   },
+   {
+    "id": "n4",
+    "kind": "transform",
+    "target": "research_fanout.parse_note",
+    "args": {
+     "text": {
+      "node": "n3",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": "r_map1",
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_parse_note"
+    }
+   },
+   {
+    "id": "n5",
+    "kind": "model",
+    "target": "agent-zg",
+    "args": {
+     "question": {
+      "node": "n_in",
+      "output": "question"
+     },
+     "notes": {
+      "node": "n4",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "seeded",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_synthesize_prompt",
+     "gathers": [
+      "notes"
+     ]
+    }
+   },
+   {
+    "id": "n6",
+    "kind": "transform",
+    "target": "research_fanout.parse_answer",
+    "args": {
+     "text": {
+      "node": "n5",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_parse_answer"
+    }
+   }
+  ],
+  "regions": [
+   {
+    "id": "r_map1",
+    "kind": "map",
+    "body": [
+     "n2",
+     "n3",
+     "n4"
+    ],
+    "condition": null,
+    "max_iterations": null,
+    "over": {
+     "node": "n1",
+     "output": "value"
+    },
+    "meta": {}
+   }
+  ],
+  "inputs": {
+   "question": "str",
+   "paragraphs": "list"
+  },
+  "outputs": {
+   "result": {
+    "node": "n6",
+    "output": "value"
+   }
+  },
+  "derived_from": null,
+  "pipeline": [],
+  "created_at": "2026-11-05T23:49:10.661708+00:00",
+  "meta": {
+   "frontend": "dsl",
+   "input_defaults": {}
+  }
+ },
+ "after": {
+  "id": "g_research_fanout_7c13fd248a",
+  "sir_version": 1,
+  "name": "research_fanout",
+  "nodes": [
+   {
+    "id": "n_in",
+    "kind": "transform",
+    "target": "workflow_input",
+    "args": {},
+    "outputs": [
+     "question",
+     "paragraphs"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "types": {
+      "question": "str",
+      "paragraphs": "list"
+     }
+    }
+   },
+   {
+    "id": "n0",
+    "kind": "model",
+    "target": "agent-zg-lite",
+    "args": {
+     "question": {
+      "node": "n_in",
+      "output": "question"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "seeded",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_plan_prompt",
+     "memoize": true,
+     "downgraded": {
+      "from": "agent-zg",
+      "to": "agent-zg-lite"
+     }
+    }
+   },
+   {
+    "id": "n1",
+    "kind": "transform",
+    "target": "research_fanout.parse_plan",
+    "args": {
+     "text": {
+      "node": "n0",
+      "output": "value"
+     },
+     "question": {
+      "node": "n_in",
+      "output": "question"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_parse_plan",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n2",
+    "kind": "retrieval",
+    "target": "research_fanout.search",
+    "args": {
+     "query": {
+      "node": "n1",
+      "output": "value"
+     },
+     "paragraphs": {
+      "node": "n_in",
+      "output": "paragraphs"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "read",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": 3600.0,
+    "region": "r_map1",
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_search",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n3",
+    "kind": "model",
+    "target": "agent-zg",
+    "args": {
+     "question": {
+      "node": "n_in",
+      "output": "question"
+     },
+     "docs": {
+      "node": "n2",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "seeded",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": "r_map1",
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_summarize_prompt",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n4",
+    "kind": "transform",
+    "target": "research_fanout.parse_note",
+    "args": {
+     "text": {
+      "node": "n3",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": "r_map1",
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_parse_note",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n5",
+    "kind": "model",
+    "target": "agent-zg",
+    "args": {
+     "question": {
+      "node": "n_in",
+      "output": "question"
+     },
+     "notes": {
+      "node": "n4",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "seeded",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_synthesize_prompt",
+     "gathers": [
+      "notes"
+     ],
+     "memoize": true
+    }
+   },
+   {
+    "id": "n6",
+    "kind": "transform",
+    "target": "research_fanout.parse_answer",
+    "args": {
+     "text": {
+      "node": "n5",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "meta": {
+     "impl": "research_fanout_parse_answer",
+     "memoize": true
+    }
+   }
+  ],
+  "regions": [
+   {
+    "id": "r_map1",
+    "kind": "map",
+    "body": [
+     "n2",
+     "n3",
+     "n4"
+    ],
+    "condition": null,
+    "max_iterations": null,
+    "over": {
+     "node": "n1",
+     "output": "value"
+    },
+    "meta": {}
+   }
+  ],
+  "inputs": {
+   "question": "str",
+   "paragraphs": "list"
+  },
+  "outputs": {
+   "result": {
+    "node": "n6",
+    "output": "value"
+   }
+  },
+  "derived_from": "g_research_fanout_7c13fd248a",
+  "pipeline": [
+   "memoize",
+   "parallelize",
+   "downgrade"
+  ],
+  "created_at": "2026-11-05T23:49:10.675648+00:00",
+  "meta": {
+   "frontend": "dsl",
+   "input_defaults": {},
+   "max_concurrency": 8,
+   "parallel_groups": [],
+   "parallel_maps": [
+    "r_map1"
+   ]
+  }
+ },
+ "passes": [
+  {
+   "pass_name": "constfold",
+   "applied": false,
+   "transformations": [],
+   "findings": [],
+   "estimate": {
+    "d_latency_ms": 0.0,
+    "d_tokens": 0,
+    "d_cost_usd": null,
+    "risk": 0.0,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "no pure deterministic transform here has all-literal arguments"
+   },
+   "refused": null
+  },
+  {
+   "pass_name": "dce",
+   "applied": false,
+   "transformations": [],
+   "findings": [],
+   "estimate": {
+    "d_latency_ms": 0.0,
+    "d_tokens": 0,
+    "d_cost_usd": null,
+    "risk": 0.0,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "every node contributes to an output or to an effect"
+   },
+   "refused": null
+  },
+  {
+   "pass_name": "context_prune",
+   "applied": false,
+   "transformations": [],
+   "findings": [
+    {
+     "node": "n3",
+     "precondition": "prompt is inspectable",
+     "message": "agent-zg's prompt could not be rendered with probe values in this process, so which arguments it reads is unknown and nothing is pruned.",
+     "pass_name": "context_prune"
+    },
+    {
+     "node": "n5",
+     "precondition": "prompt is inspectable",
+     "message": "agent-zg's prompt could not be rendered with probe values in this process, so which arguments it reads is unknown and nothing is pruned.",
+     "pass_name": "context_prune"
+    }
+   ],
+   "estimate": {
+    "d_latency_ms": 0.0,
+    "d_tokens": 0,
+    "d_cost_usd": null,
+    "risk": 0.0,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "every model call in this graph reads all of its arguments"
+   },
+   "refused": null
+  },
+  {
+   "pass_name": "cse",
+   "applied": false,
+   "transformations": [],
+   "findings": [],
+   "estimate": {
+    "d_latency_ms": 0.0,
+    "d_tokens": 0,
+    "d_cost_usd": null,
+    "risk": 0.0,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "no two nodes in this graph compute the same thing"
+   },
+   "refused": null
+  },
+  {
+   "pass_name": "loop_cutoff",
+   "applied": false,
+   "transformations": [],
+   "findings": [],
+   "estimate": {
+    "d_latency_ms": 0.0,
+    "d_tokens": 0,
+    "d_cost_usd": null,
+    "risk": 0.0,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "this graph has no loop region"
+   },
+   "refused": null
+  },
+  {
+   "pass_name": "memoize",
+   "applied": true,
+   "transformations": [
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n0"
+     ],
+     "nodes_after": [
+      "n0"
+     ],
+     "description": "n0 (agent-zg) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n1"
+     ],
+     "nodes_after": [
+      "n1"
+     ],
+     "description": "n1 (research_fanout.parse_plan) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n2"
+     ],
+     "nodes_after": [
+      "n2"
+     ],
+     "description": "n2 (research_fanout.search) may now be served from the cache when an entry is younger than 3600s, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n3"
+     ],
+     "nodes_after": [
+      "n3"
+     ],
+     "description": "n3 (agent-zg) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n4"
+     ],
+     "nodes_after": [
+      "n4"
+     ],
+     "description": "n4 (research_fanout.parse_note) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n5"
+     ],
+     "nodes_after": [
+      "n5"
+     ],
+     "description": "n5 (agent-zg) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n6"
+     ],
+     "nodes_after": [
+      "n6"
+     ],
+     "description": "n6 (research_fanout.parse_answer) is pure and may now be served from the cache, keyed on every argument"
+    }
+   ],
+   "findings": [],
+   "estimate": {
+    "d_latency_ms": 0.0,
+    "d_tokens": 0,
+    "d_cost_usd": null,
+    "risk": 0.1,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "7 node(s) are cacheable, but this graph has never run, so there is no measured hit rate to predict from"
+   },
+   "refused": null
+  },
+  {
+   "pass_name": "parallelize",
+   "applied": true,
+   "transformations": [
+    {
+     "pass_name": "parallelize",
+     "nodes_before": [
+      "n2",
+      "n3",
+      "n4"
+     ],
+     "nodes_after": [
+      "n2",
+      "n3",
+      "n4"
+     ],
+     "description": "3 node(s) in map region r_map1 now run concurrently per element (limit 8); the elements are independent by construction"
+    }
+   ],
+   "findings": [],
+   "estimate": {
+    "d_latency_ms": -0.0,
+    "d_tokens": 0,
+    "d_cost_usd": 0.0,
+    "risk": 0.02,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "up to 8 concurrent (limit 8); 0 independent group(s), 1 map region(s)"
+   },
+   "refused": null
+  },
+  {
+   "pass_name": "downgrade",
+   "applied": true,
+   "transformations": [
+    {
+     "pass_name": "downgrade",
+     "nodes_before": [
+      "n0"
+     ],
+     "nodes_after": [
+      "n0"
+     ],
+     "description": "n0 moved from agent-zg to agent-zg-lite; tested alone, and unverified until the firewall approves it on the test split"
+    }
+   ],
+   "findings": [
+    {
+     "node": "n0",
+     "precondition": "equivalence run on the corpus",
+     "message": "moving n0 from agent-zg to agent-zg-lite is a proposal, not a proof: a smaller model's competence cannot be read off the graph. The firewall's verdict on the test split decides whether it ships.",
+     "pass_name": "downgrade"
+    },
+    {
+     "node": "n3",
+     "precondition": "equivalence run on the corpus",
+     "message": "moving n3 from agent-zg to agent-zg-lite is a proposal, not a proof: a smaller model's competence cannot be read off the graph. The firewall's verdict on the test split decides whether it ships.",
+     "pass_name": "downgrade"
+    },
+    {
+     "node": "n5",
+     "precondition": "equivalence run on the corpus",
+     "message": "moving n5 from agent-zg to agent-zg-lite is a proposal, not a proof: a smaller model's competence cannot be read off the graph. The firewall's verdict on the test split decides whether it ships.",
+     "pass_name": "downgrade"
+    }
+   ],
+   "estimate": {
+    "d_latency_ms": 0.0,
+    "d_tokens": 0,
+    "d_cost_usd": null,
+    "risk": 0.35,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "proposes n0: agent-zg -> agent-zg-lite, one node at a time. Each node is tested alone; downgrading several at once needs one more confirming run."
+   },
+   "refused": null
+  }
+ ]
+}

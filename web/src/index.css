@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface-0: #121211;
+  --color-surface-1: #1a1a19;
+  --color-surface-2: #232321;
+  --color-line: #2f2f2c;
+  --color-ink: #f0efec;
+  --color-ink-2: #c3c2b7;
+  --color-ink-3: #8f8e86;
+  --color-before: #8f8e86;
+  --color-after: #3987e5;
+  --color-good: #0ca30c;
+  --color-warning: #fab219;
+  --color-serious: #ec835a;
+  --color-critical: #d03b3b;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+html, body, #root { height: 100%; }
+body { background: var(--color-surface-0); color: var(--color-ink); color-scheme: dark; }
+.num { font-variant-numeric: tabular-nums; }
+.react-flow__attribution { display: none; }

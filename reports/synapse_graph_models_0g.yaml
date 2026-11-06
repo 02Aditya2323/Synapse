@@ -1,0 +1,37 @@
+# Registry for running Synapse's graph workflows on 0G and Groq. Prices: 0G live catalog
+# (pricing_usd, fetched 6 Nov 2026) and Groq's listed prices.
+providers:
+  zerog:
+    base_url: https://router-api.0g.ai/v1
+    api_key_env: 0G_API_KEY
+  groq:
+    base_url: https://api.groq.com/openai/v1
+    api_key_env: GROQ_API_KEY
+models:
+  agent-zg:
+    provider: zerog
+    tag: qwen3.8-flash
+    params: { temperature: 0.0, seed: 7, extra_body: { enable_thinking: false } }
+    price_per_mtok: { in: 0.19125, out: 0.59925 }
+  agent-zg-lite:
+    provider: zerog
+    tag: qwen3.7-flash
+    params: { temperature: 0.0, seed: 7, extra_body: { enable_thinking: false } }
+    price_per_mtok: { in: 0.029167, out: 0.116667 }
+  agent-fast-groq:
+    provider: groq
+    tag: qwen/qwen3.8-27b
+    params: { temperature: 0.0, seed: 7 }
+    price_per_mtok: { in: 0.80, out: 4.00 }
+  agent-mini:
+    provider: zerog
+    tag: qwen3.7-flash
+    params: { temperature: 0.0, seed: 7, extra_body: { enable_thinking: false } }
+    price_per_mtok: { in: 0.029167, out: 0.116667 }
+defaults:
+  workflow_model: agent-zg
+  judge_model: agent-zg
+  downgrade_target: agent-zg-lite
+limits:
+  max_concurrency: 8
+  per_provider: { zerog: 8, groq: 6 }

@@ -11,6 +11,10 @@ results, capping runaway output, reusing identical read-only requests, and marki
 start of each prompt for 0G's prompt cache (cached tokens bill at about 11% of the input price,
 measured).
 
+A second layer works on the workflow graph: steps, their dependencies and their effects, with
+parallel scheduling, memoization and per-step model downgrade. Its 0G runs are in
+`reports/synapse_graph/`; the layer's code is being added to this package.
+
 Providers: 0G Compute's router and Groq, both through the OpenAI-compatible chat API. Results:
 [RESULTS.md](RESULTS.md).
 
@@ -52,3 +56,19 @@ synapse0g bench --agent math --model zg-main --calib 30 --test 50 --cap 1.5
 
 Reports land in `reports/`: a markdown summary and a JSON file with every call's request id,
 tokens and billed amount.
+
+## Dashboard
+
+```bash
+cd web && npm install && npm run build && cd ..
+synapse0g ui                # http://127.0.0.1:8000
+# or, while editing the UI:  synapse0g ui  and, in web/,  npm run dev  (http://localhost:5173)
+```
+
+It reads `reports/` through `/api/feed` (`synapse0g/showcase.py`) and shows three results: faster
+(research workflow on 0G), cheaper (maths agent on Groq) and refused (tau-bench retail on 0G).
+Each one has the before and after graph, every measure with its confidence interval, what the
+search tried, every task as fixed / unchanged / broken / crashed, the retail agent's actions, and
+where each cost figure comes from (0G's bill, or tokens x listed price). The run history lists every
+saved run, including those with no beneficial change and the invalid ones. If the API is down,
+the page says so and shows no numbers.

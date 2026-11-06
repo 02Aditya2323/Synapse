@@ -8,11 +8,18 @@ records, with 0G request ids, are in `reports/`.
 
 | Agent | Provider | Tasks | Result | Firewall |
 |---|---|---|---|---|
+| Research workflow graph (HotpotQA): plan, search each sub-question in parallel, summarise, answer | 0G `qwen3.8-flash` | 20 held-out | **1.99x faster (median per task, 11.87 → 6.00 s), 18% cheaper, 11% fewer tokens, 19/20 → 19/20** | APPROVE |
 | LangGraph maths agent (GSM8K) | Groq `gpt-oss-120b` | 12 held-out | **77.5% cheaper (95% CI 71–82%), 63% faster, 48% fewer tokens, 12/12 → 12/12** | APPROVE |
 | tau-bench retail (refunds, exchanges) | 0G `qwen3.8-flash` | 30 held-out | 70% cheaper and 24% faster, but **broke 5 tasks** (29 → 25) and made **more irreversible actions** (37 → 42) | **BLOCK** |
+| Code-review workflow graph, with a step moved to the cheaper model | 0G | 10 tuning | 72% cheaper, but 10/10 → 4/10 | **BLOCK** |
 
-The BLOCK is the demo's strongest moment: a large saving that looked fine on tuning tasks,
-refused because it broke answers and took extra money-moving actions.
+The research workflow's cost is measured tokens x 0G's listed price: that run did not store 0G's
+per-request bill, so no 0G credit saving is claimed from it. The tau-bench costs are 0G's own
+bill (1,129 of 1,129 requests billed; $0.36 billed vs $1.13 at list price, because 0G charges
+cached prompt tokens at about 11% of the input price).
+
+The BLOCKs are the demo's strongest moment: large savings refused because they broke answers or
+took extra money-moving actions.
 
 ## The tau-bench BLOCK, task by task
 
@@ -60,7 +67,7 @@ firewall blocked the policy, and the agent ships unchanged.
 
 ## Spend
 
-0G: $1.50 billed for these runs. Groq: $0.27.
+0G: $1.50 billed for the call-level runs, about $0.25 for the workflow-graph runs. Groq: $0.27.
 
 ## Third-party benchmarks
 

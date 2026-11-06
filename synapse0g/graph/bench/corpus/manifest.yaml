@@ -1,0 +1,37 @@
+# The task manifest: which workflow runs on which tasks.
+#
+# `py -3 -m bench.corpus.build` turns this into bench/corpus/<workflow>/tasks.jsonl.
+# Selection is the first `n` rows matching `filter`, in dataset order, so nobody can
+# cherry-pick and the same manifest always yields the same tasks. Splits are never
+# chosen here: they come from sha1(task_id) in bench/splits.py.
+#
+# n is the smallest round number giving every workflow at least 40 `test` tasks, the n in
+# docs/BENCHMARKS.md §7. Raised uniformly, and from the split sizes alone, never from results.
+# CORPUS FREEZE AT H15 (assignments/Radhesh.md): no changes to this file after that.
+
+research_fanout:
+  source: hotpotqa
+  filter: { type: comparison }  # "are X and Y ...": independent sub-queries are the natural shape
+  n: 260
+  checker: qa_f1
+
+rag_qa:
+  source: hotpotqa
+  filter: { type: bridge }      # each hop depends on the last, so context really does grow
+  n: 260
+  checker: qa_f1
+
+math_tools:
+  source: gsm8k
+  n: 260
+  checker: math_exact
+
+code_review:
+  source: review_generated      # generated: bench/corpus/review_tasks.py, real stdlib functions
+  n: 210
+  checker: review_file
+
+shop_ops:
+  source: shop_generated        # generated: bench/corpus/shop_tasks.py, seeded
+  n: 200
+  checker: ops_state

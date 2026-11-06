@@ -207,10 +207,20 @@ def models(_args) -> int:
     return 0
 
 
+def ui(args) -> int:
+    from synapse0g.server import serve
+
+    serve(args.port)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="synapse0g")
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("models").set_defaults(fn=models)
+    u = sub.add_parser("ui", help="serve the dashboard and its data")
+    u.add_argument("--port", type=int, default=8000)
+    u.set_defaults(fn=ui)
     b = sub.add_parser("bench")
     b.add_argument("--agent", choices=["research", "math", "retail"], required=True)
     b.add_argument("--user-model", default="zg-main", help="retail only: the simulated customer's model (never optimized)")
