@@ -1,0 +1,27 @@
+[
+ {
+  "file": "travel_planner.py",
+  "label": "Travel planner",
+  "inputs": "city=Kyoto"
+ },
+ {
+  "file": "research_brief.py",
+  "label": "Research brief",
+  "inputs": "topic=Compiler"
+ },
+ {
+  "file": "support_desk.py",
+  "label": "Support desk",
+  "inputs": "ticket=My blender arrived cracked and I want my money back"
+ },
+ {
+  "file": "code_review.py",
+  "label": "Code review crew",
+  "inputs": "code=def average(xs): return sum(xs) / len(xs)"
+ },
+ {
+  "file": "market_desk.py",
+  "label": "Market desk",
+  "inputs": "coin=BTC"
+ }
+]

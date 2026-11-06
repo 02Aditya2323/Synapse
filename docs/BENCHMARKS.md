@@ -155,7 +155,7 @@ committed, so `synapse bench --report` publishes them from any checkout. They ar
    accuracy drop hidden in a different table is a lie of omission, and `early_exit` in
    particular trades one for the other by design.
 2. **Crashed executions are reported, never dropped.** A harness that silently discards
-   crashes reports fake reliability (`CLAUDE.md` rule 10).
+   crashes reports fake reliability (docs/CORRECTNESS.md).
 3. **`None` is printed as `—`, never as `0`.** An unreported token count is not zero.
 4. **Sample counts appear on every aggregate.** A p95 from three samples is labelled as
    such.

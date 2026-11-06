@@ -3,15 +3,14 @@
     py -3 -m bench.suite --workflow research_fanout --split train --n 10
 
 Every execution runs in BENCH mode, so external nodes are stubbed and irreversible ones
-refused. Crashes are counted separately and never enter latency or accuracy (CLAUDE.md
-rule 10). The projected provider calls are printed before anything starts, and a run over
+refused. Crashes are counted separately and never enter latency or accuracy (docs/CORRECTNESS.md). The projected provider calls are printed before anything starts, and a run over
 SYNAPSE_PROVIDER_CALL_BUDGET is refused (docs/BENCHMARKS.md §9).
 
 `optimized` is the graph after the default pass pipeline (`passes.base.run_pipeline`), which
 is application, not selection. Baselines are in bench/baselines.py; every row but
 `cache_only_warm` starts cold.
 
-Every run ends in a firewall verdict (CLAUDE.md rule 4). The noise band comes from running
+Every run ends in a firewall verdict (docs/CORRECTNESS.md). The noise band comes from running
 the unmodified graph twice on `train` or `calib`. `test` never measures its own: it reuses
 the band from `calib`, and refuses one that is missing, thin, or from another graph or
 model (docs/CORRECTNESS.md section 6).
@@ -180,7 +179,7 @@ def run_task(graph: Graph, task: Task, concurrency: int | None = None, cache: Ca
 
 
 def _run_task(graph: Graph, task: Task, concurrency: int | None, cache: Cache | None) -> dict[str, Any]:
-    """Any crash stays a crashed row with its error (CLAUDE.md rule 10), so one bad task
+    """Any crash stays a crashed row with its error (docs/CORRECTNESS.md), so one bad task
     cannot cost a whole run its verdict."""
     try:
         execution = run_graph_sync(graph, task_input=task.input, task_id=task.task_id, split=task.split,

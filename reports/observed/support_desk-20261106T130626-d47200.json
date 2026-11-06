@@ -1,0 +1,1007 @@
+{
+ "kind": "observed",
+ "workflow": "support_desk",
+ "run_id": "support_desk-20261106T130626-d47200",
+ "saved_at": "2026-11-06T07:36:40Z",
+ "calls": [
+  {
+   "model": "qwen3.7-flash",
+   "latency_ms": 2144.8,
+   "tokens_in": 41,
+   "tokens_out": 1,
+   "request_hash": "37a436d0254b9d5e"
+  },
+  {
+   "model": "qwen3.7-flash",
+   "latency_ms": 1448.2,
+   "tokens_in": 48,
+   "tokens_out": 28,
+   "request_hash": "3c0fe77d08c38fb7"
+  },
+  {
+   "model": "qwen3.7-flash",
+   "latency_ms": 1682.0,
+   "tokens_in": 67,
+   "tokens_out": 43,
+   "request_hash": "d59de349543083bd"
+  },
+  {
+   "model": "qwen3.7-flash",
+   "latency_ms": 1284.9,
+   "tokens_in": 43,
+   "tokens_out": 1,
+   "request_hash": "b2a9e3541fefd961"
+  },
+  {
+   "model": "qwen3.7-flash",
+   "latency_ms": 1249.9,
+   "tokens_in": 48,
+   "tokens_out": 29,
+   "request_hash": "3c0fe77d08c38fb7"
+  },
+  {
+   "model": "qwen3.7-flash",
+   "latency_ms": 1630.9,
+   "tokens_in": 70,
+   "tokens_out": 40,
+   "request_hash": "22b7b4432afe4edc"
+  },
+  {
+   "model": "qwen3.7-flash",
+   "latency_ms": 1372.4,
+   "tokens_in": 41,
+   "tokens_out": 1,
+   "request_hash": "58ca90c532ff021d"
+  },
+  {
+   "model": "qwen3.7-flash",
+   "latency_ms": 1261.4,
+   "tokens_in": 48,
+   "tokens_out": 28,
+   "request_hash": "3c0fe77d08c38fb7"
+  },
+  {
+   "model": "qwen3.7-flash",
+   "latency_ms": 1590.7,
+   "tokens_in": 67,
+   "tokens_out": 35,
+   "request_hash": "eb8ba75810c26912"
+  }
+ ],
+ "repeated_calls": 2,
+ "before": {
+  "id": "g_support_desk_d8b27b444a",
+  "sir_version": 1,
+  "name": "support_desk",
+  "nodes": [
+   {
+    "id": "n0",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "dd433532aba7d403ab1d976868602f3f45f95d4f5d92de7f91cc4793d0abf4cc"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 0
+    },
+    "meta": {
+     "recorded_latency_ms": 2144.7820000175852,
+     "recorded_tokens_in": 41,
+     "recorded_tokens_out": 1,
+     "label": "call 1"
+    }
+   },
+   {
+    "id": "n1",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "3626bc0ba20a59c6329f1645f197ecbc977ce7974fe986f1db6ec0061693a2af"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 1
+    },
+    "meta": {
+     "recorded_latency_ms": 1448.1824169924948,
+     "recorded_tokens_in": 48,
+     "recorded_tokens_out": 28,
+     "label": "call 2"
+    }
+   },
+   {
+    "id": "n2",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "0261ca34c8c512b38a2dd96e00989076540d91d97f0e87304e0a8b15a8b36744"
+     },
+     "from_n0": {
+      "node": "n0",
+      "output": "value"
+     },
+     "from_n1": {
+      "node": "n1",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 2
+    },
+    "meta": {
+     "recorded_latency_ms": 1681.9981659937184,
+     "recorded_tokens_in": 67,
+     "recorded_tokens_out": 43,
+     "label": "call 3"
+    }
+   },
+   {
+    "id": "n3",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "bdadef9ffeb203ec1c0ae0baea2fb216fde6bccb31f40e30fb39ba9d6abafdff"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 3
+    },
+    "meta": {
+     "recorded_latency_ms": 1284.8720829933882,
+     "recorded_tokens_in": 43,
+     "recorded_tokens_out": 1,
+     "label": "call 4"
+    }
+   },
+   {
+    "id": "n4",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "3626bc0ba20a59c6329f1645f197ecbc977ce7974fe986f1db6ec0061693a2af"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 4
+    },
+    "meta": {
+     "recorded_latency_ms": 1249.9443750130013,
+     "recorded_tokens_in": 48,
+     "recorded_tokens_out": 29,
+     "label": "call 5"
+    }
+   },
+   {
+    "id": "n5",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "34237241b645094e1f03234c5913da16411e9a23507456da0bc0d9aae95424ba"
+     },
+     "from_n3": {
+      "node": "n3",
+      "output": "value"
+     },
+     "from_n4": {
+      "node": "n4",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 5
+    },
+    "meta": {
+     "recorded_latency_ms": 1630.864582984941,
+     "recorded_tokens_in": 70,
+     "recorded_tokens_out": 40,
+     "label": "call 6"
+    }
+   },
+   {
+    "id": "n6",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "a21d6c1e4c34d6c3c304d02da57aa5093cd0ec7393d4ed11ff8141cce05b5850"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 6
+    },
+    "meta": {
+     "recorded_latency_ms": 1372.3663330019917,
+     "recorded_tokens_in": 41,
+     "recorded_tokens_out": 1,
+     "label": "call 7"
+    }
+   },
+   {
+    "id": "n7",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "3626bc0ba20a59c6329f1645f197ecbc977ce7974fe986f1db6ec0061693a2af"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 7
+    },
+    "meta": {
+     "recorded_latency_ms": 1261.372625012882,
+     "recorded_tokens_in": 48,
+     "recorded_tokens_out": 28,
+     "label": "call 8"
+    }
+   },
+   {
+    "id": "n8",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "1295609cf9478e2b3adeda3f70cb9c71d083b9a7aa9040b1d2664fec3dad02fa"
+     },
+     "from_n1": {
+      "node": "n1",
+      "output": "value"
+     },
+     "from_n6": {
+      "node": "n6",
+      "output": "value"
+     },
+     "from_n7": {
+      "node": "n7",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 8
+    },
+    "meta": {
+     "recorded_latency_ms": 1590.656541986391,
+     "recorded_tokens_in": 67,
+     "recorded_tokens_out": 35,
+     "label": "call 9"
+    }
+   }
+  ],
+  "regions": [],
+  "inputs": {},
+  "outputs": {
+   "result": {
+    "node": "n8",
+    "output": "value"
+   }
+  },
+  "derived_from": null,
+  "pipeline": [],
+  "created_at": "2026-11-06T07:36:40.638649+00:00",
+  "meta": {
+   "frontend": "lift",
+   "lifted_from": "support_desk-20261106T130626-d47200",
+   "n_steps": 9,
+   "assumed_staleness_s": 3600.0,
+   "effect_overrides": [],
+   "note": "Lifted from a recording. Effects were inferred, and anything unrecognised defaulted to `external`, so this graph optimizes less than a declared one would."
+  },
+  "edges": {
+   "data": [
+    {
+     "from": "n0",
+     "to": "n2",
+     "output": "value",
+     "arg": "from_n0"
+    },
+    {
+     "from": "n1",
+     "to": "n2",
+     "output": "value",
+     "arg": "from_n1"
+    },
+    {
+     "from": "n3",
+     "to": "n5",
+     "output": "value",
+     "arg": "from_n3"
+    },
+    {
+     "from": "n4",
+     "to": "n5",
+     "output": "value",
+     "arg": "from_n4"
+    },
+    {
+     "from": "n1",
+     "to": "n8",
+     "output": "value",
+     "arg": "from_n1"
+    },
+    {
+     "from": "n6",
+     "to": "n8",
+     "output": "value",
+     "arg": "from_n6"
+    },
+    {
+     "from": "n7",
+     "to": "n8",
+     "output": "value",
+     "arg": "from_n7"
+    }
+   ],
+   "effect": []
+  },
+  "n_nodes": 9
+ },
+ "after": {
+  "id": "g_support_desk_d8b27b444a",
+  "sir_version": 1,
+  "name": "support_desk",
+  "nodes": [
+   {
+    "id": "n0",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "dd433532aba7d403ab1d976868602f3f45f95d4f5d92de7f91cc4793d0abf4cc"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 0
+    },
+    "meta": {
+     "recorded_latency_ms": 2144.7820000175852,
+     "recorded_tokens_in": 41,
+     "recorded_tokens_out": 1,
+     "label": "call 1",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n1",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "3626bc0ba20a59c6329f1645f197ecbc977ce7974fe986f1db6ec0061693a2af"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 1
+    },
+    "meta": {
+     "recorded_latency_ms": 1448.1824169924948,
+     "recorded_tokens_in": 48,
+     "recorded_tokens_out": 28,
+     "label": "call 2",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n2",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "0261ca34c8c512b38a2dd96e00989076540d91d97f0e87304e0a8b15a8b36744"
+     },
+     "from_n0": {
+      "node": "n0",
+      "output": "value"
+     },
+     "from_n1": {
+      "node": "n1",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 2
+    },
+    "meta": {
+     "recorded_latency_ms": 1681.9981659937184,
+     "recorded_tokens_in": 67,
+     "recorded_tokens_out": 43,
+     "label": "call 3",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n3",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "bdadef9ffeb203ec1c0ae0baea2fb216fde6bccb31f40e30fb39ba9d6abafdff"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 3
+    },
+    "meta": {
+     "recorded_latency_ms": 1284.8720829933882,
+     "recorded_tokens_in": 43,
+     "recorded_tokens_out": 1,
+     "label": "call 4",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n5",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "34237241b645094e1f03234c5913da16411e9a23507456da0bc0d9aae95424ba"
+     },
+     "from_n3": {
+      "node": "n3",
+      "output": "value"
+     },
+     "from_n4": {
+      "node": "n1",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 5
+    },
+    "meta": {
+     "recorded_latency_ms": 1630.864582984941,
+     "recorded_tokens_in": 70,
+     "recorded_tokens_out": 40,
+     "label": "call 6",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n6",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "a21d6c1e4c34d6c3c304d02da57aa5093cd0ec7393d4ed11ff8141cce05b5850"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 6
+    },
+    "meta": {
+     "recorded_latency_ms": 1372.3663330019917,
+     "recorded_tokens_in": 41,
+     "recorded_tokens_out": 1,
+     "label": "call 7",
+     "memoize": true
+    }
+   },
+   {
+    "id": "n8",
+    "kind": "model",
+    "target": "qwen3.7-flash",
+    "args": {
+     "prompt_hash": {
+      "value": "1295609cf9478e2b3adeda3f70cb9c71d083b9a7aa9040b1d2664fec3dad02fa"
+     },
+     "from_n1": {
+      "node": "n1",
+      "output": "value"
+     },
+     "from_n6": {
+      "node": "n6",
+      "output": "value"
+     },
+     "from_n7": {
+      "node": "n1",
+      "output": "value"
+     }
+    },
+    "outputs": [
+     "value"
+    ],
+    "effect": "pure",
+    "determinism": "deterministic",
+    "reads": [],
+    "writes": [],
+    "cache_key_fields": null,
+    "staleness_s": null,
+    "region": null,
+    "profile": null,
+    "origin": {
+     "run": "support_desk-20261106T130626-d47200",
+     "step": 8
+    },
+    "meta": {
+     "recorded_latency_ms": 1590.656541986391,
+     "recorded_tokens_in": 67,
+     "recorded_tokens_out": 35,
+     "label": "call 9",
+     "memoize": true
+    }
+   }
+  ],
+  "regions": [],
+  "inputs": {},
+  "outputs": {
+   "result": {
+    "node": "n8",
+    "output": "value"
+   }
+  },
+  "derived_from": "g_support_desk_d8b27b444a",
+  "pipeline": [
+   "cse",
+   "memoize",
+   "parallelize"
+  ],
+  "created_at": "2026-11-06T07:36:40.658108+00:00",
+  "meta": {
+   "frontend": "lift",
+   "lifted_from": "support_desk-20261106T130626-d47200",
+   "n_steps": 9,
+   "assumed_staleness_s": 3600.0,
+   "effect_overrides": [],
+   "note": "Lifted from a recording. Effects were inferred, and anything unrecognised defaulted to `external`, so this graph optimizes less than a declared one would.",
+   "elided": {
+    "n4": "cse: collapsed into n1",
+    "n7": "cse: collapsed into n1"
+   },
+   "max_concurrency": 4,
+   "parallel_groups": [
+    [
+     "n0",
+     "n1",
+     "n3",
+     "n6"
+    ],
+    [
+     "n2",
+     "n5",
+     "n8"
+    ]
+   ],
+   "parallel_maps": []
+  },
+  "edges": {
+   "data": [
+    {
+     "from": "n0",
+     "to": "n2",
+     "output": "value",
+     "arg": "from_n0"
+    },
+    {
+     "from": "n1",
+     "to": "n2",
+     "output": "value",
+     "arg": "from_n1"
+    },
+    {
+     "from": "n3",
+     "to": "n5",
+     "output": "value",
+     "arg": "from_n3"
+    },
+    {
+     "from": "n1",
+     "to": "n5",
+     "output": "value",
+     "arg": "from_n4"
+    },
+    {
+     "from": "n1",
+     "to": "n8",
+     "output": "value",
+     "arg": "from_n1"
+    },
+    {
+     "from": "n6",
+     "to": "n8",
+     "output": "value",
+     "arg": "from_n6"
+    },
+    {
+     "from": "n1",
+     "to": "n8",
+     "output": "value",
+     "arg": "from_n7"
+    }
+   ],
+   "effect": []
+  },
+  "n_nodes": 7
+ },
+ "passes": [
+  {
+   "pass_name": "cse",
+   "applied": true,
+   "transformations": [
+    {
+     "pass_name": "cse",
+     "nodes_before": [
+      "n1",
+      "n4"
+     ],
+     "nodes_after": [
+      "n1"
+     ],
+     "description": "n4 had the same content hash as n1 (qwen3.7-flash '3626bc0ba20a59c6329f1645f197ecbc977ce7974fe986f1db6ec0061693a2af'); collapsed"
+    },
+    {
+     "pass_name": "cse",
+     "nodes_before": [
+      "n1",
+      "n7"
+     ],
+     "nodes_after": [
+      "n1"
+     ],
+     "description": "n7 had the same content hash as n1 (qwen3.7-flash '3626bc0ba20a59c6329f1645f197ecbc977ce7974fe986f1db6ec0061693a2af'); collapsed"
+    }
+   ],
+   "findings": [],
+   "estimate": {
+    "d_latency_ms": -0.0,
+    "d_tokens": 0,
+    "d_cost_usd": null,
+    "risk": 0.05,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "2 duplicate node(s) across 1 group(s)"
+   },
+   "refused": null
+  },
+  {
+   "pass_name": "memoize",
+   "applied": true,
+   "transformations": [
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n0"
+     ],
+     "nodes_after": [
+      "n0"
+     ],
+     "description": "n0 (qwen3.7-flash) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n1"
+     ],
+     "nodes_after": [
+      "n1"
+     ],
+     "description": "n1 (qwen3.7-flash) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n2"
+     ],
+     "nodes_after": [
+      "n2"
+     ],
+     "description": "n2 (qwen3.7-flash) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n3"
+     ],
+     "nodes_after": [
+      "n3"
+     ],
+     "description": "n3 (qwen3.7-flash) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n5"
+     ],
+     "nodes_after": [
+      "n5"
+     ],
+     "description": "n5 (qwen3.7-flash) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n6"
+     ],
+     "nodes_after": [
+      "n6"
+     ],
+     "description": "n6 (qwen3.7-flash) is pure and may now be served from the cache, keyed on every argument"
+    },
+    {
+     "pass_name": "memoize",
+     "nodes_before": [
+      "n8"
+     ],
+     "nodes_after": [
+      "n8"
+     ],
+     "description": "n8 (qwen3.7-flash) is pure and may now be served from the cache, keyed on every argument"
+    }
+   ],
+   "findings": [],
+   "estimate": {
+    "d_latency_ms": 0.0,
+    "d_tokens": 0,
+    "d_cost_usd": null,
+    "risk": 0.1,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "7 node(s) are cacheable, but this graph has never run, so there is no measured hit rate to predict from"
+   },
+   "refused": null
+  },
+  {
+   "pass_name": "parallelize",
+   "applied": true,
+   "transformations": [
+    {
+     "pass_name": "parallelize",
+     "nodes_before": [
+      "n0",
+      "n1",
+      "n3",
+      "n6"
+     ],
+     "nodes_after": [
+      "n0",
+      "n1",
+      "n3",
+      "n6"
+     ],
+     "description": "n0, n1, n3, n6 have no data or effect edge between them and now run concurrently (limit 4)"
+    },
+    {
+     "pass_name": "parallelize",
+     "nodes_before": [
+      "n2",
+      "n5",
+      "n8"
+     ],
+     "nodes_after": [
+      "n2",
+      "n5",
+      "n8"
+     ],
+     "description": "n2, n5, n8 have no data or effect edge between them and now run concurrently (limit 4)"
+    }
+   ],
+   "findings": [],
+   "estimate": {
+    "d_latency_ms": -0.0,
+    "d_tokens": 0,
+    "d_cost_usd": 0.0,
+    "risk": 0.02,
+    "confidence": 0.0,
+    "declines": false,
+    "note": "up to 4 concurrent (limit 8); 2 independent group(s), 0 map region(s)"
+   },
+   "refused": null
+  }
+ ],
+ "waste": {
+  "steps": 9,
+  "removable": [
+   {
+    "node": "n4",
+    "target": "qwen3.7-flash",
+    "reason": "cse: collapsed into n1"
+   },
+   {
+    "node": "n7",
+    "target": "qwen3.7-flash",
+    "reason": "cse: collapsed into n1"
+   }
+  ],
+  "tokens_in_removable": 96,
+  "tokens_out_removable": 57,
+  "serial_ms": 13665.039123996394,
+  "dependency_bound_ms": 3826.7801660113037,
+  "waiting_ms": 9838.25895798509,
+  "refused": [],
+  "rewrites": [
+   "n4 had the same content hash as n1 (qwen3.7-flash '3626bc0ba20a59c6329f1645f197ecbc977ce7974fe986f1db6ec0061693a2af'); collapsed",
+   "n7 had the same content hash as n1 (qwen3.7-flash '3626bc0ba20a59c6329f1645f197ecbc977ce7974fe986f1db6ec0061693a2af'); collapsed",
+   "n0 (qwen3.7-flash) computed a value nothing reads, and has effect pure, so removing it cannot change the result",
+   "n2 (qwen3.7-flash) computed a value nothing reads, and has effect pure, so removing it cannot change the result",
+   "n3 (qwen3.7-flash) computed a value nothing reads, and has effect pure, so removing it cannot change the result",
+   "n5 (qwen3.7-flash) computed a value nothing reads, and has effect pure, so removing it cannot change the result"
+  ]
+ },
+ "note": "Dependencies between calls are inferred from their text: a wrapper sees the calls, not the code between them. Compile the app to apply and verify the changes."
+}

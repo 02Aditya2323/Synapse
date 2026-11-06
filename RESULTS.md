@@ -8,6 +8,7 @@ records, with 0G request ids, are in `reports/`.
 
 | Agent | Provider | Tasks | Result | Firewall |
 |---|---|---|---|---|
+| **Supplier-check app** (plain LangGraph chain, 3 lines added): graph passes + per-call policy | 0G `qwen3.8-flash` | 20 held-out | **3.48x faster (median per task, 55.5 → 15.4 s), 72% cheaper billed (95% CI 71–74%), 20/20 → 20/20** | APPROVE |
 | Research workflow graph (HotpotQA): plan, search each sub-question in parallel, summarise, answer | 0G `qwen3.8-flash` | 20 held-out | **1.99x faster (median per task, 11.87 → 6.00 s), 18% cheaper, 11% fewer tokens, 19/20 → 19/20** | APPROVE |
 | LangGraph maths agent (GSM8K) | Groq `gpt-oss-120b` | 12 held-out | **77.5% cheaper (95% CI 71–82%), 63% faster, 48% fewer tokens, 12/12 → 12/12** | APPROVE |
 | tau-bench retail (refunds, exchanges) | 0G `qwen3.8-flash` | 30 held-out | 70% cheaper and 24% faster, but **broke 5 tasks** (29 → 25) and made **more irreversible actions** (37 → 42) | **BLOCK** |
@@ -20,6 +21,36 @@ cached prompt tokens at about 11% of the input price).
 
 The BLOCKs are the demo's strongest moment: large savings refused because they broke answers or
 took extra money-moving actions.
+
+## The supplier-check app, compiled
+
+`examples/supplier_agent.py` is an ordinary LangGraph app written as a chain: read the purchasing
+policy, look up quotes, screen reviews, check certificates, decide, place the order. Three lines
+connect it (`from synapse0g.openai import OpenAI`, `synapse0g.compile(...)`, `app.invoke(...)`).
+Tasks: 60 requests in a synthetic supplier marketplace (`synapse0g/agents/supplier_desk.py`), each with
+one right answer computed by code from the policy. Report: `reports/supplier_zg-main_2026-11-06T0719.json`.
+
+1. **Compile** (5 traced calls): the policy summary and the three lookups read nothing from each
+   other, so they run together; the policy summary is the same every time, so it is computed once
+   and reused; `place_order` is irreversible, so nothing moves, caches or repeats it, and it never
+   runs in a test.
+2. **Graph changes, 8 tuning tasks**: APPROVE (8/8 in all arms; 49% faster, 16% cheaper).
+3. **Per-call changes on top, 8 tuning tasks**: thinking off on quotes, certificates and decision;
+   decision and certificate steps routed to `qwen3.7-flash`. Routing the quote step was blocked: it made
+   the app 37% slower.
+4. **Held-out, 20 tasks**, all arms in one pool, task by task:
+
+| How it ran | Median time | Cost per task (0G billed) | Passed | Orders placed in the test |
+|---|---|---|---|---|
+| As written (LangGraph runs the chain) | 55.5 s | $0.00225 | 20/20 | 17 (test marketplace) |
+| Same nodes, fan-out wired by hand in LangGraph | 30.6 s | $0.00226 | 20/20 | 17 (test marketplace) |
+| Compiled by synapse0g | 15.4 s | $0.00063 | 20/20 | 0 (skipped; the order it would place is checked) |
+
+The hand-wired arm is the framework-native comparison: LangGraph gets about half the speed-up when
+someone already knows which steps are independent, and none of the cost saving. 280 of 280 held-out
+requests carry 0G's bill. An earlier run of the same study (06T0652) had its call-level search
+voided by connection errors on our own local endpoint (fixed: its listen backlog was 5); its graph
+result was 1.99x faster and 22% cheaper, APPROVE, and is kept in `reports/`.
 
 ## The tau-bench BLOCK, task by task
 
@@ -67,7 +98,7 @@ firewall blocked the policy, and the agent ships unchanged.
 
 ## Spend
 
-0G: $1.50 billed for the call-level runs, about $0.25 for the workflow-graph runs. Groq: $0.27.
+0G: $1.50 billed for the call-level runs, about $0.25 for the workflow-graph runs, $0.74 for the two supplier-app studies. Groq: $0.27.
 
 ## Third-party benchmarks
 

@@ -91,7 +91,9 @@ def independent_groups(graph: Graph) -> list[list[str]]:
     reachable = _transitive_closure(graph)
     levels: dict[str, int] = {}
     for nid in graph.topo_order():
-        preds = graph.predecessors(nid)
+        # the input is given, not run: a node that reads only the input is as free to start as
+        # one that reads nothing, so both sit on the first level
+        preds = [p for p in graph.predecessors(nid) if graph.node(p).target != "workflow_input"]
         levels[nid] = 1 + max((levels[p] for p in preds if p in levels), default=-1)
 
     groups: list[list[str]] = []

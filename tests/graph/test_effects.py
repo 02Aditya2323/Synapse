@@ -1,4 +1,4 @@
-"""The safety predicates. CLAUDE.md rule 3: effects are law.
+"""The safety predicates. docs/CORRECTNESS.md: effects are law.
 
 These are the tests that stand between us and an agent re-sending an email or
 re-placing an order. They are deliberately boring and deliberately exhaustive: the

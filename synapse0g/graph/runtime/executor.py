@@ -4,7 +4,7 @@ This module owns node execution, measurement, and cache-hit bookkeeping.
 
 Three rules live in this file, and they are not negotiable from the outside:
 
-**Measured, never estimated** (CLAUDE.md rule 5). Latency is wall-clock around the
+**Measured, never estimated** (docs/CORRECTNESS.md). Latency is wall-clock around the
 call. Tokens come from the provider's `usage`. Cost is tokens x the price in
 models.yaml. If the provider did not report a number, the field is `None` -- never a
 zero, never an average standing in for a measurement.

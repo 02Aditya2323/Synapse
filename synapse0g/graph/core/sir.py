@@ -6,7 +6,7 @@ serves it and the dashboard renders it.
 
 Changing a field needs a `SIR_VERSION` bump, a migration note in the PR, regenerated
 `fixtures/`, and a message to the team **before** merging. Adding an optional field
-with a default is allowed without a bump (CLAUDE.md rule 1).
+with a default is allowed without a bump (docs/CORRECTNESS.md).
 
 Design, in one line each (docs/IR_SPEC.md section 1):
 
@@ -106,7 +106,7 @@ class NodeProfile(BaseModel):
 
     Never written by a frontend. Every field is a measurement: a value the provider did
     not report is `None`, never zero and never an average stood in for a measurement
-    (CLAUDE.md rule 5).
+    (docs/CORRECTNESS.md).
 
     The variance and `partial` fields are the profiler's (Aditya owns this shape per
     ASSIGNMENTS section 2). They are additive optional fields, so they need no
@@ -196,7 +196,7 @@ class Profile(BaseModel):
 
     graph_id: str
     executions: int = 0
-    crashed: int = 0  # counted separately, never as a slow workflow (CLAUDE.md rule 10)
+    crashed: int = 0  # counted separately, never as a slow workflow (docs/CORRECTNESS.md)
     cold: bool = True
     total: ProfileTotals = Field(default_factory=ProfileTotals)
     nodes: dict[str, NodeProfile] = Field(default_factory=dict)

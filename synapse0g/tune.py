@@ -89,7 +89,7 @@ class Batch:
 
 
 def run_batches(
-    engine: Engine, base_url: str, agent, model: str, tasks: list[Task], arms: list[tuple[str, Policy]], workers: int
+    engine: Engine, base_url: str, agent, model: str, tasks: list[Task], arms: list[tuple], workers: int
 ) -> list[Batch]:
     """Run several policies over the same tasks in one pool, alternating task by task.
 
@@ -101,8 +101,9 @@ def run_batches(
     def one(job: tuple[int, Task]) -> tuple[int, TaskRun]:
         arm, task = job
         session = engine.open(arms[arm][1])
+        run_agent = arms[arm][2] if len(arms[arm]) > 2 else agent  # an arm may bring its own agent
         try:
-            res = agent(task, base_url, session.id, model)
+            res = run_agent(task, base_url, session.id, model)
         finally:
             records = [r.as_dict() for r in engine.close(session.id).records]
         crashed = res.error is not None
@@ -113,7 +114,7 @@ def run_batches(
     with ThreadPoolExecutor(max_workers=workers) as pool:
         done = list(pool.map(one, jobs))
     return [
-        Batch(label, policy.as_dict(), {r.task_id: r for a, r in done if a == i}) for i, (label, policy) in enumerate(arms)
+        Batch(arm[0], arm[1].as_dict(), {r.task_id: r for a, r in done if a == i}) for i, arm in enumerate(arms)
     ]
 
 
@@ -320,8 +321,8 @@ def judge(b1: Batch, b2: Batch, cand: Batch, recheck: Batch | None = None, contr
     )
     rate, worst = max((sum(r.crashed for r in b.runs.values()) / max(len(b.runs), 1), b.label) for b in [*unchanged_arms, cand])
     if rate > MAX_CRASH_RATE:
-        v.reasons.insert(0, f"no verdict: {rate:.0%} of runs in '{worst}' crashed (provider errors). "
-                            "Fix the provider or rate limit and run again")
+        v.reasons.insert(0, f"no verdict: {rate:.0%} of runs in '{worst}' crashed. "
+                            "Fix what crashed (the errors are in the report) and run again")
         v.approve = False
         return v
     if broken:

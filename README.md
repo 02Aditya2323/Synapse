@@ -24,6 +24,41 @@ Both end in the same rule: a change ships only when a firewall run on real tasks
 broken. Providers: 0G Compute's router and Groq, through the OpenAI-compatible chat API.
 Results: [RESULTS.md](RESULTS.md).
 
+## Three ways to connect an agent
+
+| | What you change | What you get |
+|---|---|---|
+| **Paste the code** (dashboard, Connect) | nothing | The code is read, never run. Each function's effect comes from what its body calls, with the evidence; the entry function's statements become the graph; the passes show what could run in parallel and what must never move. ([synapse0g/graph/frontend/automap.py](synapse0g/graph/frontend/automap.py)) |
+| **Wrap the client** | one line: `client = synapse0g.wrap(OpenAI())` | Every call measured on the app's own provider and key. At exit the calls are lifted into a graph (a call depends on an earlier one when that answer appears in its prompt) and the passes run on it. Saved: graph and measurements, never prompt text. ([examples/wrap_agent.py](examples/wrap_agent.py)) |
+| **Compile a LangGraph app** | three lines | The compiled app runs the rewritten graph, every model call goes through the call-level optimizer, and the firewall decides on held-out tasks. |
+
+The first two show what could be saved. Only the third changes how the app runs, which is why only
+it has measured results.
+
+## Connect a LangGraph app
+
+Three lines, and nothing else in the app changes ([examples/supplier_agent.py](examples/supplier_agent.py)):
+
+```python
+from synapse0g.openai import OpenAI          # was: from openai import OpenAI
+app = synapse0g.compile(builder, sample=request, effects=EFFECTS)   # was: builder.compile()
+state = app.invoke(request)                  # as before
+```
+
+`EFFECTS` says which steps touch the world (`place_order` is `irreversible`). Any step not listed
+is treated as touching it, so it is never traced, moved, cached or repeated. `compile` runs the
+declared read-only steps once on `sample` and records which state keys each one really reads and
+writes. The edges come from that data flow, not from the order the app was written in. Then the
+graph passes run. In the supplier agent, the policy summary and the three supplier lookups were
+written as a chain but read nothing from each other, so they run together; the policy summary,
+the same every time, is computed once and reused; `place_order` stays last and is never run in a
+test. `app.explain()` prints all of it, including what each pass refused and why. Every model
+call goes through the call-level optimizer, and `synapse0g bench --agent supplier` measures the
+app as written against the compiled one on held-out tasks, with the firewall deciding.
+
+Graphs with conditional edges, cycles or reducer state keys are refused with a message, not
+approximated.
+
 ## How a technique gets approved
 
 `synapse0g bench` runs the whole loop:
@@ -74,9 +109,16 @@ synapse0g ui                # http://127.0.0.1:8000
 # or, while editing the UI:  synapse0g ui  and, in web/,  npm run dev  (http://localhost:5173)
 ```
 
+Pages: **Results** (the supplier-check app compiled on 0G, then the three earlier results),
+**Connect an agent** (paste code to see its graph; the wrap and compile snippets), **Recorded runs**
+(apps wrapped with `synapse0g.wrap`), **Workflows** and **Run history**. Every graph is the
+engine's own SIR graph: as written above, after the passes below, each step coloured by its effect,
+with every transformation and every refusal beside it.
+
 It reads `reports/` through `/api/feed` (`synapse0g/showcase.py`), compiling the bundled
-workflows with the graph engine on each request, and shows three results: faster
-(research workflow on 0G), cheaper (maths agent on Groq) and refused (tau-bench retail on 0G).
+workflows with the graph engine on each request, and shows the compiled supplier-check study
+alongside three other results: faster research on 0G, cheaper maths on Groq, and a refused
+retail optimization on 0G.
 Each one has the before and after graph, every measure with its confidence interval, what the
 search tried, every task as fixed / unchanged / broken / crashed, the retail agent's actions, and
 where each cost figure comes from (0G's bill, or tokens x listed price). The run history lists every
@@ -84,3 +126,5 @@ saved run, including those with no beneficial change and the invalid ones. The W
 shows each of the five bundled workflows as written and after the passes, with the steps the
 optimizer refused to touch and why. If the API is down,
 the page says so and shows no numbers.
+
+Dashboard design and implementation: [docs/DASHBOARD.md](docs/DASHBOARD.md).

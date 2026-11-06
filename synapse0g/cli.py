@@ -137,6 +137,17 @@ def bench(args) -> int:
         upstream.BUDGET.cap_usd = args.cap
     registry = load_registry()
     model = registry.model(args.model)
+    if args.agent == "supplier":
+        from synapse0g.supplier_bench import run
+
+        doc = run(args, registry)
+        g = doc["graph_stage"]["verdict"]
+        print(f"graph changes ({', '.join(doc['compile']['applied'])}): {'APPROVE' if g['approve'] else 'BLOCK'}")
+        print(_markdown(doc).split("## What the search tried")[0])
+        hp = doc["evaluation"]["hand_parallel"]
+        print(f"hand-parallel LangGraph: {hp['passed']}/{hp['tasks']} passed, {hp['median_wall_s']:.2f} s median, "
+              f"${hp['cost_usd']:.5f}")
+        return 0
     if args.agent == "retail":
         from synapse0g.agents.retail import LABELS, load_retail, make_retail_agent
 
@@ -253,7 +264,7 @@ def main(argv: list[str] | None = None) -> int:
     u.add_argument("--port", type=int, default=8000)
     u.set_defaults(fn=ui)
     b = sub.add_parser("bench")
-    b.add_argument("--agent", choices=["research", "math", "retail"], required=True)
+    b.add_argument("--agent", choices=["research", "math", "retail", "supplier"], required=True)
     b.add_argument("--user-model", default="zg-main", help="retail only: the simulated customer's model (never optimized)")
     b.add_argument("--model", required=True)
     b.add_argument("--calib", type=int, default=30)

@@ -43,7 +43,7 @@ def test_protected_calls_barrier_reads_and_writes():
     assert "r" in d2["w"]
 
 
-def test_split_is_stable_and_matches_ported_hash_buckets():
+def test_split_is_stable_and_matches_hash_buckets():
     import hashlib
 
     for i in range(100):

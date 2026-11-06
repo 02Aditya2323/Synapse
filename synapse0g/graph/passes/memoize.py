@@ -20,7 +20,7 @@ corpus is "nothing yet", and a pass that claims otherwise is how a benchmark bec
 fiction.
 
 **Reporting rule, repeated here because it is the one most easily lost.** Cold-cache and
-warm-cache numbers are always reported separately (CLAUDE.md rule 7). A judge will ask
+warm-cache numbers are always reported separately (docs/CORRECTNESS.md). A judge will ask
 whether the speedup is just a cache, and the answer has to already be on the slide.
 """
 
@@ -43,6 +43,12 @@ def _eligible(node: Node) -> Finding | None:
             node=node.id,
             precondition="not the input node",
             message="the workflow's input node is not work, so there is nothing to cache",
+        )
+    if node.target == "langgraph_state":
+        return Finding(
+            node=node.id,
+            precondition="not the input node",
+            message="it only gathers the final state from the steps before it, so there is nothing to cache",
         )
     return effects.may_reuse(node, transform="memoize")
 

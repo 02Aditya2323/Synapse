@@ -114,7 +114,24 @@ def check_retail(task: Task, answer: str) -> bool:
     return (answer or "").startswith("reward=1")
 
 
-CHECKERS = {"math": check_math, "research": check_research, "retail": check_retail}
+def check_supplier(task: Task, answer: str) -> bool:
+    """The order names the supplier the policy allows (or none), for the full requested quantity."""
+    try:
+        order = json.loads(answer or "{}")
+    except json.JSONDecodeError:
+        return False
+    got = order.get("supplier_id") or "none"
+    if got != task.gold:
+        return False
+    if task.gold == "none":
+        return True
+    try:
+        return int(order.get("quantity")) == int(json.loads(task.question)["quantity"])
+    except (TypeError, ValueError):
+        return False
+
+
+CHECKERS = {"math": check_math, "research": check_research, "retail": check_retail, "supplier": check_supplier}
 
 
 def _download(url: str, path: Path) -> None:

@@ -1,7 +1,7 @@
 """Shared test graphs.
 
 Hermetic by construction: nothing here touches a provider, the cache or the store
-(CLAUDE.md section 9 -- "tests must be hermetic"; a populated cache or a locally
+(docs/CORRECTNESS.md -- "tests must be hermetic"; a populated cache or a locally
 trained policy changes results).
 """
 
@@ -22,7 +22,7 @@ def _hermetic():
     left behind by an earlier test made a lifted-trace replay test pass locally while
     failing in CI, where the test ran alone and the node reached for a real provider.
 
-    CLAUDE.md section 9: tests must be hermetic. Enforcing it here rather than per file
+    docs/CORRECTNESS.md: tests must be hermetic. Enforcing it here rather than per file
     means a new test file gets it without remembering to.
     """
     from synapse0g.graph.frontend import dsl

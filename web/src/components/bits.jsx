@@ -1,9 +1,9 @@
 export const EFFECT = {
-  pure: { color: '#8f8e86', text: 'pure' },
-  read: { color: '#3987e5', text: 'read' },
-  write: { color: '#fab219', text: 'write' },
-  external: { color: '#ec835a', text: 'external' },
-  irreversible: { color: '#d03b3b', text: 'irreversible' },
+  pure: { color: 'var(--fx-pure)', text: 'pure' },
+  read: { color: 'var(--fx-read)', text: 'read' },
+  write: { color: 'var(--fx-write)', text: 'write' },
+  external: { color: 'var(--fx-external)', text: 'external' },
+  irreversible: { color: 'var(--fx-irreversible)', text: 'irreversible' },
 }
 
 export function EffectBadge({ effect }) {
@@ -33,12 +33,12 @@ export function Decision({ decision, size = 'sm' }) {
 }
 
 const STATUS = {
-  unchanged: { color: '#8f8e86', text: 'unchanged' },
-  fixed: { color: '#0ca30c', text: 'fixed' },
-  broken: { color: '#d03b3b', text: 'broken' },
-  crashed: { color: '#fab219', text: 'crashed' },
-  unstable: { color: '#ec835a', text: 'unstable' },
-  unknown: { color: '#8f8e86', text: 'unknown' },
+  unchanged: { color: 'var(--faint)', text: 'unchanged' },
+  fixed: { color: 'var(--ok)', text: 'fixed' },
+  broken: { color: 'var(--bad)', text: 'broken' },
+  crashed: { color: 'var(--warn)', text: 'crashed' },
+  unstable: { color: '#fb923c', text: 'unstable' },
+  unknown: { color: 'var(--faint)', text: 'unknown' },
 }
 
 export function Status({ status }) {
@@ -56,16 +56,33 @@ export function Pass({ v }) {
   return v ? <span className="text-good">pass</span> : <span className="text-critical">fail</span>
 }
 
-export function Card({ title, children, right, className = '' }) {
+export function Card({ title, children, right, className = '', eyebrow }) {
   return (
-    <section className={`rounded-xl border border-line bg-surface-1 ${className}`}>
-      {title && (
-        <div className="flex items-center justify-between px-5 pt-4">
-          <h3 className="text-sm font-medium text-ink-2">{title}</h3>
+    <section className={`panel ${className}`}>
+      {(title || eyebrow) && (
+        <div className="flex items-center justify-between gap-4 px-5 pt-4">
+          <div>
+            {eyebrow && <div className="eyebrow mb-1">{eyebrow}</div>}
+            {title && <h3 className="text-[14px] font-semibold text-[var(--text-strong)]">{title}</h3>}
+          </div>
           {right}
         </div>
       )}
       <div className="p-5">{children}</div>
     </section>
   )
+}
+
+export function PageTitle({ eyebrow, title, children }) {
+  return (
+    <div className="max-w-4xl">
+      {eyebrow && <div className="eyebrow mb-3">{eyebrow}</div>}
+      <h1 className="console-title text-[34px] text-[var(--text-strong)]">{title}</h1>
+      {children && <div className="text-[14.5px] text-[var(--muted)] mt-3 leading-relaxed">{children}</div>}
+    </div>
+  )
+}
+
+export function Code({ children }) {
+  return <pre className="font-mono text-[12.5px] leading-relaxed text-[var(--text)] bg-[var(--bg)] border border-[var(--line)] rounded-[8px] p-3 overflow-x-auto whitespace-pre">{children}</pre>
 }

@@ -14,7 +14,7 @@ Three rules this module exists to keep:
 3. **Hits are recorded, never hidden.** Every hit becomes a node run with
    `cached=True`, which is what lets the profile separate "fast because optimized" from
    "fast because warm" -- the distinction we have to be able to make on stage when
-   someone asks whether the speedup is just a cache (CLAUDE.md rule 7).
+   someone asks whether the speedup is just a cache (docs/CORRECTNESS.md).
 """
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
 
 docs/PASSES.md section 0 is the specification of this file.
 
-**A pass that cannot state its precondition does not ship** (CLAUDE.md rule 2). Every
+**A pass that cannot state its precondition does not ship** (docs/CORRECTNESS.md). Every
 pass implements `preconditions(graph, profile) -> list[Finding]`. An empty list means
 "legal on this graph, and I can defend why". A non-empty list is a set of reasons it is
 not, each naming a node, the rule that failed, and a sentence a human can read.
@@ -52,7 +52,7 @@ class Estimate(BaseModel):
     """What a pass expects to gain here, before anything runs.
 
     `d_cost_usd` is `None` when a price is unknown -- the estimate says "I cannot tell
-    you" rather than guessing (CLAUDE.md rule 5). `confidence` is how much measured
+    you" rather than guessing (docs/CORRECTNESS.md). `confidence` is how much measured
     profile data backs the prediction: a pass asked to optimize a graph that has never
     run returns `confidence=0.0`, and the manager treats that as "no evidence", not as
     "no gain".
@@ -245,7 +245,7 @@ def run_pass(pass_obj: Pass, graph: Graph, profile: Profile | None = None) -> Pa
 
     This is the only correct way to invoke a pass. A pass called directly skips the
     safety re-check, which is why `tests/test_passes.py` drives every pass through here
-    -- "a tool isn't built until it has been called" (CLAUDE.md rule 12), and
+    -- "a tool isn't built until it has been called" (docs/CORRECTNESS.md), and
     import-time correctness proves nothing.
     """
     profile = profile or Profile.empty(graph.id)

@@ -26,6 +26,8 @@ function NodeCard({ data }) {
       {n.parallel && <div className="text-[11px] text-after">runs per sub-question, in parallel (limit {n.parallel})</div>}
       {n.inRegion && !n.parallel && <div className="text-[11px] text-ink-3">runs per sub-question, one at a time</div>}
       {n.branch && <div className="text-[11px] text-ink-3">runs only if the agent continues</div>}
+      {n.concurrent && <div className="text-[11px] text-after">runs at the same time as the other independent steps</div>}
+      {n.reads && <div className="text-[10px] text-ink-3 truncate" title={`reads: ${n.reads.join(', ') || 'nothing'}`}>reads: {n.reads.join(', ') || 'nothing'}</div>}
       {n.memoized && <div className="text-[10px] text-ink-3">memoized</div>}
       {n.techniques?.length > 0 && <div className="text-[11px] text-after truncate">{n.techniques.join(' · ')}</div>}
       {s && (

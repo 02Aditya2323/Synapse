@@ -1,7 +1,7 @@
 """Deterministic list-schedule simulator. All returned numbers are predictions.
 
 Uses Graph.predecessors() — the same readiness predicate the runtime scheduler uses
-(CLAUDE.md rule 4), so predicted and realized schedules are structurally identical.
+(docs/CORRECTNESS.md), so predicted and realized schedules are structurally identical.
 """
 
 from __future__ import annotations

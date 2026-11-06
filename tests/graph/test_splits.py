@@ -1,4 +1,4 @@
-"""Split discipline: every number we show depends on these holding (CLAUDE.md rule 6)."""
+"""Split discipline: every number we show depends on these holding (docs/CORRECTNESS.md)."""
 
 import os
 import subprocess

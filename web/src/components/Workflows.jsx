@@ -1,6 +1,6 @@
 import { useView } from '../store.js'
-import Graph from './Graph.jsx'
-import { Card, Decision, EffectBadge } from './bits.jsx'
+import { Card, Decision, EffectBadge, PageTitle } from './bits.jsx'
+import { Compare } from '../sir/Compare.tsx'
 import { pct } from '../format.js'
 
 const signed = (x) => (x == null ? '—' : x >= 0 ? `${pct(x)} lower` : `${pct(-x)} higher`)
@@ -14,10 +14,9 @@ export default function Workflows({ workflows }) {
   const long = w.nodes > 12
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Workflows</h1>
-        <p className="text-ink-2 text-sm">Each workflow is compiled by the graph engine as you open this page: its steps, their dependencies and their effects, then the optimizer's default passes. Nothing here calls a model.</p>
-      </div>
+      <PageTitle eyebrow="Workflows" title="Five workflows, compiled now">
+        Each workflow is compiled by the graph engine as you open this page: its steps, their dependencies and their effects, then the optimizer's default passes. Nothing here calls a model.
+      </PageTitle>
       <div className="flex flex-wrap gap-2">
         {workflows.map((x) => (
           <button key={x.name} onClick={() => setName(x.name)} className={`px-3 py-1.5 rounded-md border text-sm ${x.name === name ? 'border-ink-3 bg-surface-2' : 'border-line text-ink-3 hover:text-ink-2'}`}>
@@ -26,16 +25,12 @@ export default function Workflows({ workflows }) {
           </button>
         ))}
       </div>
-      <Card title={w.about} right={<span className="text-xs text-ink-3 font-mono">{w.graph_id} · {w.nodes} steps</span>}>
-        <div className="flex flex-wrap gap-4 text-xs text-ink-2 mb-4">
-          {Object.entries(w.effects).map(([e, n]) => <span key={e} className="flex items-center gap-1.5"><EffectBadge effect={e} /> {n}</span>)}
-          <span className="text-ink-3">{long ? 'Drag to pan, scroll to zoom.' : ''}</span>
-        </div>
-        <p className="text-xs text-ink-3 mb-2">As written</p>
-        <Graph graph={w.graph.before} height={long ? 300 : 240} fit={!long} />
-        <p className="text-xs text-ink-3 mt-4 mb-2">After the optimizer's passes</p>
-        <Graph graph={w.graph.after} height={long ? 300 : 240} fit={!long} />
-      </Card>
+      <div className="flex flex-wrap items-center gap-4 text-xs text-ink-2">
+        <span className="text-[14px] text-[var(--text-strong)]">{w.about}</span>
+        {Object.entries(w.effects).map(([e, n]) => <span key={e} className="flex items-center gap-1.5"><EffectBadge effect={e} /> {n}</span>)}
+        <span className="ml-auto font-mono text-[11.5px] text-ink-3">{w.graph_id} · {w.nodes} steps</span>
+      </div>
+      <Compare key={w.name} before={w.sir.before} after={w.sir.after} passes={w.sir.passes} height={long ? 520 : 420} />
       {w.protected.length > 0 && (
         <Card title="Steps the optimizer refused to touch">
           <p className="text-sm text-ink-2 mb-3">These steps change the outside world. Effects are law: no pass may cache, reorder, re-run, speculate or batch them, and an irreversible step never runs during optimization or testing.</p>

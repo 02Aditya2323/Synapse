@@ -1,24 +1,149 @@
 @import "tailwindcss";
+@import "@fontsource/geist-sans";
+@import "@fontsource/geist-sans/500.css";
+@import "@fontsource/geist-sans/600.css";
+@import "@fontsource/jetbrains-mono";
+@import "@fontsource/jetbrains-mono/600.css";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource/instrument-serif/latin-400.css";
+@import "@fontsource/instrument-serif/latin-400-italic.css";
+@import "./styles/tokens.css";
+@import "./styles/fx.css";
 
+/* the dashboard's own colour names, mapped onto the tokens so every screen shares one palette */
 @theme {
-  --color-surface-0: #121211;
-  --color-surface-1: #1a1a19;
-  --color-surface-2: #232321;
-  --color-line: #2f2f2c;
-  --color-ink: #f0efec;
-  --color-ink-2: #c3c2b7;
-  --color-ink-3: #8f8e86;
-  --color-before: #8f8e86;
-  --color-after: #3987e5;
-  --color-good: #0ca30c;
-  --color-warning: #fab219;
-  --color-serious: #ec835a;
-  --color-critical: #d03b3b;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --color-surface-0: #05070b;
+  --color-surface-1: #0b0f17;
+  --color-surface-2: #111827;
+  --color-line: #1f2937;
+  --color-ink: #e5e7eb;
+  --color-ink-2: #a9b1bd;
+  --color-ink-3: #838b98;
+  --color-before: #838b98;
+  --color-after: #38bdf8;
+  --color-accent: #f97316;
+  --color-good: #22c55e;
+  --color-warning: #f59e0b;
+  --color-serious: #fb923c;
+  --color-critical: #ef4444;
+  --font-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+body { color-scheme: dark; }
+.react-flow__attribution { display: none; }
+
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* ligatures off: JetBrains Mono would render "!=" as "≠" and "<=" as "≤", which
+     misquotes precondition strings the backend sends verbatim */
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-variant-ligatures: none;
+  }
 }
 
-html, body, #root { height: 100%; }
-body { background: var(--color-surface-0); color: var(--color-ink); color-scheme: dark; }
-.num { font-variant-numeric: tabular-nums; }
-.react-flow__attribution { display: none; }
+.panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0) 120px),
+    color-mix(in srgb, var(--panel) 88%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: var(--radius);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 48px -28px rgba(0, 0, 0, 0.85);
+}
+
+/* ---- the console's atmosphere: the landing's light, quieter, behind every screen ---- */
+.console-sky { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.console-sky::before {
+  content: ''; position: absolute; inset: -20%;
+  background:
+    radial-gradient(38% 34% at 88% 6%, rgba(249, 115, 22, 0.10), transparent 70%),
+    radial-gradient(34% 40% at 6% 96%, rgba(56, 189, 248, 0.06), transparent 70%),
+    radial-gradient(26% 30% at 52% 58%, rgba(45, 212, 191, 0.04), transparent 70%);
+  background-size: 130% 130%;
+  animation: hero-aurora 26s ease-in-out infinite alternate;
+}
+.console-sky::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 80% 60% at 70% 0%, #000 0%, transparent 75%);
+}
+@media (prefers-reduced-motion: reduce) { .console-sky::before { animation: none !important; } }
+
+/* an eyebrow over a title: the landing's orange rule and label */
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 500; color: var(--accent); }
+.eyebrow::before { content: ''; width: 22px; height: 1px; background: var(--accent); }
+
+/* titles in the landing's extended display face, at console sizes */
+.console-title {
+  font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; line-height: 1;
+  font-stretch: 112%; font-variation-settings: 'wdth' 112;
+}
+
+/* a live dot */
+@keyframes ping-soft { 0% { transform: scale(1); opacity: .7; } 80%, 100% { transform: scale(2.6); opacity: 0; } }
+.ping-soft { animation: ping-soft 2s cubic-bezier(0, 0, .2, 1) infinite; }
+@media (prefers-reduced-motion: reduce) { .ping-soft { animation: none !important; } }
+
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-variant-ligatures: none; text-align: right; }
+.dtable th { font-variant-ligatures: none; }
+
+/* dense data tables */
+.dtable { width: 100%; border-collapse: collapse; font-size: 14px; }
+.dtable th {
+  font-family: var(--font-sans); font-size: 12.5px; font-weight: 500;
+  color: var(--faint); text-align: left; padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.07); white-space: nowrap;
+}
+.dtable th.num { text-align: right; }
+.dtable td { padding: 0 16px; height: 50px; border-bottom: 1px solid rgba(255,255,255,.055); }
+.dtable tr:last-child td { border-bottom: 0; }
+.dtable tbody tr td { transition: background-color .15s; }
+.dtable tbody tr:hover td { background: rgba(255,255,255,.025); }
+.dtable tbody tr:hover td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+
+/* form inputs (account and project screens) */
+.field {
+  height: 40px; padding: 0 12px; border-radius: var(--radius-sm);
+  background: var(--bg); border: 1px solid var(--line-strong);
+  font-size: 14px; color: var(--text-strong); outline: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+.field::placeholder { color: var(--faint); }
+.field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+.field:invalid:not(:placeholder-shown):not(:focus) { border-color: color-mix(in srgb, var(--bad) 60%, transparent); }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 9999px; }
+
+/* irreversible nodes are loud: hatched background */
+.fx-irreversible-hatch {
+  background-image: repeating-linear-gradient(135deg, rgba(239,68,68,.16) 0 6px, transparent 6px 12px);
+}
+
+@keyframes rec-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+.animate-rec-pulse { animation: rec-pulse 1.6s ease-in-out infinite; }
+
+/* React Flow chrome in our palette */
+.react-flow__controls { box-shadow: none !important; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
+.react-flow__controls-button { background: var(--panel) !important; border-bottom: 1px solid var(--line) !important; fill: var(--muted) !important; }
+.react-flow__controls-button:hover { background: var(--raised) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+.dtable td.num, .dtable th.num { white-space: nowrap; }

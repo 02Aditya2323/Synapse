@@ -1,4 +1,4 @@
-"""Workflow benchmark tools. Each one is called the way a workflow calls it (CLAUDE.md rule 12)."""
+"""Workflow benchmark tools. Each one is called the way a workflow calls it (docs/CORRECTNESS.md)."""
 
 import copy
 

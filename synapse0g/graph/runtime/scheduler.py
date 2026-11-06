@@ -4,7 +4,7 @@ A node becomes ready when all its data dependencies have values **and** all its
 effect-edge predecessors have completed. Ready work runs concurrently up to a global
 limit and a per-provider limit.
 
-**Effect ordering is enforced here, not by the passes** (SYSTEM.md section 7.1). The
+**Effect ordering is enforced here, not by the passes** (docs/IR_SPEC.md). The
 scheduler derives the effect edges from the graph itself and refuses to violate them
 whatever a pass claims, and it additionally asserts that side-effecting nodes execute
 one at a time in program order. Defence in depth: a buggy pass must produce a slow run,

@@ -1,4 +1,4 @@
-"""Splits are by task id (CLAUDE.md rule 6, docs/BENCHMARKS.md §5).
+"""Splits are by task id (docs/CORRECTNESS.md, docs/BENCHMARKS.md §5).
 
     train   60 %   fitting the learned pass policy and the cost model
     calib   20 %   thresholds: early-exit gate, noise band, risk priors

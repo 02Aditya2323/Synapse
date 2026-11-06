@@ -12,7 +12,7 @@ Tables:
     cache        the content-addressed node cache (runtime/cache.py owns the policy)
 
 An execution that crashed is stored with its error and `status='crashed'`. It is never
-a slow workflow and never a failed optimization (CLAUDE.md rule 10) -- the aggregates
+a slow workflow and never a failed optimization (docs/CORRECTNESS.md) -- the aggregates
 in `profile/` and `bench/` exclude it and count it separately.
 """
 

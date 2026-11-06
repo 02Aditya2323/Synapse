@@ -148,12 +148,20 @@ def _handler(engine: Engine):
     return Handler
 
 
+class _Server(ThreadingHTTPServer):
+    # The default listen backlog is 5. An agent with parallel steps, run over several tasks at
+    # once, opens far more connections than that, and the extra ones were refused: crashes that
+    # were ours, not the provider's.
+    request_queue_size = 256
+    daemon_threads = True
+
+
 class Proxy:
     """Run the endpoint on a local port in a background thread."""
 
     def __init__(self, engine: Engine, host: str = "127.0.0.1", port: int = 0):
         self.engine = engine
-        self.server = ThreadingHTTPServer((host, port), _handler(engine))
+        self.server = _Server((host, port), _handler(engine))
         self.server.daemon_threads = True
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
 

@@ -155,7 +155,7 @@ class Verdict(BaseModel):
 ```
 
 The verdict object is attached to **every** optimization result and rendered in the UI.
-An optimization without a verdict is a draft, not a result (`CLAUDE.md` rule 4).
+An optimization without a verdict is a draft, not a result (docs/CORRECTNESS.md).
 
 ### 4.3 The noise band
 

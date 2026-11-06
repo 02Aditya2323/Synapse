@@ -1,0 +1,170 @@
+﻿/* Surface effects shared by the landing page and the console. Every one of these is
+   decoration over real content; none of them carries data. */
+
+/* ---- type ----------------------------------------------------------------------- */
+.font-display {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.86;
+  font-variation-settings: 'wdth' 125;
+}
+.font-display-tight { font-stretch: 100%; font-variation-settings: 'wdth' 100; }
+.font-serif { font-family: var(--font-serif); font-weight: 400; letter-spacing: -0.01em; }
+.label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--faint);
+}
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong);
+}
+
+/* ---- film grain over everything (a fixed, animated SVG noise tile) ---------------- */
+.grain {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.9s steps(6) infinite;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ---- the cursor spotlight on panels: --mx/--my are set by useSpotlight() ---------- */
+.spot { position: relative; isolation: isolate; }
+.spot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  opacity: var(--spot-o, 0);
+  transition: opacity 0.3s var(--ease-out);
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(249, 115, 22, 0.07), transparent 60%);
+}
+.spot::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1px;
+  opacity: var(--spot-o, 0);
+  transition: opacity 0.3s var(--ease-out);
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(249, 115, 22, 0.55), transparent 65%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* ---- trace: an SVG path that draws itself (e-CESA style circuits) ------------------ */
+.trace-draw { stroke-dasharray: var(--len, 600); stroke-dashoffset: var(--len, 600); animation: trace 2.4s var(--ease-out) forwards; }
+@keyframes trace { to { stroke-dashoffset: 0; } }
+.trace-run { stroke-dasharray: 14 400; animation: trace-run 3.2s linear infinite; }
+@keyframes trace-run { from { stroke-dashoffset: 414; } to { stroke-dashoffset: 0; } }
+
+/* ---- marquee ------------------------------------------------------------------------ */
+.marquee { display: flex; width: max-content; animation: marquee 60s linear infinite; }
+.marquee:hover { animation-play-state: paused; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ---- skeleton shimmer for loading states -------------------------------------------- */
+.shimmer {
+  background: linear-gradient(90deg, var(--raised) 0%, #1a2232 40%, var(--raised) 80%);
+  background-size: 300% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+
+/* ---- the BLOCK stamp --------------------------------------------------------------- */
+@keyframes stamp-shake {
+  0%, 100% { transform: translate(0, 0) rotate(-4deg); }
+  20% { transform: translate(-3px, 1px) rotate(-4.6deg); }
+  40% { transform: translate(3px, -1px) rotate(-3.4deg); }
+  60% { transform: translate(-2px, 0) rotate(-4.2deg); }
+  80% { transform: translate(1px, 1px) rotate(-3.8deg); }
+}
+
+/* ---- crosshair marker ---------------------------------------------------------------- */
+.xhair { position: relative; width: 18px; height: 18px; border-radius: 9999px; border: 1px solid currentColor; }
+.xhair::before, .xhair::after { content: ''; position: absolute; background: currentColor; }
+.xhair::before { left: 50%; top: -6px; bottom: -6px; width: 1px; transform: translateX(-50%); }
+.xhair::after { top: 50%; left: -6px; right: -6px; height: 1px; transform: translateY(-50%); }
+
+/* ---- focus: visible, on-brand, never removed ---------------------------------------- */
+:focus-visible { outline: 1.5px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+::selection { background: rgba(249, 115, 22, 0.28); color: #fff; }
+
+/* the landing page draws its own cursor on fine pointers */
+
+/* Lenis */
+html.smooth-page.lenis, html.smooth-page.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grain, .marquee, .trace-run { animation: none !important; }
+}
+
+/* ---- landing instruments --------------------------------------------------------- */
+.measure-fill { animation: measure-fill 3.2s cubic-bezier(.6,0,.3,1) infinite; }
+@keyframes measure-fill { 0% { transform: scaleX(0); } 70%, 100% { transform: scaleX(1); } }
+.beam-run { animation: beam-run 3.6s linear infinite; }
+@keyframes beam-run { from { left: -10rem; } to { left: 100%; } }
+.footer-mark { -webkit-text-stroke: 1px rgba(255,255,255,.12); color: transparent; }
+@media (prefers-reduced-motion: reduce) { .measure-fill, .beam-run { animation: none !important; } }
+
+/* ---- pass diagrams: a light pulse along each connection ------------------------- */
+.pd-pulse { stroke-dasharray: 9 120; animation: pd-pulse 2.6s cubic-bezier(.45,0,.55,1) infinite; filter: drop-shadow(0 0 3px rgba(249,115,22,.8)); }
+@keyframes pd-pulse { from { stroke-dashoffset: 110; } to { stroke-dashoffset: -20; } }
+@media (prefers-reduced-motion: reduce) { .pd-pulse { animation: none !important; stroke-dasharray: none; opacity: .5; } }@keyframes step-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+section[id] { scroll-margin-top: 64px; }
+
+/* ---- lattice: a light sweep across the lifted layer -------------------------------- */
+.lattice-sweep { animation: lattice-sweep 2.8s cubic-bezier(.45,0,.55,1) infinite; }
+@keyframes lattice-sweep { from { left: -35%; } to { left: 105%; } }
+@media (prefers-reduced-motion: reduce) { .lattice-sweep { animation: none !important; display: none; } }
+/* ---- footer wordmark: the compiler beam sweeping across the letters ------------------- */
+.footer-beam {
+  color: transparent;
+  background-image: linear-gradient(100deg, transparent 0%, transparent 40%, rgba(249,115,22,.0) 44%, rgba(253,186,116,.95) 50%, rgba(249,115,22,.0) 56%, transparent 60%, transparent 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  animation: footer-beam 5.5s cubic-bezier(.6,0,.4,1) infinite;
+  filter: drop-shadow(0 0 18px rgba(249,115,22,.35));
+}
+@keyframes footer-beam { from { background-position: 120% 0; } to { background-position: -20% 0; } }
+@media (prefers-reduced-motion: reduce) { .footer-beam { animation: none !important; opacity: 0; } }
+/* ---- hero aurora: slow warm and cool light behind the die -------------------------- */
+.hero-aurora {
+  background:
+    radial-gradient(40% 45% at 78% 22%, rgba(249,115,22,.22), transparent 70%),
+    radial-gradient(38% 42% at 18% 80%, rgba(56,189,248,.16), transparent 70%),
+    radial-gradient(30% 35% at 55% 60%, rgba(45,212,191,.10), transparent 70%);
+  background-size: 140% 140%;
+  animation: hero-aurora 18s ease-in-out infinite alternate;
+}
+@keyframes hero-aurora { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
+@media (prefers-reduced-motion: reduce) { .hero-aurora { animation: none !important; } }
+
+/* an indeterminate bar: work is running and its length is unknown, so no percentage is shown */
+@keyframes force-scan {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}

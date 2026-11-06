@@ -1,0 +1,51 @@
+/* Design tokens: surfaces, text, accent, verdict colours and the effect palette. */
+:root {
+  /* surfaces (darkest → raised) */
+  --bg: #05070b;
+  --panel: #0b0f17;
+  --raised: #111827;
+  --line: #1f2937;
+  --line-strong: #374151;
+
+  /* text */
+  --text: #e5e7eb;
+  --text-strong: #ffffff;
+  --muted: #a9b1bd;
+  --faint: #838b98;
+  --ghost: #566070;
+
+  /* the one accent */
+  --accent: #f97316;
+
+  /* verdict colours (data, not decoration) */
+  --bad: #ef4444;   --bad-bg: #2a0f12;    /* BLOCK, broken, regressions */
+  --warn: #f59e0b;  --warn-bg: #2a1f05;   /* warnings, findings */
+  --ok: #22c55e;    --ok-bg: #0b2416;     /* APPROVE, fixed */
+  --info: #38bdf8;                        /* cache hits, links */
+
+  /* the effect lattice: cool = the optimizer may move it, hot = it may not */
+  --fx-pure: #2dd4bf;
+  --fx-read: #60a5fa;
+  --fx-write: #c4b5fd;
+  --fx-external: #f59e0b;
+  --fx-irreversible: #ef4444;
+
+  /* the critical path */
+  --crit: #f97316;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  --font-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* display: an extended grotesque for statements, an editorial serif for asides */
+  --font-display: 'Archivo Variable', 'Geist Sans', sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+
+  /* landing surfaces: warm off-white type on near-black, like ink on a lightbox */
+  --ink: #ece8e1;
+  --ink-dim: #bdb8af;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}

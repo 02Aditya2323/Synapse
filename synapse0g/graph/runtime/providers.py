@@ -5,7 +5,7 @@ Provider configuration for Synapse workflows. The `models.yaml` is a nested docu
 first-class `price_per_mtok`, and the key ring reads its env var name from the file
 instead of a hard-coded table.
 
-**Only `models.yaml` names a model** (CLAUDE.md rule 8). Code passes registry ids such
+**Only `models.yaml` names a model** (docs/CORRECTNESS.md). Code passes registry ids such
 as `agent-small`; this module turns them into provider + tag. Nothing else in Synapse
 may contain a provider tag or a URL.
 
@@ -48,7 +48,7 @@ from synapse0g.graph.runtime.rate_gate import gate_for  # noqa: E402
 
 class ProviderError(RuntimeError):
     """A provider could not answer. Carries enough detail to record on a crashed run --
-    never swallowed, never turned into a benchmark number (CLAUDE.md rule 10)."""
+    never swallowed, never turned into a benchmark number (docs/CORRECTNESS.md)."""
 
 
 @dataclass(frozen=True)
@@ -294,18 +294,17 @@ def chat(model_id: str, messages: list[dict], tools: list[dict] | None = None, *
     model really answered, so a profile never attributes a fallback's latency to the
     model that was asked for.
     """
-    from synapse0g.graph import privacy
     from synapse0g.graph.runtime import meter
 
     # Recorded where the call is made, not here at the top: a fallback re-enters `chat`, and
     # counting at every level would charge one answer twice.
     if model_id in _fakes:
-        result = privacy.call_through(lambda m, t: _fakes[model_id](m, t, params), messages, tools)
+        result = _fakes[model_id](messages, tools, params)
         meter.record(result)
         return result
     cfg = model_config(model_id)
     try:
-        result = privacy.call_through(lambda m, t: _chat_one(cfg, m, t, params), messages, tools)
+        result = _chat_one(cfg, messages, tools, params)
         meter.record(result)
         return result
     except ProviderError as exc:

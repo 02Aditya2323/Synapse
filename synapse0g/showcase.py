@@ -62,6 +62,9 @@ def _graph_nodes(graph: dict, other: dict | None) -> dict:
     others = {n["id"]: n for n in (other or {}).get("nodes", [])}
     parallel = set((graph.get("meta") or {}).get("parallel_maps") or [])
     other_parallel = set(((other or {}).get("meta") or {}).get("parallel_maps") or [])
+    # steps that are not a map region but were found independent and run side by side
+    grouped = {nid for g in (graph.get("meta") or {}).get("parallel_groups") or [] for nid in g}
+    other_grouped = {nid for g in ((other or {}).get("meta") or {}).get("parallel_groups") or [] for nid in g}
     consumers: dict[str, list[str]] = {}
     for n in graph["nodes"]:
         for ref in (n.get("args") or {}).values():
@@ -71,7 +74,7 @@ def _graph_nodes(graph: dict, other: dict | None) -> dict:
     for n in graph["nodes"]:
         meta = n.get("meta") or {}
         o = others.get(n["id"])
-        label = n["target"].split(".")[-1]
+        label = n["target"].split(".")[-1].removeprefix("langgraph:")
         if n["kind"] == "model":
             reader = next((c for c in consumers.get(n["id"], []) if c.startswith("parse_")), None)
             label = reader.removeprefix("parse_") if reader else label
@@ -87,7 +90,11 @@ def _graph_nodes(graph: dict, other: dict | None) -> dict:
             "model": n["target"] if n["kind"] == "model" else None,
             "region": region,
             "memoized": bool(meta.get("memoize")),
-            "changed": o is not None and (o["target"] != n["target"] or (region in parallel) != (region in other_parallel)),
+            "concurrent": n["id"] in grouped,
+            "changed": o is not None and (o["target"] != n["target"] or (region in parallel) != (region in other_parallel)
+                                          or (n["id"] in grouped) != (n["id"] in other_grouped)),
+            "reads": meta.get("measured_reads"),
+            "writes": meta.get("measured_writes"),
         })
         for arg, ref in (n.get("args") or {}).items():
             if isinstance(ref, dict) and "node" in ref:
@@ -111,7 +118,9 @@ def compile_workflow(name: str) -> dict:
     for r in results:
         d = r.model_dump(mode="json")
         passes.append({k: v for k, v in d.items() if k not in ("graph", "before", "after")})
-    return {"before": graph.model_dump(mode="json"), "after": optimized.model_dump(mode="json"), "passes": passes}
+    return {"before": graph.model_dump(mode="json"), "after": optimized.model_dump(mode="json"), "passes": passes,
+            # the shape the SIR graph view reads: the graph plus its derived data and effect edges
+            "sir": {"before": graph.to_ui(), "after": optimized.to_ui(), "passes": passes}}
 
 
 def _transforms(passes: list[dict]) -> list[dict]:
@@ -161,6 +170,7 @@ def workflows() -> list[dict]:
             "nodes": len(c["before"]["nodes"]),
             "effects": dict(Counter(n["effect"] for n in c["before"]["nodes"])),
             "graph": {"before": before, "after": after},
+            "sir": c["sir"],
             "transforms": _transforms(c["passes"]),
             "protected": [{"node": k, "reasons": v} for k, v in protected.items()],
             "runs": [r for r in runs if r["agent"] == name],
@@ -205,6 +215,7 @@ def _graph_result(kind: str, rel: str) -> dict:
         "id": "research-0g",
         "claim": kind,
         "layer": "graph",
+        "sir": graphs["sir"],
         "title": "Research workflow on 0G",
         "subtitle": "Plan, search each sub-question, summarise, answer (HotpotQA)",
         "provider": "0G Compute",
@@ -302,9 +313,10 @@ def _actions(task_run: dict) -> list[str]:
     return [n for rec in task_run["records"] for n in rec.get("tool_calls") or [] if n not in _RETAIL_READS]
 
 
-def _call_tasks(rep: dict, verdict: dict | None, kind: str) -> list[dict]:
-    b1, b2 = rep["runs"]["test unchanged 1"], rep["runs"]["test unchanged 2"]
-    opt = rep["runs"].get("test optimized") or {}
+def _call_tasks(rep: dict, verdict: dict | None, kind: str,
+                labels: tuple[str, str, str] = ("test unchanged 1", "test unchanged 2", "test optimized")) -> list[dict]:
+    b1, b2 = rep["runs"][labels[0]], rep["runs"][labels[1]]
+    opt = rep["runs"].get(labels[2]) or {}
     v = verdict or {}
     rows = []
     for tid in b1:
@@ -450,8 +462,121 @@ def _call_result(kind: str, rel: str) -> dict:
     }
 
 
+# ---- the supplier-check app: compiled by synapse0g, both layers, on 0G --------------------
+SUPPLIER_ARMS = ("test as written 1", "test as written 2", "test optimized")
+HAND = "test hand-parallel LangGraph"
+
+
+def latest_supplier() -> str | None:
+    """The newest supplier study whose held-out stage finished."""
+    for p in sorted(REPORTS.glob("supplier_*.json"), reverse=True):
+        d = json.loads(p.read_text(encoding="utf-8"))
+        if (d.get("evaluation") or {}).get("verdict"):
+            return p.relative_to(REPORTS).as_posix()
+    return None
+
+
+def _supplier_result(rel: str) -> dict:
+    rep = _load(rel)
+    ev = rep["evaluation"]
+    v, b1, b2, o, hand = ev["verdict"], ev["baseline_1"], ev["baseline_2"], ev["optimized"], ev["hand_parallel"]
+    runs = rep["runs"]
+
+    def avg(key):
+        return mean([b1[key], b2[key]]) if b1.get(key) is not None and b2.get(key) is not None else None
+
+    # speed: per task, the mean of the two as-written runs over the optimized run
+    ratios = [mean([runs[SUPPLIER_ARMS[0]][t]["wall_s"], runs[SUPPLIER_ARMS[1]][t]["wall_s"]]) / r["wall_s"]
+              for t, r in runs[SUPPLIER_ARMS[2]].items() if not r["crashed"] and r["wall_s"]]
+    hand_ratios = [mean([runs[SUPPLIER_ARMS[0]][t]["wall_s"], runs[SUPPLIER_ARMS[1]][t]["wall_s"]]) / r["wall_s"]
+                   for t, r in runs[HAND].items() if not r["crashed"] and r["wall_s"]]
+    n = rep["test_n"]
+    tasks = _call_tasks(rep, v, "supplier", SUPPLIER_ARMS)
+    counts = Counter(t["status"] for t in tasks)
+    executed = {lb: sum(1 for r in runs[lb].values() if r["extra"].get("order_executed")) for lb in (*SUPPLIER_ARMS, HAND)}
+    metrics = [
+        _metric("Time per task (median)", "s", avg("median_wall_s"), o["median_wall_s"]),
+        _metric("Time per task (mean)", "s", avg("mean_wall_s"), o["mean_wall_s"], ci=v.get("latency_ci")),
+        _metric("Cost per task", "usd", avg("cost_per_task_usd"), o["cost_per_task_usd"], ci=v.get("cost_ci"),
+                note="0G's own billed amount per request"),
+        _metric("Tokens per task", "tokens", (avg("tokens_in") + avg("tokens_out")) / n, (o["tokens_in"] + o["tokens_out"]) / n),
+        _metric("Model calls per task", "calls", avg("model_calls") / n, o["model_calls"] / n),
+        _metric("Tasks passed", "tasks", avg("passed"), o["passed"], lower_is_better=False),
+        _metric("Crashed runs", "tasks", avg("crashed"), o["crashed"]),
+    ]
+    arms = [
+        {"label": "As written (LangGraph runs the chain)", "median_wall_s": avg("median_wall_s"), "cost_per_task_usd": avg("cost_per_task_usd"),
+         "passed": avg("passed"), "calls_per_task": avg("model_calls") / n, "speedup": 1.0, "orders_executed": executed[SUPPLIER_ARMS[0]],
+         "note": "the developer's code, unchanged; its orders go to the test marketplace"},
+        {"label": "Hand-wired fan-out in LangGraph", "median_wall_s": hand["median_wall_s"], "cost_per_task_usd": hand["cost_per_task_usd"],
+         "passed": hand["passed"], "calls_per_task": hand["model_calls"] / n, "speedup": median(hand_ratios) if hand_ratios else None,
+         "orders_executed": executed[HAND],
+         "note": "what LangGraph alone gets when an expert already knows which steps are independent"},
+        {"label": "Compiled by synapse0g", "median_wall_s": o["median_wall_s"], "cost_per_task_usd": o["cost_per_task_usd"],
+         "passed": o["passed"], "calls_per_task": o["model_calls"] / n, "speedup": median(ratios) if ratios else None,
+         "orders_executed": executed[SUPPLIER_ARMS[2]],
+         "note": "found by the compiler from measured reads and writes; checked by the firewall; orders never placed in a test"},
+    ]
+    s = rep["search"]
+    trials = [{
+        "technique": t["candidate"]["technique"], "step": rep["steps"].get(t["candidate"]["step"], t["candidate"]["step"]),
+        "why": t["candidate"]["why"], "predicted_usd": t["candidate"]["predicted_usd"], "measured_usd": t["measured_usd"],
+        "approve": t["verdict"]["approve"], "reasons": t["verdict"]["reasons"], "passes": t["verdict"]["passes"],
+        "cost_gain": t["verdict"]["cost_gain"], "latency_gain": t["verdict"]["latency_gain"], "broken": t["verdict"]["broken"],
+    } for t in s["trials"]]
+    g = rep["graph_stage"]["verdict"]
+    recs = [rec for lb in SUPPLIER_ARMS for t in runs[lb].values() for rec in t["records"]]
+    comp = rep["compile"]
+    return {
+        "id": "supplier-0g",
+        "claim": "app",
+        "layer": "app",
+        "title": "Supplier-check agent on 0G",
+        "subtitle": "An ordinary LangGraph app: read the policy, look up quotes, reviews and certificates, choose, place the order",
+        "provider": "0G Compute",
+        "model": rep["prices"]["models"][rep["model"]]["tag"],
+        "tasks": n,
+        "split": "held-out",
+        "headline": {"value": median(ratios) if ratios else None, "unit": "x", "label": "faster (median per task)"},
+        "verdict": {
+            "decision": "APPROVE" if v["approve"] else "BLOCK",
+            "reasons": v["reasons"] or ["No task broke; time and cost improved with 95% confidence"],
+            "counts": {"fixed": counts["fixed"], "unchanged": counts["unchanged"] + counts["unstable"],
+                       "broken": counts["broken"], "crashed": counts["crashed"]},
+            "passes": {"before": avg("passed"), "after": o["passed"]},
+            "outcome": "The compiled app is approved." if v["approve"] else "The app stays as written.",
+        },
+        "metrics": metrics,
+        "arms": arms,
+        "graph_stage": {"approve": g["approve"], "passes": g["passes"], "latency_gain": g["latency_gain"], "cost_gain": g["cost_gain"],
+                        "reasons": g["reasons"], "tasks": rep["calib_n"]},
+        "sir": {"before": _ui(comp["before"]), "after": _ui(comp["after"]), "passes": comp["passes"],
+                "as_written": comp["before"]["meta"].get("declared_order") or []},
+        "integration": ['from synapse0g.openai import OpenAI          # was: from openai import OpenAI',
+                        'app = synapse0g.compile(builder, sample=request, effects=EFFECTS)   # was: builder.compile()',
+                        'state = app.invoke(request)'],
+        "search": {"trials": trials, "policy": [x.split(": ", 1)[-1] for x in s["policy_described"]], "tuning_tasks": rep["calib_n"],
+                   "skipped": [{"technique": c["technique"], "why": c["why"], "predicted_usd": c["predicted_usd"]} for c in s["skipped"]]},
+        "billing": {"source": "billed", "explain": "Cost is 0G's own billed amount for each request (x_0g_trace.billing), summed.",
+                    "spent_usd": rep["spend"]["spent_usd"], "calls": rep["spend"]["calls"],
+                    "billed_usd": sum(r.get("billed_usd") or 0 for r in recs), "listed_usd": sum(r.get("listed_cost_usd") or 0 for r in recs),
+                    "requests_with_bill": sum(1 for r in recs if r.get("billed_usd") is not None), "requests": len(recs)},
+        "task_rows": tasks,
+        "report": "reports/" + rel,
+    }
+
+
+def _ui(graph_json: dict) -> dict:
+    from synapse0g.graph.core.sir import Graph
+
+    return Graph.model_validate(graph_json).to_ui()
+
+
 def featured() -> list[dict]:
     out = []
+    hero = latest_supplier()
+    if hero:
+        out.append(_supplier_result(hero))
     for kind, layer, rel in FEATURED:
         out.append(_graph_result(kind, rel) if layer == "graph" else _call_result(kind, rel))
     return out
@@ -489,6 +614,26 @@ def history() -> list[dict]:
                 "split": m["split"],
             })
     return rows
+
+
+def observed_runs() -> list[dict]:
+    """Runs recorded by `synapse0g.wrap`, newest first, one line each."""
+    rows = []
+    for p in sorted((REPORTS / "observed").glob("*.json"), reverse=True):
+        d = json.loads(p.read_text(encoding="utf-8"))
+        applied = [x["pass_name"] for x in d["passes"] if x["applied"]]
+        rows.append({"run_id": d["run_id"], "workflow": d["workflow"], "saved_at": d["saved_at"], "calls": len(d["calls"]),
+                     "repeated_calls": d["repeated_calls"], "applied": applied,
+                     "tokens": sum((c["tokens_in"] or 0) + (c["tokens_out"] or 0) for c in d["calls"]),
+                     "wall_ms": sum(c["latency_ms"] for c in d["calls"])})
+    return rows
+
+
+def observed_run(run_id: str) -> dict | None:
+    if not run_id.replace("-", "").replace("_", "").isalnum():
+        return None
+    p = REPORTS / "observed" / f"{run_id}.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else None
 
 
 def feed() -> dict:

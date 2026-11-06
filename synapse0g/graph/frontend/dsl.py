@@ -488,7 +488,7 @@ class Workflow:
         functools.update_wrapper(self, fn)
 
     def __call__(self, *args, **kwargs) -> Graph:
-        """Calling a workflow compiles it. It does not run it (SYSTEM.md section 4.1)."""
+        """Calling a workflow compiles it. It does not run it (docs/IR_SPEC.md)."""
         return self.compile(*args, **kwargs)
 
     def compile(self, *args, **kwargs) -> Graph:

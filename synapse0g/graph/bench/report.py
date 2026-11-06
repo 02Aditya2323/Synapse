@@ -112,7 +112,7 @@ def build(runs: list[dict], ablations: list[dict] | None = None) -> dict[str, An
                                          if name != "sequential"}})
     absent = {"framework-default baseline": "not built"}
     if any(b["verdict"] is None for b in blocks):
-        absent["firewall verdict"] = "a run here has none, so it is a draft (CLAUDE.md rule 4)"
+        absent["firewall verdict"] = "a run here has none, so it is a draft (docs/CORRECTNESS.md)"
     return {"workflows": blocks, "ablations": ablations or [], "absent": absent}
 
 

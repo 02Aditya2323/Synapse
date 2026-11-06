@@ -1,6 +1,6 @@
 """The effect lattice and the safety predicates: what a pass may legally do.
 
-`CLAUDE.md` rule 3: **effects are law.** No pass may reorder, re-run, cache, speculate,
+docs/CORRECTNESS.md: **effects are law.** No pass may reorder, re-run, cache, speculate,
 batch or elide a node whose effect is `external` or `irreversible`. Ever. Not behind a
 flag, not in a benchmark, not "just for the demo".
 
@@ -223,7 +223,7 @@ def may_execute_during_search(node: Node) -> Finding | None:
 # --------------------------------------------- the names profile/ and correctness/ use
 # `profile/`, `correctness/` and `passes/manager.py` were written against these three
 # names. They are kept here, on this module's semantics, so there is exactly one
-# implementation of the lattice in the codebase (CLAUDE.md rule 3). Writing them twice
+# implementation of the lattice in the codebase (docs/CORRECTNESS.md). Writing them twice
 # is how two parts of a compiler come to disagree about what is safe.
 
 #: The tiers that touch the world. Nothing here is re-run, re-ordered, cached,

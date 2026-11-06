@@ -3,7 +3,7 @@
 Twelve passes. Each one states what it does, the precondition that makes it
 semantics-preserving, how it predicts its own gain, what it typically wins, and how it
 can go wrong. A pass that cannot fill in the "precondition" row does not ship
-(`CLAUDE.md` rule 2).
+(docs/CORRECTNESS.md).
 
 ---
 
@@ -92,7 +92,7 @@ search results. Mitigation: `staleness_s` is required on every `read` node — t
 default — so the author has to make a decision.
 
 **Reporting rule:** cold-cache and warm-cache numbers are always reported separately
-(`CLAUDE.md` rule 7, `SYSTEM.md` §12). A judge will ask whether the speedup is just a
+(docs/CORRECTNESS.md, docs/IR_SPEC.md). A judge will ask whether the speedup is just a
 cache, and the answer must already be on the slide.
 
 ---
@@ -281,7 +281,7 @@ equivalence.
 **Typical win:** large on workflows with an easy majority of tasks.
 
 **Fails when:** the threshold is calibrated on the same tasks used to report accuracy —
-the classic leak. Split discipline (`CLAUDE.md` rule 6) is what prevents it.
+the classic leak. Split discipline (docs/CORRECTNESS.md) is what prevents it.
 
 **Honesty rule:** because this pass trades accuracy for cost, every number it produces
 is reported with the accuracy delta beside it. Never show the saving alone.

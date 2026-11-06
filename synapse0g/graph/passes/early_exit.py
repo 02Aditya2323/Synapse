@@ -13,7 +13,7 @@ contract is explicit --
   saving alone.**
 
 **The failure mode is the classic leak**: calibrating the threshold on the same tasks
-used to report accuracy. Split discipline is what prevents it (CLAUDE.md rule 6), and
+used to report accuracy. Split discipline is what prevents it (docs/CORRECTNESS.md), and
 planted case U10 in docs/CORRECTNESS.md section 5 is exactly this -- a threshold
 calibrated on the test split, expected to be caught by the layer-3 split-discipline
 check.

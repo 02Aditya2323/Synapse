@@ -1,6 +1,6 @@
 """Lift a recorded execution trace into SIR.
 
-The second frontend (SYSTEM.md section 4.2). The DSL is for workflows written with
+The second frontend (docs/IR_SPEC.md). The DSL is for workflows written with
 Synapse in mind; this is for the ones that were not — which is the more interesting
 claim, because it means the optimizer works on agents whose authors had never heard of
 us.
@@ -61,8 +61,8 @@ MONEY_MOVING = (
 class Step(BaseModel):
     """One recorded step. The subset of the workflow step that SIR needs.
 
-    Importers (`frontend/importers/otel.py`, `langfuse.py`, `blackbox.py` — Radhesh's)
-    normalise their formats into this, so this module never learns about a vendor.
+    Trace importers normalise recorded calls into this shared format, keeping
+    graph construction independent of the recording format.
     """
 
     idx: int

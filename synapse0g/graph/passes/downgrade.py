@@ -16,7 +16,7 @@ believable.
 
 **What it predicts.** The measured price difference x the measured tokens. Returns
 `d_cost_usd=None` when either model lacks a price in `models.yaml`, rather than guessing
-(CLAUDE.md rule 5).
+(docs/CORRECTNESS.md).
 
 **How it goes wrong.** Nodes downgraded together without being tested together: two
 individually safe downgrades can interact. So the pass proposes **one node at a time**,
@@ -40,7 +40,7 @@ def _registry():
 def target_model(graph: Graph) -> str | None:
     """The cheaper model to try, from `defaults.downgrade_target` in models.yaml.
 
-    Only models.yaml names a model (CLAUDE.md rule 8), including this one.
+    Only models.yaml names a model (docs/CORRECTNESS.md), including this one.
     """
     override = graph.meta.get("downgrade_target")
     if override:
