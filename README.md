@@ -1,205 +1,261 @@
-# synapse0g
+# Synapse0g
 
-An optimizer for AI agents. It makes an agent cheaper and faster, and checks on the agent's own
-tasks that nothing broke before any change ships.
+**An AI agent that optimizes other AI agents, and pays for its own compute on 0G.**
 
-It works at two levels, in one package:
+You bring an agent. Synapse0g compiles it into a graph, rebuilds it to run faster and cheaper,
+checks outcomes on benchmark tasks where a test set is available, and hands the optimized agent
+back to you **as code**. A pasted sample alone does not establish correctness across other inputs. You pay
+it in 0G, straight into its 0G compute account, and every model call it makes for your job is paid
+from that balance, with 0G's request id and exact charge.
 
-- **The workflow graph** (`synapse0g.graph`). A workflow is compiled to an effect-typed graph:
-  steps, explicit dependencies, and what each step does to the world (`pure`, `read`, `write`,
-  `external`, `irreversible`). Passes then rewrite it: independent steps run in parallel, pure
-  steps are memoized, a step moves to a cheaper model. Each pass states the precondition that
-  makes it safe, and none may cache, reorder, re-run or speculate a step that changes the world.
-  Specs: [docs/IR_SPEC.md](docs/IR_SPEC.md), [docs/PASSES.md](docs/PASSES.md),
-  [docs/CORRECTNESS.md](docs/CORRECTNESS.md).
-- **Each model call** (`synapse0g.proxy`). Agents point their OpenAI-compatible client at the
-  synapse0g endpoint. Every call is measured: tokens, hidden reasoning tokens, time, the
-  provider's request id, and on 0G the amount 0G says it billed. A per-step policy then applies
-  techniques: switching hidden reasoning off, routing a step to a cheaper model on the same
-  provider, shortening old tool results, capping runaway output, reusing identical read-only
-  requests, and marking the stable start of each prompt for 0G's prompt cache (cached tokens bill
-  at about 11% of the input price, measured).
+- **Demo routes after deployment:** `/` (landing page) · `/#/pay` (the console); see the deployment guide for setup.
+- **Network:** 0G mainnet (chain 16661) · inference on the 0G Router · payments on 0G's Payment Layer
+- **Results:** [RESULTS.md](RESULTS.md) · **Deploy:** [docs/DEPLOY.md](docs/DEPLOY.md) · **Payments:** [docs/PAYMENTS.md](docs/PAYMENTS.md)
 
-Both end in the same rule: a change ships only when a firewall run on real tasks finds nothing
-broken. Providers: 0G Compute's router and Groq, through the OpenAI-compatible chat API.
-Results: [RESULTS.md](RESULTS.md).
+---
 
-## Three ways to connect an agent
+## Why
 
-| | What you change | What you get |
-|---|---|---|
-| **Paste the code** (dashboard, Connect) | nothing | The code is read, never run. Each function's effect comes from what its body calls, with the evidence; the entry function's statements become the graph; the passes show what could run in parallel and what must never move. ([synapse0g/graph/frontend/automap.py](synapse0g/graph/frontend/automap.py)) |
-| **Wrap the client** | one line: `client = synapse0g.wrap(OpenAI())` | Every call measured on the app's own provider and key. At exit the calls are lifted into a graph (a call depends on an earlier one when that answer appears in its prompt) and the passes run on it. Saved: graph and measurements, never prompt text. ([examples/wrap_agent.py](examples/wrap_agent.py)) |
-| **Compile a LangGraph app** | three lines | The compiled app runs the rewritten graph, every model call goes through the call-level optimizer, and the firewall decides on held-out tasks. |
+Business processes are turning into AI agents: purchasing, support, research, operations. Most
+are written the obvious way: every step waits for the one before it, every call uses the biggest
+model, and the bill grows with every run. The hard part is no longer building agents. It is making
+them faster and cheaper **without breaking them**, and proving it.
 
-The first two show what could be saved. Only the third changes how the app runs, which is why only
-it has measured results.
+## The loop
 
-## Connect a LangGraph app
-
-Three lines, and nothing else in the app changes ([examples/supplier_agent.py](examples/supplier_agent.py)):
-
-```python
-from synapse0g.openai import OpenAI          # was: from openai import OpenAI
-app = synapse0g.compile(builder, sample=request, effects=EFFECTS)   # was: builder.compile()
-state = app.invoke(request)                  # as before
+```text
+  your agent ──► quote (from its steps) ──► you pay in 0G: depositFor(optimizer) on 0G's Payment Layer
+                                                        │
+                                                        ▼
+  optimized code ◄── run optimized ◄── rewrite (passes + approved call changes) ◄── compile to SIR
+       │                  │
+       │                  └─ every model call paid from the optimizer's own 0G account (request id + charge)
+       └─ optimized_agent.py, your original code, both graphs, the policy, the run's evidence
 ```
 
-`EFFECTS` says which steps touch the world (`place_order` is `irreversible`). Any step not listed
-is treated as touching it, so it is never traced, moved, cached or repeated. `compile` runs the
-declared read-only steps once on `sample` and records which state keys each one really reads and
-writes. The edges come from that data flow, not from the order the app was written in. Then the
-graph passes run. In the supplier agent, the policy summary and the three supplier lookups were
-written as a chain but read nothing from each other, so they run together; the policy summary,
-the same every time, is computed once and reused; `place_order` stays last and is never run in a
-test. `app.explain()` prints all of it, including what each pass refused and why. Every model
-call goes through the call-level optimizer, and `synapse0g bench --agent supplier` measures the
-app as written against the compiled one on held-out tasks, with the firewall deciding.
+1. **Bring an agent.** Paste or upload a LangGraph agent with one sample input, or pick the example
+   agent. Its steps are read from the code and the job is priced line by line.
+2. **Pay.** One transaction from your wallet: `depositFor(optimizer account)` on 0G's Payment Layer
+   (`0xA3b15Bd2…cE32`). No contract of ours, nobody in between. The server checks the receipt on
+   chain (payer, amount, account, not used before) and starts the job at once.
+3. **Compile to SIR.** For LangGraph, declared `pure` and `read` steps are traced on the sample;
+   side-effecting steps are not traced. The edges reflect observed state reads and writes.
+   Plain-Python compilation reads the entry function statically. Each step gets an effect: `pure`, `read`,
+   `write`, `external` or `irreversible`.
+4. **Optimize.** The passes rewrite the graph (independent steps in parallel, pure steps cached),
+   and per-step call changes the firewall approved apply (hidden reasoning off, a cheaper model).
+   Every change carries its reason; every refusal too. Irreversible steps are flagged and never run.
+5. **Run and return.** The optimized agent runs on your input, two calls at a time, each paid from
+   the optimizer's account. You get the answer, the measured cost and time, and a zip with
+   `optimized_agent.py`, generated from the optimized graph.
 
-Graphs with conditional edges, cycles or reducer state keys are refused with a message, not
-approximated.
+## The demo (about 3 minutes)
 
-## Compile a plain Python agent
+1. Landing page → **Optimize your agent**.
+2. **Example agent** → `RFQ-011` (trap: the cheapest supplier has no valid ISO certificate).
+3. **Get the price**: the bill shows the agent's steps, the price of a model call measured on 0G,
+   compile and run costs, the optimizer's 50% fee, and the total.
+4. **Pay** with MetaMask. Stages: Quoted → Payment sent → Confirmed on chain → Compiled to SIR →
+   Optimized run → Optimized agent returned.
+5. **Job page**: the SIR as written and after the passes, every change and refusal, the optimized
+   graph lighting up as it runs, every call with its 0G request id and charge, the result, and the
+   generated code with each optimization's lines marked. **Download your optimized agent (.zip).**
 
-No framework needed ([examples/procurement_agent.py](examples/procurement_agent.py)):
+The job page reports the actual calls, charges, time and result for the request you run.
+Held-out study measurements are listed below and in [RESULTS.md](RESULTS.md).
+
+## Built for "Agents that pay for themselves" (0G)
+
+| Requirement | How Synapse0g meets it |
+| --- | --- |
+| Money in, credit landing in the agent's 0G compute account | Customers call `depositFor(agent account)` on 0G's Payment Layer; the deposit is the agent's compute credit. Each payment's tx hash is shown and matched to its job. |
+| Inference paid from that balance, with tx hashes and request ids | Every call goes to the 0G Router with the agent's own key (`ZG_AGENT_KEY`); each records 0G's request id and billed charge in 0G. The job page and the history show them. |
+| Runs on its own, no manual top-up | A payment starts its job by itself (by tx hash from the page, or found by the deposit watcher). Customers fund the agent, not the team. |
+| A spend cap | Per job (what the job may cost), per key (the Router key's own limit, or Synapse0g's cap when the key has none), and per call (each call reserves its worst case before it is sent). |
+| Graceful when funds run low | Tight funds: calls go one at a time instead of two. Not enough: the job **pauses** before the next call, says why, and **resumes** on the credit already paid, without paying twice for calls already made. |
+| A job worth paying for | Optimizing agents, with measured savings and a firewall that refuses changes that break answers. |
+
+The earning route is "charging for a service". Payments from team wallets are labelled as tests,
+never as revenue.
+
+## What it does to an agent
+
+**SIR, the graph.** An agent is lifted into an effect-typed graph: steps, explicit data edges, and
+what each step can do to the world. Spec: [docs/IR_SPEC.md](docs/IR_SPEC.md).
+
+**Effects decide what may move.**
+
+| Effect | Example | What any rewrite may do |
+| --- | --- | --- |
+| `pure` | a seeded model call, a parse | eligible for rewrites when the pass's other preconditions hold |
+| `read` | search, a lookup | reuse while fresh, reorder, parallelize, batch |
+| `write` | an agent's scratchpad | in order; parallel only on separate keys |
+| `external` | sending an email, a POST | nothing: never repeated, reordered, cached or started early |
+| `irreversible` | placing an order, a refund | nothing, **and never run** while optimizing, testing or in a paid run |
+
+**Twelve passes**, each with the precondition that makes it safe ([docs/PASSES.md](docs/PASSES.md)):
+parallelize, memoize, cse, downgrade, context_prune, context_trim, batch, dce, loop_cutoff,
+speculate, constfold, early_exit. A pass that cannot show its rule holds leaves the step alone,
+and says why.
+
+**Per-step call changes.** Reasoning off, routing a step to a cheaper model on the same provider,
+shortening old tool results, reusing identical read-only requests. Found by a search on tuning
+tasks, each kept only if the **firewall** approves: no stable task breaks, and cost or time improves
+with 95% confidence, measured against an unchanged control run at the same moment. The final policy
+is then measured on held-out tasks the search never saw ([docs/CORRECTNESS.md](docs/CORRECTNESS.md)).
+
+## What you get back
+
+`synapse0g-optimized-<job>.zip`:
+
+| File | What it is |
+| --- | --- |
+| `optimized_agent.py` | your agent, optimized: the optimized SIR lowered back to code by the compiler (no LLM writes it). Parallel edges, cached pure steps, per-step model settings, and irreversible steps held back unless `--allow-irreversible` |
+| `<your module>.py` | your code, unchanged: the optimized agent imports your step functions from it |
+| `sir_before.json`, `sir_after.json` | the graph as written and after the passes |
+| `policy.json` | approved and refused call changes, and the held-out verdict |
+| `OPTIMIZATION.md`, `run.json`, `input.json`, `README.md` | what changed and why, this run's calls and charges, the input, how to run it |
+
+Run it with `python optimized_agent.py` (or `python optimized_agent.py my_input.json`)
+in an environment with the original agent's dependencies. The ZIP does not bundle that
+environment; the supplier example also requires this project's supplier modules.
+
+## Results
+
+Measured on real provider calls, on held-out tasks; 0G costs are 0G's own bill per request. Full
+records with request ids are in `reports/`; details in [RESULTS.md](RESULTS.md).
+
+| Agent | Result (held-out) | Firewall |
+| --- | --- | --- |
+| Supplier-check agent (LangGraph, 3 lines added) | **3.48× faster** (median 55.5 → 15.4 s), **72% cheaper** on 0G's bill, 20/20 → 20/20 | APPROVE |
+| Procurement agent (plain Python, 2 lines added) | **4.5× faster** (median 136.3 → 30.2 s), **87.5% cheaper**, 13.5/18 → 15/18 | APPROVE |
+| Research workflow (HotpotQA) | **1.99× faster**, 18% cheaper, 19/20 → 19/20 | APPROVE |
+| Maths agent (GSM8K, Groq) | **77.5% cheaper**, 63% faster, 12/12 → 12/12 | APPROVE |
+| tau-bench retail | 70% cheaper, but broke 5 tasks and took more irreversible actions | **BLOCK** |
+| Code-review workflow, a step on a cheaper model | 72% cheaper, but 10/10 → 4/10 right | **BLOCK** |
+
+The two BLOCKs matter most: large savings, refused because they broke answers.
+
+## Use it
+
+### Dashboard
+
+| Page | What it shows |
+| --- | --- |
+| `/` | landing page: what Synapse0g is, the safety layers, the 12 passes, results |
+| `#/pay` · **Optimize your agent** | your code or the example agent → itemised price → pay with your wallet |
+| `#/job/<quote>` | one paid job: stages, SIR before/after, the run, every call and charge, result, generated code, evidence |
+| `#/jobs` · **Jobs and payments** | the optimizer's account (balance, spend cap), every job, every deposit with its tx hash |
+| `#/live` · **Live run** | example agents run as written and optimized at the same moment on 0G (supplier check, procurement, research, maths) |
+| `#/overview` · **Results**, Workflows, Run history | the studies, the bundled workflows, every saved run |
+| `#/connect` · **SDK and CLI** | integration snippets |
+
+### SDK (Python)
+
+A LangGraph app, three lines ([examples/supplier_agent.py](examples/supplier_agent.py)):
 
 ```python
-from synapse0g.openai import OpenAI                       # was: from openai import OpenAI
-app = synapse0g.compile(handle_request, effects=EFFECTS)  # handle_request is an ordinary function
+import synapse0g
+from synapse0g.openai import OpenAI                                  # was: from openai import OpenAI
+app = synapse0g.compile(builder, sample=request, effects=EFFECTS)    # was: builder.compile()
+state = app.invoke(request)                                          # as before
+print(app.explain())                                                 # every change and refusal, with reasons
+```
+
+A plain Python agent ([examples/procurement_agent.py](examples/procurement_agent.py)):
+
+```python
+app = synapse0g.compile(handle_request, effects=EFFECTS)   # an ordinary function; its statements become the graph
 draft = app.invoke(request=..., policy_path=..., quotation_paths=...)
 ```
 
-The entry function's own statements become the graph, each a call to a function in the same file.
-`[extract_quotation(d) for d in documents]` becomes a map whose items run side by side. Each step's
-effect is inferred from what its code calls (an unrecognised call makes it `external`, the safe
-default) and `EFFECTS` overrides that where the developer knows better. A loop, branch or computed
-value in the entry function is refused with its line number. A step declared `pure` and `seeded` is
-cached by its arguments within a `cache_scope` (a customer, a team) and the agent's source, so the
-same document read for the same customer under the same prompt is read once.
+`EFFECTS` names what touches the world (`place_order: "irreversible"`). In the LangGraph SDK
+adapter, undeclared steps default to `external` and are not traced. Plain-Python compilation
+and the custom-agent loader infer effects from code for undeclared steps; unrecognised calls
+are treated as `external`.
 
-## The procurement agent
-
-An office manager asks for 15 monitors at most Rs 12,000 each within seven days, and three supplier
-quotations arrive as a PDF, a spreadsheet and an email. The agent reads the request and the company
-purchasing policy, reads each quotation with references to its page, row or line, checks every
-offer against the policy in code (expiry, stock, delivery, price before GST, advance payment,
-specifications, refurbished goods), has the model explain the choice, drafts the purchase request
-with its evidence and files it for a person's approval. A missing price or date makes an offer
-incomplete, never a guess. Approval submits it once; a second approval changes nothing.
-
-36 scenarios plus the demo (`synapse0g/agents/procurement_data/`), with right outcomes computed by
-code from the facts behind the documents. `synapse0g bench --agent procurement` measures it.
-
-Measured on 0G, 18 held-out requests: 4.5x faster per task (136 → 30 s), 87.5% cheaper billed,
-15/18 passed vs 13.5/18 as written; firewall APPROVE. The parallel graph was refused on its tuning
-check (one noisy request); details in [RESULTS.md](RESULTS.md).
-
-## synapse0g as a paid agent
-
-`synapse0g agent` runs synapse0g as a service that optimizes other people's agents and pays for its
-own model calls:
+### CLI
 
 ```bash
-synapse0g agent quote procurement           # what a study costs: runs x calls x cost per call (measured)
-synapse0g agent submit study:procurement    # or inspect:<path> for any agent's code (free, static)
-synapse0g agent status                      # balance and budget mode
-synapse0g agent run                         # work through the queue
+synapse0g ui [--host 0.0.0.0 --port 8000]          # the dashboard, API, payment desk and paid jobs
+synapse0g agent check                              # the agent's 0G account: currency, balance, the key's caps (read-only)
+synapse0g agent submit run:supplier-RFQ-011 --paid # a paid job, from the terminal
+synapse0g agent run --once --paid                  # run it, paid from the agent's account
+synapse0g models                                   # models and prices from 0G's live catalog
+synapse0g workflow show shop_ops                   # compile a bundled workflow, show the passes (offline)
+synapse0g bench --agent supplier --model zg-main --calib 8 --test 20 --cap 1.5   # a full study
 ```
 
-Before each job it reads its balance and chooses a mode: **full** study, **reduced** study (fewer tasks
-and trials, said so in the result), **static** (inspect jobs only; studies wait, with the reason), or
-**paused**. Every study runs under a hard cap of at most the balance above a reserve. The balance comes
-from a local ledger today (`synapse0g agent deposit`); the agent's 0G compute account replaces it
-when the launchpad is connected. API: `GET /api/agent`, `GET/POST /api/jobs`.
+### Pasting your own agent
 
-Funding comes through comfy, 0G's token launchpad: trades of the agent's token pay fees, a compute
-share of them becomes 0G compute credit, and the agent's model calls spend it.
-`synapse0g/funding.py` reads every stage from where it happens (the chain, the 0G Router, the
-agent's own billed calls) and the dashboard's **Funding and jobs** page (`#/agent`) shows it; a
-stage that has not happened says so. Setup steps and what was checked on chain: [docs/COMFY.md](docs/COMFY.md).
-API: `GET /api/funding`.
+Supported: LangGraph `StateGraph` agents with fixed edges, using the `openai` client or LangChain's
+`ChatOpenAI` at module level (pointed at the optimizer's account automatically); model names may be
+models.yaml ids or 0G tags. Graphs that pick their next step at run time (conditional edges, tool
+loops) are refused **at the quote, before any payment** when they use conditional edges.
+Other unsupported shapes are checked during compilation. Pasted agents get graph optimizations;
+per-step model changes need a test set and apply to the example agents.
 
-## How a technique gets approved
-
-`synapse0g bench` runs the whole loop:
-
-1. Run the agent unchanged on tuning tasks, twice, to learn which tasks are stable and how much
-   cost and time move by chance.
-2. Profile each step and predict what each technique would save. Techniques predicted to save
-   under 3% are not tried, and the report says why.
-3. Try the best-predicted technique, alongside an unchanged control run on the same tasks at the
-   same time, so a provider slowing down affects both. Keep it only if no task that passed both
-   unchanged runs now fails (checked twice), the pass count did not drop, and cost or time improved
-   with 95% confidence (paired by task, bootstrap over tasks). It is blocked if it makes the agent
-   clearly more than 10% slower. Blocked techniques that saved money are listed as trade-offs.
-4. Repeat until nothing is left worth trying.
-5. Measure the final policy against the unchanged agent on held-out tasks the search never saw.
-   Those are the reported numbers. If nothing helped, the report says "no beneficial change".
-
-## Safety rules
-
-- Routing never crosses providers.
-- A model response asking for any tool that is not read-only is never reused: reusing it would
-  repeat the action. Tools are labelled from their names and descriptions. An unknown tool is
-  treated as irreversible until a developer labels it.
-- A spending cap stops paid calls before they are sent (`SYNAPSE0G_SPEND_CAP_USD`, or `--cap`).
-
-## Run it
+## Run it locally
 
 ```bash
 uv venv .venv && uv pip install -e ".[agents,dev]"
-# .env holds 0G_API_KEY and GROQ_API_KEY; never commit it
-.venv/bin/python -m pytest -q                  # offline, no keys, no spend
-synapse0g models                                # prices from 0G's live catalog
-synapse0g bench --agent research --model zg-main --calib 30 --test 50 --cap 1.5
-synapse0g bench --agent math --model zg-main --calib 30 --test 50 --cap 1.5
-
-synapse0g workflow show shop_ops                # compile a workflow, show passes and protected steps (offline)
-synapse0g workflow bench research_fanout --split calib --n 10   # measure unchanged vs optimized on 0G
-```
-
-Reports land in `reports/` (workflow-graph runs in `reports/synapse_graph/`): a markdown summary and a JSON file with every call's request id,
-tokens and billed amount.
-
-## Dashboard
-
-```bash
 cd web && npm install && npm run build && cd ..
-synapse0g ui                # http://127.0.0.1:8000
-# or, while editing the UI:  synapse0g ui  and, in web/,  npm run dev  (http://localhost:5173)
+cp .env.example .env    # then fill in the keys below. Never commit .env.
+.venv/bin/python -m pytest -q -m "not live"        # non-live suite; some tests read the public model catalog
+.venv/bin/synapse0g ui                             # http://127.0.0.1:8000
 ```
 
-Pages: **Live run** (race the supplier app as written and compiled on real 0G calls),
-**Funding and jobs** (funding evidence and the service queue), **Results** (the supplier-check app compiled on 0G, then the three earlier results),
-**Connect an agent** (paste code to see its graph; the wrap and compile snippets), **Recorded runs**
-(apps wrapped with `synapse0g.wrap`), **Workflows** and **Run history**. Every graph is the
-engine's own SIR graph: as written above, after the passes below, each step coloured by its effect,
-with every transformation and every refusal beside it.
+| Key (`.env`) | What it is |
+| --- | --- |
+| `0G_API_KEY` (or `ZG_API_KEY`) | the team's 0G Router key, used by the live runs and studies |
+| `ZG_AGENT_KEY` | the optimizer agent's own capped Router key: paid jobs spend only through it, never the team key |
+| `ZG_MANAGEMENT_KEY` | read-only management key (`account:read`, `keys:read`): balance and the key's cap |
+| `GROQ_API_KEY` | optional |
+| `SYNAPSE0G_AGENT_CAP_0G` | the agent's cap when its Router key has no limit (default 0.3) |
 
-It reads `reports/` through `/api/feed` (`synapse0g/showcase.py`), compiling the bundled
-workflows with the graph engine on each request, and shows the compiled supplier-check study
-alongside three other results: faster research on 0G, cheaper maths on Groq, and a refused
-retail optimization on 0G.
-Each one has the before and after graph, every measure with its confidence interval, what the
-search tried, every task as fixed / unchanged / broken / crashed, the retail agent's actions, and
-where each cost figure comes from (0G's bill, or tokens x listed price). The run history lists every
-saved run, including those with no beneficial change and the invalid ones. The Workflows page
-shows each of the five bundled workflows as written and after the passes, with the steps the
-optimizer refused to touch and why. If the API is down,
-the page says so and shows no numbers.
+Public settings live in `payments.yaml` (Payment Layer, agent account, chain, RPCs) and
+`models.yaml` (provider and model configuration). Keys are read on the server and never returned by
+any endpoint.
 
-Dashboard design and implementation: [docs/DASHBOARD.md](docs/DASHBOARD.md).
+## Deploy
 
-## Pay and receive generated agent code
+One Docker web service on Render: `Dockerfile`, `render.yaml`, `deploy/start.sh`. Set
+`ZG_API_KEY`, `ZG_AGENT_KEY`, `ZG_MANAGEMENT_KEY` in Render; mount the disk at `/app/data` so jobs,
+payments and the spend ledger survive restarts. Steps: [docs/DEPLOY.md](docs/DEPLOY.md).
 
-The **Optimize your agent** page (`#/pay`) accepts pasted/uploaded Python or the
-supplier example, input JSON, and a payment quote. Separate Jobs and payments
-(`#/jobs`) and job-detail (`#/job/<quote>`) pages show execution, payment evidence,
-generated code and ZIP delivery. The default route is the animated landing page.
+## How it is built
 
-Generated Python is lowered from optimized SIR and the selected call policy by
-`synapse0g/codegen.py`. It reuses the source agent's functions and requires their
-runtime dependencies; the ZIP is not a bundled Python environment. Custom source
-runs on the server, so the current unsandboxed flow is for a controlled demo.
-See [docs/PAYMENTS.md](docs/PAYMENTS.md), [docs/DASHBOARD.md](docs/DASHBOARD.md)
-and [docs/DEPLOY.md](docs/DEPLOY.md) for the payment flow, design assets and deployment.
+```text
+synapse0g/
+  graph/        the compiler: SIR (core/), frontends for LangGraph and plain Python, the 12 passes,
+                the runtime that executes an optimized graph (parallel, cached, irreversible steps stubbed)
+  proxy.py      the OpenAI-compatible endpoint every model call goes through: per-step policy, measurement
+  upstream.py   calls to 0G and Groq, with 0G's request id and billed charge per call
+  spend.py      the spend guard: worst-case reservation per call, job / key / account caps, SQLite ledger
+  payments.py   quotes, depositFor matching, the deposit watcher, the payment desk
+  service.py    paid jobs: compile, run, deliver; job progress
+  codegen.py    the optimized SIR lowered back to optimized_agent.py
+  custom.py     loading a customer's own agent
+  study.py, optimizer.py   the search and the firewall
+  live.py       live runs for the dashboard
+  server.py     the API and the web app
+web/            React dashboard and landing page (Vite, Tailwind, React Flow, three.js)
+examples/       the supplier-check and procurement agents
+reports/        every study, with each call's request id and billed charge
+```
+
+## Limits, stated plainly
+
+- Graphs with conditional edges or cycles are not compiled yet; they are refused, not approximated.
+- "Your code" runs the pasted agent on the server: right for a demo you control; open sign-ups would
+  need a sandbox.
+- The optimizer keeps a small working balance (about 0.05 0G) so two calls can run at once; below
+  that, jobs slow down or pause and resume.
+- Earlier funding work through comfy (a token launchpad) is documented in [docs/COMFY.md](docs/COMFY.md);
+  the shipped payment route is direct customer payment ([docs/PAYMENTS.md](docs/PAYMENTS.md)).
+
+## Docs
+
+[RESULTS.md](RESULTS.md) · [docs/PAYMENTS.md](docs/PAYMENTS.md) · [docs/DEPLOY.md](docs/DEPLOY.md) ·
+[docs/IR_SPEC.md](docs/IR_SPEC.md) · [docs/PASSES.md](docs/PASSES.md) · [docs/CORRECTNESS.md](docs/CORRECTNESS.md) ·
+[docs/DASHBOARD.md](docs/DASHBOARD.md) · [docs/COMFY.md](docs/COMFY.md)

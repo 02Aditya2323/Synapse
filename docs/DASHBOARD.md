@@ -138,7 +138,9 @@ origin of this project's dashboard.
 
 The repository also supports a plain-Python procurement agent and its saved studies.
 Its document fixtures, supported compilation shapes, and measured results are
-described in the README and RESULTS.md; the Live run page remains the supplier demo.
+described in the README and RESULTS.md. Live run also offers procurement, research
+and maths: graph compilation applies to supplier/procurement, while loop-based
+research and maths use call-level policies from their saved studies.
 
 ## Paid runs and delivery assets
 
