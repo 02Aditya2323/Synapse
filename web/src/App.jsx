@@ -9,7 +9,11 @@ import Connect from './pages/Connect.jsx'
 import Recorded from './pages/Recorded.jsx'
 import PaidAgent from './pages/PaidAgent.jsx'
 import LiveRun from './pages/LiveRun.jsx'
+import { lazy, Suspense } from 'react'
 import Pay from './pages/Pay.jsx'
+const Landing = lazy(() => import('./landing/Landing.tsx'))
+import Job from './pages/Job.jsx'
+import Jobs from './pages/Jobs.jsx'
 
 function FeedPage() {
   const { data, error, isLoading } = useFeed()
@@ -31,9 +35,10 @@ function FeedPage() {
 
 export default function App() {
   const page = useView((v) => v.page)
+  if (page === 'landing') return <Suspense fallback={<div className="min-h-screen bg-[var(--bg)]" />}><Landing /></Suspense>
   return (
     <Shell>
-      {page === 'recorded' ? <Recorded /> : page === 'agent' ? <PaidAgent /> : page === 'live' ? <LiveRun /> : page === 'pay' ? <Pay /> : <FeedPage />}
+      {page === 'recorded' ? <Recorded /> : page === 'agent' ? <PaidAgent /> : page === 'live' ? <LiveRun /> : page === 'pay' ? <Pay /> : page === 'job' ? <Job /> : page === 'jobs' ? <Jobs /> : <FeedPage />}
     </Shell>
   )
 }

@@ -35,9 +35,9 @@ class Session:
     # model ids the agent asks for -> the ids that pay for them (e.g. zg-main -> agent-main: the same
     # model, billed to the agent's own account). Empty: every call is paid as asked.
     pay_from: dict[str, str] = field(default_factory=dict)
-    # a compile's trace, kept on disk: the same request is answered from it, at no cost, so compiling the
-    # same app again (after a restart) pays nothing. Only for tracing, where the answer is used to learn
-    # what each step reads and writes; never for a run whose answers are the product.
+    # calls already answered, kept on disk: the same request is answered from it, at no cost. Used for a
+    # compile's trace (compiling the same app again pays nothing) and for one paid job's own calls (a job
+    # resumed after a pause continues where it stopped instead of paying twice). Never shared across jobs.
     replay_path: str | None = None
     replay: dict | None = None
 
@@ -73,6 +73,11 @@ class Engine:
     def complete(self, session: Session, body: dict) -> dict:
         if body.get("stream"):
             raise ValueError("streaming responses are not supported yet; call without stream=true")
+        if body.get("model") not in self.registry.models:
+            # a 0G tag ("qwen3.8-flash") names the same model as its models.yaml id: use the team provider's id
+            alias = next((m.id for m in self.registry.models.values() if m.tag == body.get("model") and m.provider == "zerog"), None)
+            if alias:
+                body = {**body, "model": alias}
         if body.get("model") not in self.registry.models:
             raise KeyError(f"unknown model {body.get('model')!r}; use one of {', '.join(self.registry.models)}")
         # the step is named by the call as the agent wrote it, before it is billed to another account, so a

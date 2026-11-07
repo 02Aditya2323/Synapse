@@ -70,8 +70,9 @@ def measured_run_cost(registry, agent: str = "supplier") -> dict:
         raise ValueError(f"no study of {agent} to price a run from")
     doc = json.loads(paths[-1].read_text(encoding="utf-8"))
     by_tag = {m.tag: m for m in registry.models.values() if m.provider == "zerog"}
-    costs, largest = [], 0
+    costs, largest, calls = [], 0, 0
     for task in doc["runs"].get("test optimized", {}).values():
+        calls = max(calls, sum(1 for r in task["records"] if r.get("status") == "ok"))
         total = 0
         for r in task["records"]:
             if r.get("status") != "ok":
@@ -85,7 +86,22 @@ def measured_run_cost(registry, agent: str = "supplier") -> dict:
     if not costs:
         raise ValueError(f"{paths[-1].name} has no optimized runs")
     return {"report": paths[-1].name, "runs": len(costs), "mean": sum(costs) // len(costs), "max": max(costs),
-            "largest_prompt_tokens": largest}
+            "largest_prompt_tokens": largest, "calls_per_run": calls}
+
+
+FEE_RATE = 0.5  # the optimizer's fee on the compute a job needs: what it earns for its own future work
+
+
+def _min_charge(min_cost: int, vault_ratio: float) -> int:
+    """The least 0G accepts a call against (min_cost, counting 80% of a deposit), rounded up to 0.0001 0G."""
+    return math.ceil(min_cost / vault_ratio / 10**14) * 10**14
+
+
+def _customer_price(expected: int, min_cost: int, vault_ratio: float) -> tuple[int, int]:
+    """What the customer pays: the compute their job needs plus the optimizer's fee, never less than the minimum
+    charge. It depends only on their agent, never on what the optimizer's account holds."""
+    fee = int(expected * FEE_RATE)
+    return fee, max(math.ceil((expected + fee) / 10**14) * 10**14, _min_charge(min_cost, vault_ratio))
 
 
 def price(registry, *, free_neuron: int, compiled: bool, concurrency: int = 2, vault_ratio: float = 0.8,
@@ -104,12 +120,38 @@ def price(registry, *, free_neuron: int, compiled: bool, concurrency: int = 2, v
     compile_cost = 0 if compiled else _as_written_cost(registry)
     expected = run["max"] + compile_cost
     room = max(concurrency * worst_call, min_cost)
-    need = room + expected  # admitted at the peak, with the job's spend still to come
-    shortfall = max(need - free_neuron, 0)
-    pay = max(math.ceil(shortfall / vault_ratio / 10**15) * 10**15, expected, min_payment)
-    return {"pay": pay, "expected": expected, "run_max": run["max"], "run_mean": run["mean"], "compile": compile_cost,
-            "worst_call": worst_call, "room": room, "need": need, "free_now": free_neuron, "vault_ratio": vault_ratio,
+    need = room + expected  # the optimizer's working room at the peak: its own concern, never on the customer's bill
+    fee, pay = _customer_price(expected, min_cost, vault_ratio)
+    return {"pay": pay, "expected": expected, "fee": fee, "fee_rate": FEE_RATE, "min_charge": _min_charge(min_cost, vault_ratio),
+            "subtotal": expected + fee, "agent": "supplier check", "steps": 6, "model_steps": 5,
+            "per_call": _as_written_cost(registry) // 5,
+            "per_call_source": "the costliest model call measured on 0G for this agent, as written",
+            "calls_per_run": run["calls_per_run"], "compiled": compiled, "run_max": run["max"], "run_mean": run["mean"], "compile": compile_cost,
+            "worst_call": worst_call, "room": room, "need": need, "vault_ratio": vault_ratio,
             "from_report": run["report"], "runs_measured": run["runs"]}
+
+
+def price_custom(registry, *, steps: int, free_neuron: int, concurrency: int = 2, vault_ratio: float = 0.8,
+                 min_cost: int = 10**16, min_payment: int = 5 * 10**15) -> dict:
+    """A customer's own agent: traced once and run once optimized, about one model call per step each time,
+    each priced at the costliest call measured as written (0G's own prices), plus room for two calls in flight."""
+    from synapse0g import spend
+
+    measured = _as_written_cost(registry)  # the costliest as-written run of the example agent: 5 model steps
+    per_call = measured // 5
+    model = registry.model("agent-main")
+    max_out = registry.providers[model.provider].max_tokens or 2048
+    worst_call = spend.worst_case(model, {"messages": [{"content": "x" * 5000}], "max_tokens": max_out})
+    expected = 2 * steps * per_call
+    room = max(concurrency * worst_call, min_cost)
+    need = room + expected
+    fee, pay = _customer_price(expected, min_cost, vault_ratio)
+    return {"pay": pay, "expected": expected, "fee": fee, "fee_rate": FEE_RATE, "min_charge": _min_charge(min_cost, vault_ratio),
+            "subtotal": expected + fee, "model_steps": steps, "per_call": per_call,
+            "per_call_source": "the costliest model call measured on 0G (qwen3.8-flash at 0G's own price)",
+            "calls_per_run": steps, "compiled": False, "run_max": steps * per_call, "run_mean": steps * per_call, "compile": steps * per_call,
+            "worst_call": worst_call, "room": room, "need": need, "vault_ratio": vault_ratio,
+            "from_report": "steps found in your code x the costliest measured call", "runs_measured": steps, "steps": steps}
 
 
 def _as_written_cost(registry) -> int:
@@ -124,6 +166,15 @@ def _as_written_cost(registry) -> int:
 
 
 # ---- quotes, deposits and their match ----------------------------------------------------------
+def _compile_is_free(service) -> bool:
+    """Compiled in this process, or its trace is recorded and replays at no cost (the same app, the same sample)."""
+    trace = service.ROOT / "data" / "paid_trace.json"
+    try:
+        return "app" in service._PAID or len(json.loads(trace.read_text(encoding="utf-8"))) >= 5
+    except (OSError, ValueError):
+        return False
+
+
 class Payments:
     def __init__(self, db: Path = DB, cfg: dict | None = None):
         self.db, self.cfg = Path(db), cfg or load_config()
@@ -280,7 +331,7 @@ class Desk:
         from synapse0g.registry import load_registry
 
         self.pay = payments or Payments()
-        self.chain = chain or Chain(self.pay.cfg["network"]["rpc"])
+        self.chain = chain or Chain(self.pay.cfg["network"]["rpc"], self.pay.cfg["network"].get("rpc_fallbacks"))
         self.registry = registry or load_registry()
         self.guard = guard or spend.guard_for(self.registry.providers["zerog-agent"])
         self.queue = queue or service.Queue()
@@ -301,20 +352,33 @@ class Desk:
             out["router_error"] = f"{type(e).__name__}: {e}"[:200]
         return out
 
-    def quote(self, payer: str, task: str | None = None) -> dict:
-        from synapse0g import service
+    def quote(self, payer: str, task: str | None = None, *, code: str | None = None, sample: dict | None = None,
+              entry: str | None = None, name: str | None = None) -> dict:
+        from synapse0g import custom, service
 
         now = self.balances()
         free = int((now.get("free_0g") or 0) * NEURON)
-        b = price(self.registry, free_neuron=free, compiled="app" in service._PAID)
+        if code is not None:  # the customer's own agent
+            folder = self.pay.db.parent / "custom" / uuid.uuid4().hex[:10]
+            path = custom.save(code, folder)
+            module = custom.load(path)
+            steps = custom.step_count(module, path, entry)
+            b = price_custom(self.registry, steps=steps, free_neuron=free)
+            spec = {"agent": "custom", "code_path": str(path), "sample": sample or {}, "entry": entry,
+                    "name": name or "your agent", "steps": steps, "cap_0g": max(b["need"], b["pay"]) / NEURON}
+            return self._finish_quote(payer, spec, b, now)
+        b = price(self.registry, free_neuron=free, compiled=_compile_is_free(service))
         cap = max(b["need"], b["pay"])
+        spec = {"agent": "supplier", "task": task, "cap_0g": cap / NEURON}
+        return self._finish_quote(payer, spec, b, now)
+
+    def _finish_quote(self, payer: str, spec: dict, b: dict, now: dict) -> dict:
         # the key's own limit must cover the job, or the job would stop part way: refuse before payment
         room = self.guard.read_key_room() if self.guard.read_key_room else None
         b["key_room"] = room
         if room is not None and room < b["need"]:
             raise ValueError(f"the agent's Router key has {room / NEURON:.4f} 0G of its limit left and this job needs up to "
                              f"{b['need'] / NEURON:.4f}: raise the key's credit limit on pc.0g.ai before paying")
-        spec = {"agent": "supplier", "task": task, "cap_0g": cap / NEURON}
         q = self.pay.new_quote(payer, spec, b, now)
         q["transaction"] = self._transaction(q)
         return q

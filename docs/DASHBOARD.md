@@ -7,23 +7,24 @@ implementation, rather than a future design or a claim about implementation orig
 
 ## Pages and navigation
 
-The console shell (`web/src/components/Shell.jsx`) has a fixed-width, sticky sidebar
-with the SYNAPSE0G wordmark, a branching signal glyph, six compiler navigation entries and separate Pay and run and Funding and jobs entries, and
-an API connection indicator. Selection is highlighted with an orange marker.
+The default route is a lazy-loaded landing page (`web/src/landing/Landing.tsx`),
+separate from the console shell. The console wordmark returns to the landing page.
+Navigation groups the paid workflow, evidence, and developer tools.
 
-| Page | Purpose |
+| Route | Page and purpose |
 | --- | --- |
-| Live run | Run the supplier app as written and compiled on 0G, with call events, two live lanes, a shared-clock timeline, and measured outcomes. |
-| Pay and run | Quote and confirm a supplier request payment, monitor the paid run, inspect generated Python, and download its delivery ZIP. |
-| Funding and jobs | Inspect funding evidence, the local service ledger, budget modes, and queued jobs. |
-| Results | Lead with the compiled supplier-check study and show research, maths, and blocked retail results. Open a result for its detailed evidence. |
-| Connect an agent | Inspect pasted Python or a local path, choose a sample agent, or read the client wrapping and LangGraph compilation examples. |
-| Recorded runs | Inspect calls captured by the wrapper, repeated calls, graph transformations, and estimated opportunities. |
-| Workflows | Explore the five bundled workflow graphs and the transformations and refusals produced by their passes. |
-| Run history | Browse saved runs, including unsuccessful and invalid runs. |
+| `#/` | Landing: product explanation, optimizer, demo, safety, passes, results |
+| `#/pay` | Optimize your agent: paste/upload Python or choose an example, provide input, obtain and pay a quote |
+| `#/jobs` | Jobs and payments: account overview, quotes, payment history and job status |
+| `#/job/<quote>` | One job: progress, calls, measured outcome, generated code and delivery |
+| `#/live` | Live run: compare baseline and optimized execution |
+| `#/overview`, `#/result/<id>` | Measured results and their evidence |
+| `#/workflows`, `#/history` | Bundled graphs and saved runs |
+| `#/connect` | SDK and CLI integration guidance |
+| `#/recorded`, `#/agent` | Recorded runs and funding views, retained as routes |
 
-The page selection lives in `web/src/store.js` and uses URL hashes. Result details
-are rendered by `web/src/components/Result.jsx`.
+Hash routing is implemented in `web/src/store.js`. Pay, job detail and job history
+share payment components in `web/src/pages/paykit.jsx`.
 
 ## Visual language
 
@@ -144,8 +145,8 @@ described in the README and RESULTS.md; the Live run page remains the supplier d
 `web/src/pages/Pay.jsx` implements `#/pay`. It uses `/api/pay/quote`,
 `/api/pay/confirm`, `/api/pay/resume`, `/api/pay/history`, and `/api/pay/<quote>`;
 `/api/pay/<quote>/package` serves the delivery archive. Generated code appears with
-line markers for its transformations. The current paid workflow is the bundled
-supplier agent, with request selection rather than user source upload.
+line markers for its transformations. The paid workflow accepts pasted or uploaded Python source as well as the bundled
+supplier example. Custom source execution is implemented by `synapse0g/custom.py`.
 
 The page displays which component enforces the key cap and distinguishes team test
 payments from customer payments. See [PAYMENTS.md](PAYMENTS.md) for the scope of the
@@ -156,3 +157,23 @@ Token artwork is stored in `assets/synapse-token.png` and
 `assets/synapse-token-256.png`. These are token identity assets referenced by the
 comfy setup, not the console's branching SVG glyph. Their filenames alone do not
 establish authorship or licensing history.
+
+## Landing artwork, motion and sound
+
+The landing page uses the existing dark surfaces, orange accent and display typography.
+Its section navigation tracks scrolling and includes a mobile menu. Content and visual
+explanations live under `web/src/landing/`: `Explainer.tsx`, `Passes.tsx`,
+`PassDiagrams.tsx`, `Lattice.tsx`, `sections.tsx`, and `content.ts`.
+
+`HeroSilicon.tsx` supplies the lazy-loaded 3D hero. Geometry and rendering helpers
+live in `web/src/three/silicon.tsx` and `neuron.ts`; `heroGraph.ts` and `engineData.ts`
+supply graph-related visual data. These are code assets rather than raster screenshots
+of the console. Rendering uses Three.js, React Three Fiber, Drei and postprocessing.
+`web/src/lib/motion.tsx` and Lenis support scrolling and reveals; the sound module
+provides the landing sound controls and browser audio state. The static token PNGs
+remain separate identity assets.
+
+Custom-agent uploads execute Python on the server to compile and run the agent;
+this is different from the read-only Connect inspector. The deployment documentation
+limits this unsandboxed capability to a controlled demo. Docker/Render configuration,
+persistent state and deployment requirements are described in [DEPLOY.md](DEPLOY.md).

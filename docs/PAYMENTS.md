@@ -38,8 +38,9 @@ Phase 1 of the paid agent. (Comfy, the token route, is on hold: its agent regist
 
 ## Generated delivery and current scope
 
-The current paid path selects the bundled supplier-check app. Customers choose a
-request; there is no arbitrary source-upload flow on this page. `service.deliver`
+The paid path accepts pasted/uploaded Python source and input JSON, or a request
+for the bundled supplier-check example. Custom source is imported and executed on
+the server through `custom.py`; it is not sandboxed. `service.deliver`
 uses `codegen.generate_langgraph` to lower the optimized SIR and selected call policy
 into Python without an LLM writing the output.
 
@@ -48,7 +49,7 @@ The ZIP includes `optimized_agent.py`, `supplier_agent.py`, `sir_before.json`,
 `run.json`. It is downloaded through `/api/pay/<quote>/package`. The page also
 shows generated source with optimization line markers.
 
-The generated code imports the original supplier functions. Run it in an environment
+The generated code imports the source agent functions. Run it in an environment
 with the original agent's dependencies, including synapse0g and LangGraph; the ZIP
 does not bundle those dependencies. Importing these functions is execution reuse
 within the delivered app, not a statement about this repository's provenance.
@@ -62,3 +63,11 @@ uses `SYNAPSE0G_AGENT_CAP_0G`, and the page identifies synapse0g as the enforcer
 That fallback constrains this server's guarded calls; it is not a Router-enforced
 limit on every possible use of the key. Jobs that stop for lack of available credit
 can be resumed using `/api/pay/resume`; completed jobs clear their stop note.
+
+## Redesigned payment interface
+
+`#/pay` starts the quote/payment flow, `#/jobs` lists jobs and payments, and
+`#/job/<quote>` shows a job's progress and delivery. Shared UI lives in `paykit.jsx`.
+Custom-agent packages include the submitted source rather than `supplier_agent.py`;
+actual delivery contents and dependencies depend on the selected agent.
+See [DEPLOY.md](DEPLOY.md) before exposing custom source execution publicly.

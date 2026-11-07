@@ -8,6 +8,7 @@
 network:
   chain_id: 16661
   rpc: https://evmrpc.0g.ai
+  rpc_fallbacks: [https://0g-mainnet.drpc.org]   # tried when the public RPC refuses or drops a read
   explorer: https://chainscan.0g.ai
 
 payment_layer: "0xA3b15Bd2aD18BFB6b5f92D8AA9F444Dd59d1cE32"   # docs.0g.ai Router, Deposits & Billing

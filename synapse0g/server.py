@@ -25,6 +25,7 @@ from __future__ import annotations
 import json
 import mimetypes
 import threading
+import time
 import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -92,6 +93,20 @@ class Handler(BaseHTTPRequestHandler):
                 run = live.RUNS.get(path.rsplit("/", 1)[-1])
                 since = int((parse_qs(urlparse(self.path).query).get("since") or ["0"])[0])
                 return self._json(200, run.since(since)) if run else self._json(404, {"error": "no such live run"})
+            if path == "/api/lattice":  # which transforms each effect tier allows, computed from the effect rules
+                from synapse0g.graph.core.lattice import table
+
+                return self._json(200, table())
+            if path == "/api/passes":  # every pass the compiler has, with its safety rule
+                from synapse0g.graph.passes.base import all_passes, default_pipeline
+
+                on = set(default_pipeline())
+                return self._json(200, {"passes": [{"name": x.name, "description": x.description, "precondition": x.precondition,
+                                                    "on_by_default": x.name in on} for x in all_passes()]})
+            if path == "/api/example/supplier":
+                from synapse0g.agents import supplier
+
+                return self._json(200, {"name": "supplier check", "code": supplier.APP_PATH.read_text(encoding="utf-8")})
             if path == "/api/pay/history":
                 return self._json(200, _desk().history())
             if path.startswith("/api/pay/") and path.endswith("/package"):
@@ -158,6 +173,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, {"id": run.id, "task_id": run.task_id})
             if path == "/api/pay/quote":
                 try:
+                    if body.get("code"):
+                        return self._json(200, _desk().quote(body.get("payer") or "", code=body["code"], sample=body.get("sample") or {},
+                                                             entry=body.get("entry") or None, name=body.get("name") or None))
                     return self._json(200, _desk().quote(body.get("payer") or "", body.get("task") or None))
                 except ValueError as e:
                     return self._json(400, {"error": str(e)})
@@ -222,7 +240,21 @@ def _desk():
         return _DESK["desk"]
 
 
+_LAST_ACCOUNT: dict = {}
+
+
 def _paid_account() -> dict:
+    """The account, read now; if 0G cannot be reached this moment, the last good reading, marked with its age."""
+    out = _read_account()
+    if out.get("connected"):
+        _LAST_ACCOUNT.update(out, read_at=time.time())
+        return out
+    if _LAST_ACCOUNT and "not set" not in out.get("why", ""):
+        return {**_LAST_ACCOUNT, "stale": True, "stale_s": round(time.time() - _LAST_ACCOUNT["read_at"]), "why": out.get("why")}
+    return out
+
+
+def _read_account() -> dict:
     """The agent's own 0G account as the spend guard sees it, or why it cannot be read. Never a key."""
     import os
 
@@ -242,7 +274,7 @@ def _paid_account() -> dict:
         return {"connected": False, "why": f"{type(e).__name__}: {e}"[:300]}
 
 
-def serve(port: int = 8000) -> None:
+def serve(port: int = 8000, host: str = "127.0.0.1") -> None:
     from synapse0g.registry import load_env
 
     load_env()  # keys stay on the server: no endpoint returns one
@@ -254,8 +286,8 @@ def serve(port: int = 8000) -> None:
             print(f"payments: the desk could not start yet: {type(e).__name__}: {e}")
 
     threading.Thread(target=warm, daemon=True).start()
-    httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"synapse0g dashboard on http://127.0.0.1:{port}  (data: /api/feed)")
+    httpd = ThreadingHTTPServer((host, port), Handler)
+    print(f"synapse0g dashboard on http://{host}:{port}  (data: /api/feed)", flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

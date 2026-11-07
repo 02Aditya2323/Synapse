@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { BarChart3, Boxes, CreditCard, History, Plug, Radio, Wallet, Zap } from 'lucide-react'
+import { BarChart3, Boxes, CreditCard, History, Plug, Wallet, Zap } from 'lucide-react'
 import { useView } from '../store.js'
 import { useHealth } from '../api.js'
 
@@ -17,13 +17,20 @@ export function Glyph({ size = 22 }) {
   )
 }
 
-const NAV = [
-  { page: 'live', label: 'Live run', icon: Zap },
-  { page: 'overview', label: 'Results', icon: BarChart3, also: ['result'] },
-  { page: 'connect', label: 'Connect an agent', icon: Plug },
-  { page: 'recorded', label: 'Recorded runs', icon: Radio },
-  { page: 'workflows', label: 'Workflows', icon: Boxes },
-  { page: 'history', label: 'Run history', icon: History },
+const GROUPS = [
+  ['The optimizer agent', [
+    { page: 'pay', label: 'Optimize your agent', icon: CreditCard },
+    { page: 'jobs', label: 'Jobs and payments', icon: Wallet, also: ['job'] },
+  ]],
+  ['Proof', [
+    { page: 'live', label: 'Live run', icon: Zap },
+    { page: 'overview', label: 'Results', icon: BarChart3, also: ['result'] },
+    { page: 'workflows', label: 'Workflows', icon: Boxes },
+    { page: 'history', label: 'Run history', icon: History },
+  ]],
+  ['Developers', [
+    { page: 'connect', label: 'SDK and CLI', icon: Plug },
+  ]],
 ]
 
 function NavItem({ item }) {
@@ -67,7 +74,7 @@ export default function Shell({ children }) {
   return (
     <div className="min-h-full flex">
       <aside className="sticky top-0 h-screen w-[248px] shrink-0 border-r border-white/[.06] flex flex-col bg-[linear-gradient(180deg,rgba(17,24,39,.72),rgba(11,15,23,.92))] backdrop-blur-xl">
-        <button onClick={() => go('overview')} className="group flex items-center gap-2.5 px-5 h-16 border-b border-white/[.06] text-left">
+        <button onClick={() => go('landing')} className="group flex items-center gap-2.5 px-5 h-16 border-b border-white/[.06] text-left">
           <Glyph />
           <span className="font-display font-display-tight text-[16px] text-[var(--text-strong)] group-hover:text-[var(--accent)] transition-colors" style={{ fontWeight: 800, letterSpacing: '-0.01em' }}>
             SYNAPSE<span className="text-[var(--accent)]">0G</span>
@@ -75,11 +82,12 @@ export default function Shell({ children }) {
           <span className="ml-auto text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--faint)]">Console</span>
         </button>
         <nav className="flex-1 px-3 py-3 space-y-0.5">
-          <div className="px-3 pt-1 pb-1.5 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--ghost)]">Compiler</div>
-          {NAV.map((item) => <NavItem key={item.page} item={item} />)}
-          <div className="px-3 pt-4 pb-1.5 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--ghost)]">Paid agent</div>
-          <NavItem item={{ page: 'pay', label: 'Pay and run', icon: CreditCard }} />
-          <NavItem item={{ page: 'agent', label: 'Funding and jobs', icon: Wallet }} />
+          {GROUPS.map(([title, items], i) => (
+            <div key={title}>
+              <div className={`px-3 ${i ? 'pt-4' : 'pt-1'} pb-1.5 text-[10.5px] font-medium uppercase tracking-[.14em] text-[var(--ghost)]`}>{title}</div>
+              {items.map((item) => <NavItem key={item.page} item={item} />)}
+            </div>
+          ))}
         </nav>
         <HealthLine />
       </aside>

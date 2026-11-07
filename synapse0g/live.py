@@ -102,10 +102,29 @@ def _task_set(agent: str):
     return [t for t in every if split_of(t.id) == "test"][:20]
 
 
+def _supplier_trap(rfq_id: str) -> str | None:
+    """What makes this request hard, read from the marketplace's own data (never from a model)."""
+    from synapse0g.agents import supplier_desk as d
+
+    rfq = d._RFQS[rfq_id]
+    if d.right_answer(rfq) is None:
+        return "no supplier qualifies: the right answer is no order"
+    cheapest = min(rfq["suppliers"], key=lambda s: d._total(s, rfq["quantity"]))
+    for bad, why in ((not cheapest.cert_valid, "has no valid ISO 9001 certificate"),
+                     (cheapest.serious_review, "has a serious review (counterfeit, safety or non-delivery)"),
+                     (cheapest.stock < rfq["quantity"], "cannot supply the full quantity"),
+                     (cheapest.lead_days > rfq["needed_within_days"], "cannot deliver in time"),
+                     (cheapest.unit_price > rfq["max_unit_price"], "is over the price limit")):
+        if bad:
+            return f"trap: the cheapest supplier {why}"
+    return None
+
+
 def _describe(agent: str, t) -> dict:
     if agent == "supplier":
         rfq = json.loads(t.question)
-        return {"rfq": rfq, "label": f"{rfq['rfq_id']}: {rfq['quantity']} x {rfq['item']}",
+        trap = _supplier_trap(rfq["rfq_id"])
+        return {"rfq": rfq, "trap": trap, "label": f"{rfq['rfq_id']}: {rfq['quantity']} x {rfq['item']}" + (f"  ·  {trap}" if trap else ""),
                 "summary": f"{rfq['rfq_id']}: {rfq['quantity']} x {rfq['item']}, at most {rfq['max_unit_price']} each, "
                            f"within {rfq['needed_within_days']} days"}
     if agent == "procurement":
@@ -198,6 +217,16 @@ class _Watch:
         self.stop.set()
         self.thread.join()
         self._flush()
+
+
+def plain_error(error: str | None) -> str | None:
+    """A provider's refusal in plain words, with its own text kept after it."""
+    if not error:
+        return error
+    if "insufficient_balance" in error or "Insufficient balance" in error:
+        return "0G refused the call: the account paying for this run has no balance left (402 insufficient_balance). " \
+               "Top it up on pc.0g.ai, then run again. " + error[-160:]
+    return error
 
 
 def _summary(records, wall_s: float, answer: dict | None, passed: bool, order_placed: bool) -> dict:
@@ -300,7 +329,7 @@ def _run(run: LiveRun, cold: bool) -> None:
                 answer = (state or {}).get("order")
                 placed = bool((state or {}).get("receipt", {}).get("po_number"))
                 a = _summary(records, wall, answer, error is None and check(task, json.dumps(answer or {})), placed)
-                a["error"] = error
+                a["error"] = plain_error(error)
                 a["receipt"] = (state or {}).get("receipt")
                 run.emit("arm_done", arm="as_written", summary=a)
                 results["as_written"] = a
@@ -326,7 +355,7 @@ def _run(run: LiveRun, cold: bool) -> None:
                 out = (execution.outputs.get("result") if execution and not error else None) or {}
                 answer = out.get("order")
                 c = _summary(records, wall, answer, error is None and check(task, json.dumps(answer or {})), False)
-                c["error"] = error
+                c["error"] = plain_error(error)
                 c["cache_hits"] = execution.cache_hits if execution else 0
                 run.emit("arm_done", arm="compiled", summary=c)
                 results["compiled"] = c
@@ -339,8 +368,10 @@ def _run(run: LiveRun, cold: bool) -> None:
             a, c = results.get("as_written"), results.get("compiled")
             if a is None or c is None:
                 raise RuntimeError("an arm did not finish: see the server log")
-            a["short"], c["short"] = (a["answer"] or {}).get("supplier_id"), (c["answer"] or {}).get("supplier_id")
-            run.emit("result", as_written=a, compiled=c, same_decision=a["short"] == c["short"])
+            # no supplier chosen is an answer too: "no order" (right when none qualifies)
+            a["short"], c["short"] = ((x["answer"] or {}).get("supplier_id") or ("no order" if x["answer"] else None) for x in (a, c))
+            run.emit("result", as_written=a, compiled=c,
+                     same_decision=None if a["error"] or c["error"] else a["short"] == c["short"])
     except Exception as e:  # the run says it failed and why
         traceback.print_exc()
         run.emit("failed", error=f"{type(e).__name__}: {e}")
@@ -432,7 +463,7 @@ def _run_other(run: LiveRun, cold: bool) -> None:
             wall = time.perf_counter() - t
             text = answer if isinstance(answer, str) else json.dumps(answer or {}, default=str)
             summary = _summary(records, wall, answer, error is None and answer is not None and check(task, text), False)
-            summary.update(error=error, short=_short(agent, answer), **extra)
+            summary.update(error=plain_error(error), short=_short(agent, answer), **extra)
             run.emit("arm_done", arm=name, summary=summary)
             results[name] = summary
 
@@ -473,7 +504,7 @@ def _run_other(run: LiveRun, cold: bool) -> None:
         if a is None or (len(arms) == 2 and c is None):
             raise RuntimeError("an arm did not finish: see the server log")
         run.emit("result", as_written=a, compiled=c, unchanged=len(arms) == 1,
-                 same_decision=None if c is None else a["short"] == c["short"])
+                 same_decision=None if c is None or a["error"] or c["error"] else a["short"] == c["short"])
     except Exception as e:  # the run says it failed and why
         traceback.print_exc()
         run.emit("failed", error=f"{type(e).__name__}: {e}")

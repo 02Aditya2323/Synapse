@@ -192,14 +192,14 @@ Dashboard design and implementation: [docs/DASHBOARD.md](docs/DASHBOARD.md).
 
 ## Pay and receive generated agent code
 
-The **Pay and run** page (`#/pay`) quotes a supplier-check request, verifies its
-payment, runs the optimized supplier agent, and offers a ZIP delivery. This path
-currently uses the bundled supplier app; it is not an arbitrary agent-upload flow.
-The package contains generated Python, the original supplier source, both SIR
-graphs, the selected call policy, input, explanation, and run evidence.
+The **Optimize your agent** page (`#/pay`) accepts pasted/uploaded Python or the
+supplier example, input JSON, and a payment quote. Separate Jobs and payments
+(`#/jobs`) and job-detail (`#/job/<quote>`) pages show execution, payment evidence,
+generated code and ZIP delivery. The default route is the animated landing page.
 
-The generated file is lowered from the optimized SIR and policy by
-`synapse0g/codegen.py`. It reuses the source agent's step functions and requires their
-runtime dependencies, including this project's supplier modules. It is not a
-self-contained replacement for the full environment. Payment flow, spend limits,
-and delivery contents are documented in [docs/PAYMENTS.md](docs/PAYMENTS.md).
+Generated Python is lowered from optimized SIR and the selected call policy by
+`synapse0g/codegen.py`. It reuses the source agent's functions and requires their
+runtime dependencies; the ZIP is not a bundled Python environment. Custom source
+runs on the server, so the current unsandboxed flow is for a controlled demo.
+See [docs/PAYMENTS.md](docs/PAYMENTS.md), [docs/DASHBOARD.md](docs/DASHBOARD.md)
+and [docs/DEPLOY.md](docs/DEPLOY.md) for the payment flow, design assets and deployment.

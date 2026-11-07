@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -297,7 +298,7 @@ def agent(args) -> int:
 def ui(args) -> int:
     from synapse0g.server import serve
 
-    serve(args.port)
+    serve(args.port, args.host)
     return 0
 
 
@@ -318,7 +319,8 @@ def main(argv: list[str] | None = None) -> int:
     ag.add_argument("--once", action="store_true", help="run: one job, then stop")
     ag.set_defaults(fn=agent)
     u = sub.add_parser("ui", help="serve the dashboard and its data")
-    u.add_argument("--port", type=int, default=8000)
+    u.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8000")), help="default: $PORT, else 8000")
+    u.add_argument("--host", default=os.environ.get("HOST", "127.0.0.1"), help="0.0.0.0 to serve beyond this machine (a host such as Render)")
     u.set_defaults(fn=ui)
     b = sub.add_parser("bench")
     b.add_argument("--agent", choices=["research", "math", "retail", "supplier", "procurement"], required=True)

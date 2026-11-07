@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 import os
 import time
+import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -94,22 +95,29 @@ def shares(charge: dict, split: dict) -> dict:
 
 
 # ---- sources -----------------------------------------------------------------------------------
+FALLBACK_RPCS = ["https://0g-mainnet.drpc.org"]  # 0G's docs advise a third-party RPC beside its rate-limited public one
+
+
 class Chain:
-    def __init__(self, rpc: str):
+    def __init__(self, rpc: str, fallbacks: list[str] | None = None):
         self.rpc = rpc
+        self.rpcs = [rpc] + [u for u in (FALLBACK_RPCS if fallbacks is None else fallbacks) if u != rpc]
 
     def _call(self, method: str, params: list, attempts: int = 4):
         body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params}).encode()
-        req = urllib.request.Request(self.rpc, body, {"Content-Type": "application/json", "User-Agent": USER_AGENT})
-        for i in range(attempts):  # the public RPC drops connections now and then: a read is safe to repeat
+        for i in range(attempts):  # an RPC drops connections now and then: a read is safe to repeat, on the next RPC
+            url = self.rpcs[i % len(self.rpcs)]
+            req = urllib.request.Request(url, body, {"Content-Type": "application/json", "User-Agent": USER_AGENT})
             try:
                 with urllib.request.urlopen(req, timeout=30) as r:
                     doc = json.load(r)
+                if "error" in doc and i < attempts - 1 and "rate" in str(doc["error"]).lower():
+                    continue
                 break
             except (OSError, json.JSONDecodeError):
                 if i == attempts - 1:
                     raise
-                time.sleep(1.5 * (i + 1))
+                time.sleep(1.0 * (i + 1))
         if "error" in doc:
             raise RuntimeError(f"{method}: {doc['error']}")
         return doc["result"]
@@ -141,10 +149,19 @@ class RouterAccount:
     def __init__(self, key: str):
         self.key = key
 
-    def _get(self, path: str) -> dict:
+    def _get(self, path: str, attempts: int = 3) -> dict:
         req = urllib.request.Request(ROUTER + path, headers={"Authorization": f"Bearer {self.key}", "User-Agent": USER_AGENT})
-        with urllib.request.urlopen(req, timeout=30) as r:
-            return json.load(r)
+        for i in range(attempts):  # a dropped connection or a DNS hiccup is retried; a refusal (4xx) is not
+            try:
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    return json.load(r)
+            except urllib.error.HTTPError:
+                raise
+            except (OSError, json.JSONDecodeError):
+                if i == attempts - 1:
+                    raise
+                time.sleep(1.0 * (i + 1))
+        raise RuntimeError("unreachable")
 
     def balance(self) -> dict:
         doc = self._get("/account/balance")

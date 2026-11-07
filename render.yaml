@@ -1,0 +1,27 @@
+# Render blueprint: one Docker web service with a persistent disk for jobs, payments and the spend ledger.
+# Secrets are set in the Render dashboard (sync: false), never in this file.
+services:
+  - type: web
+    name: synapse0g
+    runtime: docker
+    plan: starter            # a persistent disk needs a paid plan; on the free plan, drop `disk` (state resets on restart)
+    region: singapore
+    healthCheckPath: /api/health
+    autoDeploy: false
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: ZG_API_KEY          # the team's 0G key, for the live runs (the .env name 0G_API_KEY cannot start with a digit here)
+        sync: false
+      - key: ZG_AGENT_KEY        # the optimizer agent's own capped Router key: paid jobs spend only through it
+        sync: false
+      - key: ZG_MANAGEMENT_KEY   # read-only (account:read, keys:read): balances and the key's cap
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: SYNAPSE0G_AGENT_CAP_0G
+        value: "0.3"
+    disk:
+      name: synapse0g-data
+      mountPath: /app/data
+      sizeGB: 1

@@ -190,3 +190,27 @@ def test_a_job_stopped_by_the_key_cap_resumes_on_the_credit_already_paid(desk):
     assert {"optimized_agent.py", "supplier_agent.py", "sir_after.json", "policy.json", "input.json"} <= names
     compile(code, "optimized_agent.py", "exec")  # the generated agent is valid Python
     assert "g.add_edge(START, 'get_quotes')" in code and "protected(original.place_order" in code
+
+
+def test_a_customers_own_pasted_agent_is_compiled_optimized_and_returned_as_code(desk):
+    import json
+    import zipfile
+
+    from synapse0g.agents import supplier
+
+    code = supplier.APP_PATH.read_text()
+    sample = {"rfq": json.loads(supplier.split("test", 1)[0].question)}
+    q = desk.quote(CUSTOMER, code=code, sample=sample, name="my supplier agent")
+    assert q["spec"]["agent"] == "custom" and q["spec"]["steps"] == 6 and q["pay"] > 0
+    desk.fake.pay(tx(21), CUSTOMER, q["pay"])
+    desk.confirm(q["id"], tx(21))
+    v = _wait(desk, q["id"], timeout=60)
+    assert v["quote"]["status"] == "done", v["quote"]
+    r = v["job"]["result"]
+    assert r["custom"] and "place_order" in r["flagged"] and r["billed_0g"]
+    compiled = next(e for e in v["progress"]["events"] if e["type"] == "compiled")
+    assert {"memoize", "parallelize"} <= set(compiled["applied"])
+    with zipfile.ZipFile(service.ROOT / r["package"]) as z:
+        code_out = z.read(next(n for n in z.namelist() if n.endswith("optimized_agent.py"))).decode()
+        assert any(n.endswith("customer_agent.py") for n in z.namelist())
+    assert "import customer_agent as original" in code_out and "g.add_edge(START, 'get_quotes')" in code_out

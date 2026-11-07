@@ -21,7 +21,6 @@ So the code handed back is the optimized graph itself, written out.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 PSEUDO = ("n_in", "n_state")  # the graph's input and final state: not steps
@@ -270,6 +269,42 @@ def generate_langgraph(*, module: str, state_class: str, builder_attr: str, ui_a
     w('    print(f"done in {time.perf_counter() - t0:.1f} s")')
     w("    print(json.dumps({k: v for k, v in state.items() if k not in inputs}, indent=1, default=str)[:4000])")
     return "\n".join(out) + "\n"
+
+
+def generate_function(*, module: str, entry: str, job: str) -> str:
+    """A plain-Python agent, optimized: the same function, compiled and run by synapse0g's runtime, which runs its
+    optimized SIR (independent steps together, pure steps cached, irreversible steps flagged and held back)."""
+    return f'''"""Your agent, optimized by synapse0g (job {job}). Generated code: regenerate rather than edit by hand.
+
+Your function `{entry}` is imported unchanged from {module}.py. synapse0g compiles it to the optimized SIR
+(sir_after.json) and runs that graph: independent steps together, pure steps from the cache, and irreversible or
+external steps flagged and held back unless you allow them.
+
+    python optimized_agent.py                 # runs the input this job was paid for (input.json)
+    python optimized_agent.py my_input.json
+    python optimized_agent.py --allow-irreversible
+"""
+
+import json
+import sys
+import time
+from pathlib import Path
+
+import synapse0g
+
+import {module} as original  # your code, unchanged
+
+HERE = Path(__file__).resolve().parent
+app = synapse0g.compile(original.{entry}, effects=getattr(original, "EFFECTS", {{}}))
+
+if __name__ == "__main__":
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    inputs = json.loads(Path(args[0] if args else HERE / "input.json").read_text(encoding="utf-8"))
+    t0 = time.perf_counter()
+    out = app.invoke(**inputs, allow_irreversible="--allow-irreversible" in sys.argv)
+    print(f"done in {{time.perf_counter() - t0:.1f}} s")
+    print(json.dumps(out, indent=1, default=str)[:4000])
+'''
 
 
 def readme(*, job: str, module: str, applied: list[str], protected: list[str], verdict: dict | None) -> str:

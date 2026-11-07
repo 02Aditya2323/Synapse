@@ -230,6 +230,38 @@ def deliver(job, app, policy, report_doc: dict | None, report: str | None, resul
     return str(zpath.relative_to(ROOT))
 
 
+def deliver_custom(job, app, module, target: dict, path: Path, result: dict, sample: dict) -> str:
+    """The customer's optimized agent as code, beside their original, both graphs and this run's evidence."""
+    from synapse0g import codegen
+    from synapse0g.optimizer import Policy
+
+    ui_after, ui_before = app.after.to_ui(), app.before.to_ui()
+    nodes = [n["id"] for n in ui_after["nodes"]]
+    if target["kind"] == "langgraph":
+        code = codegen.generate_langgraph(
+            module=path.stem, state_class=target["target"].state_schema.__name__, builder_attr=target["name"], ui_after=ui_after,
+            policy={}, step_labels={}, reasoning_off={}, refused=[], verdict=None, job=job.id, report=None, sample_input=sample,
+            functions=codegen.module_functions(module, nodes))
+    else:
+        code = codegen.generate_function(module=path.stem, entry=target["name"], job=job.id)
+    protected = [n["id"] for n in ui_after["nodes"] if n.get("effect") in ("external", "irreversible")]
+    run = {k: v for k, v in result.items() if k != "package"}
+    files = {
+        "optimized_agent.py": code,
+        f"{path.stem}.py": path.read_text(encoding="utf-8"),
+        "sir_before.json": json.dumps(ui_before, indent=1, default=str),
+        "sir_after.json": json.dumps(ui_after, indent=1, default=str),
+        "OPTIMIZATION.md": codegen.optimization_md(explain=app.explain(), policy_described=Policy({}).describe(), refused=[],
+                                                   run=run, paid={"tx": job.spec.get("payment_tx"), "quote": job.spec.get("quote")}),
+        "README.md": codegen.readme(job=job.id, module=path.stem, applied=app.applied, protected=protected, verdict=None),
+        "input.json": json.dumps(sample, indent=1, default=str),
+        "run.json": json.dumps(run, indent=1, default=str),
+    }
+    zpath = codegen.write_pack(ROOT / "data" / DELIVERIES / f"synapse0g-optimized-{job.id}", files)
+    result["optimized_code"] = code
+    return str(zpath.relative_to(ROOT))
+
+
 def peak_overlap(records) -> int:
     """The most calls in flight at one moment: from when each request left to when its reply came back."""
     edges = []
@@ -284,8 +316,8 @@ def submit(queue: Queue, kind: str, spec: dict) -> Job:
     if kind not in ("inspect", "study", "run"):
         raise ValueError("kind is inspect, study or run")
     if kind == "run":
-        if spec.get("agent", "supplier") != "supplier":
-            raise ValueError("run jobs run the supplier-check app")
+        if spec.get("agent", "supplier") not in ("supplier", "custom"):
+            raise ValueError("run jobs run the supplier-check app or the customer's own agent")
         job = Job(id="job-" + uuid.uuid4().hex[:10], kind=kind, spec={"agent": "supplier", **spec}, created=time.time())
         job.quote = {"cap_0g": float(spec.get("cap_0g", RUN_CAP_0G)), "note": "one supplier request, compiled, paid by the agent's account"}
         queue.put(job)
@@ -349,7 +381,7 @@ class Agent:
 
                 job.result = inspect_code(code=job.spec.get("code"), path=job.spec.get("path"), entry=job.spec.get("entry"))
             elif job.kind == "run":
-                job.result = self._paid_run(job)
+                job.result = self._paid_custom(job) if job.spec.get("agent") == "custom" else self._paid_run(job)
             else:
                 job.result, job.spent_usd = self._study(job, mode)
             job.status, job.note = "done", ""
@@ -416,7 +448,8 @@ class Agent:
                               held_out=(report_doc or {}).get("evaluation", {}).get("verdict"))
                 progress.emit("phase", phase="run", text="Running the optimized agent on your request, two calls at a time, "
                                                          "paid by the agent's account")
-                session = engine.open(policy, pay_from=PAY_FROM)
+                # a resumed job replays the calls its paused attempt already paid for, and continues from there
+                session = engine.open(policy, pay_from=PAY_FROM, replay_path=str(ROOT / "data" / "resume" / f"{job.id}.json"))
                 watch = live._Watch(progress, session, "run")
                 try:
                     with routed(px.base_url, session.id):
@@ -454,6 +487,89 @@ class Agent:
                 "peak_overlap": peak_overlap(run_records), "calls": calls}
         result["package"] = deliver(job, _PAID["app"], policy, report_doc, report, result, ex=ex, registry=registry,
                                     inputs={"rfq": rfq})
+        progress.emit("result", **{k: v for k, v in result.items() if k != "calls"})
+        progress.done = True
+        return result
+
+    def _paid_custom(self, job: Job) -> dict:
+        """The customer's own agent: compiled on their sample input, run optimized, returned as code. Every call
+        is paid from the agent's account under the job's cap, exactly as for the example agent."""
+        import synapse0g
+        from synapse0g import custom, live
+        from synapse0g.graph.runtime.executor import ExecutionMode
+        from synapse0g.openai import routed
+        from synapse0g.proxy import Engine, Proxy
+        from synapse0g.registry import load_registry
+        from synapse0g.spend import NEURON
+        from synapse0g.study import _passes
+
+        registry = self.registry or load_registry()
+        engine = Engine(registry)
+        path = Path(job.spec["code_path"])
+        sample = job.spec.get("sample") or {}
+        cap = int(float(job.spec.get("cap_0g", RUN_CAP_0G)) * NEURON)
+        before = len(self.guard.refusals)
+        progress = PROGRESS[job.id] = live.LiveRun(job.id, "your agent")
+        progress.emit("task", label=job.spec.get("name") or "your agent", summary=json.dumps(sample)[:300], cap_0g=cap / NEURON)
+        records, run_records, execution, app = [], [], None, None
+        t0 = time.perf_counter()
+        try:
+            module = custom.load(path)
+            target = custom.find(module, job.spec.get("entry"))
+            nodes = list(target["target"].nodes) if target["kind"] == "langgraph" else []
+            effects, effect_source = custom.effects_of(module, path, nodes) if nodes else (getattr(module, "EFFECTS", {}) or {}, {})
+            with self.guard.for_job(job.id, cap), Proxy(engine) as px:
+                progress.emit("phase", phase="compile", text="Tracing your agent step by step and lifting it to SIR, "
+                                                             "paid by the optimizer's account")
+                trace = engine.open(pay_from=PAY_FROM)
+                watch = live._Watch(progress, trace, "compile")
+                try:
+                    with routed(px.base_url, trace.id):
+                        if target["kind"] == "langgraph":
+                            app = synapse0g.compile(target["target"], sample=sample, effects=effects, name=target["name"],
+                                                    cache_dir=ROOT / "data" / "paid_cache", cache_scope=f"customer-{job.id}")
+                        else:
+                            app = synapse0g.compile(target["target"], effects=effects, name=target["name"],
+                                                    cache_dir=ROOT / "data" / "paid_cache", cache_scope=f"customer-{job.id}")
+                finally:
+                    watch.close()
+                    records += engine.close(trace.id).records
+                progress.emit("compiled", reused=False, applied=app.applied, before=app.before.to_ui(), after=app.after.to_ui(),
+                              passes=_passes(app), explain=app.explain(), order=app.before.meta.get("declared_order"),
+                              effects_from=effect_source)
+                progress.emit("policy", report=None, steps={}, held_out=None)
+                progress.emit("phase", phase="run", text="Running your optimized agent on your input, two calls at a time, "
+                                                         "paid by the optimizer's account")
+                session = engine.open(pay_from=PAY_FROM, replay_path=str(ROOT / "data" / "resume" / f"{job.id}.json"))
+                watch = live._Watch(progress, session, "run")
+                try:
+                    with routed(px.base_url, session.id):
+                        execution = app.run(dict(sample), mode=ExecutionMode.BENCH, on_event=lambda e: progress.emit(
+                            "node", event=e["type"], **{k: v for k, v in e.items() if k != "type"}))
+                finally:
+                    watch.close()
+                    run_records = engine.close(session.id).records
+        except Exception as e:
+            refused = self.guard.refusals[before:]
+            progress.emit("paused" if refused else "failed", **({"reason": refused[0][1]} if refused else
+                                                                {"error": f"{type(e).__name__}: {e}"[:400]}))
+            progress.done = True
+            if refused:
+                raise Paused(f"stopped for funds: {refused[0][1]}") from e
+            raise
+        calls = [{"step": r.step, "model": r.tag, "account": r.provider, "request_id": r.request_id, "billed_0g": r.billed_0g,
+                  "latency_s": round(r.latency_s, 3), "started_at": r.started_at, "status": r.status, "error": r.error,
+                  "hold": r.hold_id, "compile": i < len(records)} for i, r in enumerate(records + run_records)]
+        billed = [c["billed_0g"] for c in calls if c["status"] == "ok"]
+        outputs = (execution.outputs if execution and not execution.crashed else {}) or {}
+        result = {"task": "your agent", "rfq": job.spec.get("name") or "your agent", "report": None, "compiled_now": True,
+                  "wall_s": round(time.perf_counter() - t0, 3), "crashed": execution.error if execution and execution.crashed else None,
+                  "answer": outputs.get("result", outputs), "passed": bool(execution) and not execution.crashed,
+                  "order_placed": False, "order_note": "irreversible and external steps are flagged and never executed in a paid run",
+                  "cap_0g": cap / NEURON, "billed_0g": None if None in billed else round(sum(billed), 9),
+                  "peak_overlap": peak_overlap(run_records), "calls": calls, "custom": True,
+                  "flagged": [n["id"] for n in app.after.to_ui()["nodes"] if n.get("effect") in ("external", "irreversible")]}
+        result["package"] = deliver_custom(job, app, module, target, path, result, sample)
         progress.emit("result", **{k: v for k, v in result.items() if k != "calls"})
         progress.done = True
         return result
