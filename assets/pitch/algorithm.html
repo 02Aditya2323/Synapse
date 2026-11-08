@@ -1,0 +1,57 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#05070b;color:#e5e7eb;font-family:-apple-system,"Avenir Next",Helvetica,sans-serif;width:1920px;height:1080px;overflow:hidden}
+.wrap{padding:44px 56px}
+h1{margin:0;font-size:40px;font-weight:800;letter-spacing:-.01em}h1 b{color:#f97316}
+.sub{color:#a9b1bd;font-size:19px;margin-top:6px}
+.cols{display:grid;grid-template-columns:1fr 1.25fr .95fr;gap:26px;margin-top:28px}
+.col{border:1px solid #1f2937;border-radius:16px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent 140px)}
+.tag{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.t1{background:rgba(45,212,191,.12);color:#2dd4bf}.t2{background:rgba(249,115,22,.14);color:#f97316}.t3{background:rgba(196,181,253,.14);color:#c4b5fd}
+h2{font-size:24px;margin:12px 0 4px}.when{color:#838b98;font-size:15px;margin-bottom:14px}
+.step{border:1px solid #273142;background:#0b0f17;border-radius:10px;padding:10px 14px;margin:0 0 8px;font-size:15.5px;line-height:1.4}
+.step b{color:#fff}.n{color:#f97316;font-weight:800;margin-right:8px}
+.arrow{text-align:center;color:#566070;margin:-2px 0 6px;font-size:14px}
+.gate{border-color:#f97316;background:rgba(249,115,22,.07)}
+.ok{color:#22c55e;font-weight:700}.bad{color:#ef4444;font-weight:700}
+.loop{border:1px dashed #f97316;border-radius:10px;padding:8px 10px;margin-top:6px}
+.note{font-size:13.5px;color:#838b98;margin-top:10px;line-height:1.45}
+.foot{position:absolute;left:56px;right:56px;bottom:30px;display:flex;gap:14px;align-items:center;font-size:16px;color:#a9b1bd}
+.pill{padding:8px 14px;border:1px solid #273142;border-radius:999px;background:#0b0f17}
+.pill b{color:#f97316}
+</style></head><body><div class="wrap">
+<h1>How Synapse<b>0G</b> optimizes an agent</h1>
+<div class="sub">Two layers that run for every agent, one optional learned ranker. Nothing ships unless its safety rule holds and the firewall finds nothing broken.</div>
+<div class="cols">
+
+<div class="col"><span class="tag t1">1 · Graph layer</span><h2>Compile and rewrite the graph</h2><div class="when">runs at compile time, every job</div>
+<div class="step"><span class="n">1</span><b>Trace</b> each step once on a sample input: what it really reads and writes</div><div class="arrow">▼</div>
+<div class="step"><span class="n">2</span><b>Lift to SIR</b>: steps + data edges + an effect per step<br><span style="color:#2dd4bf">pure</span> · <span style="color:#60a5fa">read</span> · <span style="color:#c4b5fd">write</span> · <span style="color:#f59e0b">external</span> · <span style="color:#ef4444">irreversible</span></div><div class="arrow">▼</div>
+<div class="step gate"><span class="n">3</span><b>For each pass</b> (parallelize, memoize, cse, dce, …): check its <b>precondition</b> against the effects</div><div class="arrow">▼</div>
+<div class="step"><span class="n">4</span>Holds → <span class="ok">apply</span> &nbsp;·&nbsp; fails → <span class="bad">refuse, with the reason</span><br>irreversible steps: never moved, cached or run</div><div class="arrow">▼</div>
+<div class="step"><span class="n">5</span><b>Audit</b> the rewritten graph → optimized SIR → <b>code</b> (optimized_agent.py)</div>
+<div class="note">Supplier check: 4 lookups run in parallel, the policy step is cached, place_order is flagged.</div>
+</div>
+
+<div class="col"><span class="tag t2">2 · Call layer · heuristic search</span><h2>Find per-step model changes</h2><div class="when">runs in a study, on tuning tasks only</div>
+<div class="step"><span class="n">1</span><b>Baseline twice</b>, unchanged: which tasks are stable, how much cost and time drift by chance</div><div class="arrow">▼</div>
+<div class="step"><span class="n">2</span><b>Profile each step</b>: tokens, hidden reasoning, cost, repeats</div><div class="arrow">▼</div>
+<div class="loop">
+<div class="step"><span class="n">3</span><b>Candidates</b>, ranked by predicted saving: reasoning off · cheaper model · cache marks · trim old tool results · reuse · output cap. Under <b>3%</b> predicted → skipped</div><div class="arrow">▼</div>
+<div class="step"><span class="n">4</span><b>Try the best one</b> beside an <b>unchanged control</b>, same tasks, same moment</div><div class="arrow">▼</div>
+<div class="step gate"><span class="n">5</span><b>Firewall</b>: no stable task breaks (rechecked) · pass count not lower · cost or time better with <b>95% confidence</b> (paired bootstrap) · not &gt;10% slower</div><div class="arrow">▼</div>
+<div class="step"><span class="n">6</span><span class="ok">APPROVE</span> → keep it, re-profile &nbsp;·&nbsp; <span class="bad">BLOCK</span> → refuse with reason &nbsp;·&nbsp; <b>repeat</b> (≤ 6 trials)</div>
+</div><div class="arrow">▼</div>
+<div class="step"><span class="n">7</span><b>Held-out tasks</b> it never saw: final verdict and the reported numbers</div>
+<div class="note">Supplier check: kept reasoning off ×3 and a cheaper model ×2; refused the cheaper model on the quote step (36.7% slower). Held-out: 72% cheaper, 20/20 right.</div>
+</div>
+
+<div class="col"><span class="tag t3">3 · Learned ranker (optional)</span><h2>Random forest pass policy</h2><div class="when">in the engine; not in the live demo path</div>
+<div class="step"><span class="n">1</span><b>11 graph features</b>, measured before a pass: nodes, edges, model steps, reads, writes, protected steps, critical path, wall time, tokens, cost</div><div class="arrow">▼</div>
+<div class="step"><span class="n">2</span><b>One forest per pass</b> (32 trees, depth 4) predicts two things: <b>gain %</b> and <b>break risk</b></div><div class="arrow">▼</div>
+<div class="step gate"><span class="n">3</span><b>Score</b> = gain ÷ (1 + risk) → ranks passes in the beam search; gain inside the noise band → not tried</div><div class="arrow">▼</div>
+<div class="step"><span class="n">4</span>Its pick still goes through the <b>precondition</b> and the <b>firewall</b>; no forest for a pass → falls back to the pass's own estimate</div>
+<div class="note">Trained on the train split only, checked on held-out tasks, and refuses to run if tasks leak between them.</div>
+</div>
+</div>
+<div class="foot"><span class="pill">Safety: <b>effects</b> decide what may move</span><span class="pill">Proof: <b>firewall</b> on held-out tasks</span><span class="pill">Measured: every call's <b>0G request id + charge</b></span><span class="pill">Output: <b>optimized_agent.py</b></span></div>
+</div></body></html>

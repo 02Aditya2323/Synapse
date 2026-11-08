@@ -1,5 +1,7 @@
 # Synapse0g
 
+![Synapse0g — compile, optimize and return agents as code](assets/synapse0g-banner-1200.png)
+
 **An AI agent that optimizes other AI agents, and pays for its own compute on 0G.**
 
 You bring an agent. Synapse0g compiles it into a graph, rebuilds it to run faster and cheaper,
@@ -14,6 +16,20 @@ from that balance, with 0G's request id and exact charge.
 
 ---
 
+## Navigate
+
+[Quickstart](#run-it-locally) · [Architecture](#architecture) · [Integration options](#integration-options) ·
+[Results](#results) · [SDK and CLI](#use-it) · [Deployment](#deploy) ·
+[Limitations](#limits-stated-plainly) · [Documentation](#docs)
+
+## At a glance
+
+- **Compile:** LangGraph state dependencies and supported plain-Python workflows become SIR.
+- **Optimize:** effect-aware passes expose concurrency and reuse, with explicit refusals.
+- **Measure:** task checkers, paired controls and held-out studies evaluate changes.
+- **Deliver:** generated Python ships beside source, graphs, policy and execution evidence.
+- **Account:** direct compute deposits, call receipts and spend reservations connect payment to execution.
+
 ## Why
 
 Business processes are turning into AI agents: purchasing, support, research, operations. Most
@@ -23,15 +39,17 @@ them faster and cheaper **without breaking them**, and proving it.
 
 ## The loop
 
-```text
-  your agent ──► quote (from its steps) ──► you pay in 0G: depositFor(optimizer) on 0G's Payment Layer
-                                                        │
-                                                        ▼
-  optimized code ◄── run optimized ◄── rewrite (passes + approved call changes) ◄── compile to SIR
-       │                  │
-       │                  └─ every model call paid from the optimizer's own 0G account (request id + charge)
-       └─ optimized_agent.py, your original code, both graphs, the policy, the run's evidence
+```mermaid
+flowchart LR
+    A[Agent source and sample input] --> Q[Itemised quote]
+    Q --> P[Customer deposit on 0G]
+    P --> V[Verify payment receipt]
+    V --> C[Compile to SIR]
+    C --> O[Apply eligible graph passes]
+    O --> R[Run with guarded compute]
+    R --> D[Generated code and evidence ZIP]
 ```
+
 
 1. **Bring an agent.** Paste or upload a LangGraph agent with one sample input, or pick the example
    agent. Its steps are read from the code and the job is priced line by line.
@@ -48,6 +66,64 @@ them faster and cheaper **without breaking them**, and proving it.
 5. **Run and return.** The optimized agent runs on your input, two calls at a time, each paid from
    the optimizer's account. You get the answer, the measured cost and time, and a zip with
    `optimized_agent.py`, generated from the optimized graph.
+
+## Architecture
+
+```mermaid
+flowchart TB
+    UI[React console and landing page] --> API[Python HTTP API]
+    API --> PAY[Payment desk and job queue]
+    PAY --> CHAIN[0G Payment Layer]
+    PAY --> COMP[Compiler frontends]
+    COMP --> SIR[SIR: data dependencies and effects]
+    SIR --> PASSES[Optimization passes]
+    PASSES --> RUN[Scheduler and step cache]
+    RUN --> PROXY[OpenAI-compatible proxy]
+    PROXY --> GUARD[Spend reservations and caps]
+    GUARD --> ROUTER[0G Router inference]
+    RUN --> GEN[Python code generator]
+    GEN --> ZIP[Source, graphs, policy and run evidence]
+    PAY --> STORE[SQLite and files under data]
+    RUN --> STORE
+    GUARD --> STORE
+    STUDY[Task corpus and paired study runner] --> POLICY[Validated call policy]
+    POLICY --> PROXY
+```
+
+The compiler decides which graph transformations are eligible; the proxy applies per-call
+settings and records provider usage. The spend guard accounts for paid calls independently
+of graph scheduling. Persisted job state and deliveries live under `data/`, while committed
+benchmark reports live under `reports/`.
+
+### How a change earns approval
+
+```mermaid
+flowchart LR
+    T[Tuning tasks] --> C[Candidate change]
+    C --> E[Paired baseline and candidate runs]
+    E --> F{Firewall checks}
+    F -->|Breaks tasks or lacks a measured gain| B[Reject and record why]
+    F -->|Passes checks| K[Keep candidate]
+    K --> H[Evaluate final policy on held-out tasks]
+    H --> R[Publish outcomes, cost, timing and verdict]
+```
+
+This is empirical evidence for the named tasks and conditions. A single uploaded sample
+is useful for tracing and execution, but it is not a substitute for a regression corpus.
+Graph preconditions and study verdicts answer different questions and are shown separately.
+
+## Integration options
+
+| Route | Input | Behavior |
+| --- | --- | --- |
+| Code inspector | Python source or local path | Static inspection; shows effects and graph opportunities without executing the agent |
+| Client wrapper | `synapse0g.wrap(client)` | Records real calls and derives an observed graph; does not execute graph rewrites |
+| LangGraph SDK | Builder, sample state and effect declarations | Traces eligible steps, compiles dependencies and runs the rewritten graph |
+| Plain-Python SDK | Supported entry function and effect declarations | Reads call statements and supported map expressions into SIR |
+| Paid console | Source or example, sample input and wallet payment | Quotes, compiles, runs and returns generated code with evidence |
+
+The paid custom-code route executes submitted Python on the server. Use it in a controlled
+environment; public arbitrary-code submission requires isolation beyond the current demo.
 
 ## The demo (about 3 minutes)
 
@@ -122,19 +198,22 @@ environment; the supplier example also requires this project's supplier modules.
 
 ## Results
 
-Measured on real provider calls, on held-out tasks; 0G costs are 0G's own bill per request. Full
+Measured on real provider calls; the main agent studies use held-out tasks. 0G costs are 0G's own bill per request. Full
 records with request ids are in `reports/`; details in [RESULTS.md](RESULTS.md).
 
-| Agent | Result (held-out) | Firewall |
+| Agent | Reported result | Firewall |
 | --- | --- | --- |
 | Supplier-check agent (LangGraph, 3 lines added) | **3.48× faster** (median 55.5 → 15.4 s), **72% cheaper** on 0G's bill, 20/20 → 20/20 | APPROVE |
 | Procurement agent (plain Python, 2 lines added) | **4.5× faster** (median 136.3 → 30.2 s), **87.5% cheaper**, 13.5/18 → 15/18 | APPROVE |
 | Research workflow (HotpotQA) | **1.99× faster**, 18% cheaper, 19/20 → 19/20 | APPROVE |
 | Maths agent (GSM8K, Groq) | **77.5% cheaper**, 63% faster, 12/12 → 12/12 | APPROVE |
 | tau-bench retail | 70% cheaper, but broke 5 tasks and took more irreversible actions | **BLOCK** |
-| Code-review workflow, a step on a cheaper model | 72% cheaper, but 10/10 → 4/10 right | **BLOCK** |
+| Code-review workflow, cheaper-model calibration trial | 72% cheaper, but 10/10 → 4/10 right | **BLOCK** |
 
-The two BLOCKs matter most: large savings, refused because they broke answers.
+The BLOCK examples show savings refused because task outcomes regressed. Procurement's
+13.5/18 baseline is the mean of two unchanged runs. Supplier speedup is the median of
+per-task speedup ratios, not the ratio of the displayed median durations. Results describe
+these studies, not a guaranteed saving for every agent.
 
 ## Use it
 
@@ -174,10 +253,61 @@ adapter, undeclared steps default to `external` and are not traced. Plain-Python
 and the custom-agent loader infer effects from code for undeclared steps; unrecognised calls
 are treated as `external`.
 
+### Try an offline graph
+
+After installation, this small example compiles and runs without a provider key:
+
+```python
+from typing import TypedDict
+from langgraph.graph import END, START, StateGraph
+import synapse0g
+
+class State(TypedDict, total=False):
+    text: str
+    cleaned: str
+    length: int
+
+def clean(state: State):
+    return {"cleaned": state["text"].strip()}
+
+def count(state: State):
+    return {"length": len(state["text"])}
+
+builder = StateGraph(State)
+builder.add_node("clean", clean)
+builder.add_node("count", count)
+builder.add_edge(START, "clean")
+builder.add_edge("clean", "count")
+builder.add_edge("count", END)
+
+app = synapse0g.compile(
+    builder, sample={"text": " hello "},
+    effects={"clean": "pure", "count": "pure"},
+)
+print(app.explain())
+print(app.invoke({"text": " hello "}))
+```
+
+Both functions read only `text`, so the compiler can discover that the written chain
+contains independent work. For real model calls, use the complete
+[supplier example](examples/supplier_agent.py) or [procurement example](examples/procurement_agent.py).
+
+### Paste-ready examples
+
+Upload one of these files through **Optimize your agent**, then supply its sample JSON:
+
+| Example | Sample input | Purpose |
+| --- | --- | --- |
+| [Research report](examples/paste/research_report_agent.py) | `{"topic": "Battery recycling"}` | Independent outline, facts and risks feed a draft and polish step |
+| [Support ticket](examples/paste/support_ticket_agent.py) | `{"ticket": "My order arrived damaged"}` | Effect declarations distinguish analysis from protected action steps |
+
+The support example's email and refund functions return demonstration data; they do not
+connect to real email or payment services. These examples make model calls when executed.
+
 ### CLI
 
 ```bash
-synapse0g ui [--host 0.0.0.0 --port 8000]          # the dashboard, API, payment desk and paid jobs
+synapse0g ui --host 127.0.0.1 --port 8000          # the dashboard, API, payment desk and paid jobs
 synapse0g agent check                              # the agent's 0G account: currency, balance, the key's caps (read-only)
 synapse0g agent submit run:supplier-RFQ-011 --paid # a paid job, from the terminal
 synapse0g agent run --once --paid                  # run it, paid from the agent's account
@@ -197,9 +327,16 @@ per-step model changes need a test set and apply to the example agents.
 
 ## Run it locally
 
+Prerequisites: Python 3.11 or newer, uv, and Node.js 22 with npm (matching the Docker build).
+The commands below use a macOS/Linux shell from the repository root. Paid and live runs
+need provider credentials; graph inspection can be used without spending compute.
+
+
 ```bash
-uv venv .venv && uv pip install -e ".[agents,dev]"
-cd web && npm install && npm run build && cd ..
+uv venv .venv
+source .venv/bin/activate
+uv pip install -e ".[agents,dev]"
+cd web && npm ci && npm run build && cd ..
 cp .env.example .env    # then fill in the keys below. Never commit .env.
 .venv/bin/python -m pytest -q -m "not live"        # non-live suite; some tests read the public model catalog
 .venv/bin/synapse0g ui                             # http://127.0.0.1:8000
@@ -253,6 +390,40 @@ reports/        every study, with each call's request id and billed charge
   that, jobs slow down or pause and resume.
 - Earlier funding work through comfy (a token launchpad) is documented in [docs/COMFY.md](docs/COMFY.md);
   the shipped payment route is direct customer payment ([docs/PAYMENTS.md](docs/PAYMENTS.md)).
+
+## Validation and troubleshooting
+
+```bash
+.venv/bin/python -m pytest -q -m "not live"
+cd web && npm run build
+```
+
+The non-live suite covers compiler contracts, effect protection, payment matching,
+spend reservations, run reuse, concurrency and delivery generation. Some tests read
+the public model catalog. A production build checks frontend bundling; it does not
+verify a deployed wallet/payment flow.
+
+| Symptom | Check |
+| --- | --- |
+| Dashboard cannot load results | Start `synapse0g ui`; confirm `/api/health` responds and `web/dist` exists |
+| Missing provider key | Fill `.env`; paid jobs use `ZG_AGENT_KEY`, while studies/live runs use the team key |
+| Job waiting for funds | Inspect account credit, key cap and per-job reservation; use the job page's resume action |
+| Unsupported graph | Read the refusal; conditional routes and cycles require a different supported workflow shape |
+| Generated file cannot import a module | Restore the source agent's runtime dependencies; the ZIP is not an environment bundle |
+| State disappears after deployment | Mount persistent storage at `/app/data` and run a single service instance |
+
+## Design and presentation assets
+
+The [dashboard design guide](docs/DASHBOARD.md) maps screens, visual tokens, 3D modules,
+motion and data endpoints to their implementation. Repository presentation assets include:
+
+- [README banner](assets/synapse0g-banner-1200.png) and [full-size banner](assets/synapse0g-banner.png).
+- [Optimization walkthrough](assets/pitch/algorithm.png), with its [HTML source](assets/pitch/algorithm.html).
+- [Supplier demo scenario](assets/pitch/rfq011.png), with its [HTML source](assets/pitch/rfq011.html).
+
+Presentation graphics summarize the demo; saved reports and current job receipts remain
+the evidence for measured results. Benchmark datasets and libraries retain their own
+attributions; corpus sources and licences are listed in the [corpus guide](synapse0g/graph/bench/corpus/README.md).
 
 ## Docs
 

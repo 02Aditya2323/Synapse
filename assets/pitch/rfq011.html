@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#05070b;color:#e5e7eb;font-family:-apple-system,"Avenir Next",Helvetica,sans-serif;width:1920px;height:1080px}
+.wrap{padding:52px 64px}h1{margin:0;font-size:42px;font-weight:800}h1 b{color:#f97316}
+.sub{color:#a9b1bd;font-size:20px;margin-top:8px}
+.req{display:flex;gap:14px;margin:26px 0}.chip{padding:10px 16px;border:1px solid #273142;border-radius:10px;background:#0b0f17;font-size:19px}.chip b{color:#fff}
+table{width:100%;border-collapse:collapse;font-size:20px;margin-top:8px}
+th{text-align:left;color:#838b98;font-weight:500;padding:12px 14px;border-bottom:1px solid #273142;font-size:16px;text-transform:uppercase;letter-spacing:.06em}
+td{padding:16px 14px;border-bottom:1px solid #1a2230}td.m{font-family:Menlo,monospace}
+.bad{color:#ef4444;font-weight:700}.ok{color:#22c55e;font-weight:700}
+tr.win td{background:rgba(34,197,94,.07)}tr.win td:first-child{box-shadow:inset 4px 0 0 #22c55e}
+.foot{margin-top:28px;font-size:18px;color:#a9b1bd;line-height:1.6}.foot code{color:#f97316;font-family:Menlo,monospace;font-size:16px}
+</style></head><body><div class="wrap">
+<h1>RFQ-011: the trap, and why <b>S111</b> is right</h1>
+<div class="sub">Seeded test marketplace (fixed seed, 60 requests). The right answer is computed by code from the purchasing policy, never by a model.</div>
+<div class="req"><div class="chip">Item <b>V-belt A42</b></div><div class="chip">Quantity <b>1,000</b></div><div class="chip">Max unit price <b>6.41</b></div><div class="chip">Needed within <b>10 days</b></div><div class="chip">Policy: valid <b>ISO 9001</b>, no serious reviews</div></div>
+<table><tr><th>Supplier</th><th>Unit price</th><th>Shipping</th><th>Stock</th><th>Lead time</th><th>ISO 9001</th><th>Verdict</th></tr>
+<tr><td class="m">S113 Meridian Industrial</td><td class="m">4.29 (cheapest)</td><td class="m">150</td><td class="m">1,000</td><td class="m">10 d</td><td class="bad">not valid</td><td class="bad">rejected: certificate</td></tr>
+<tr><td class="m">S112 Cobalt Trading</td><td class="m">4.58</td><td class="m">90</td><td class="m">1,326</td><td class="m">10 d</td><td class="bad">not valid</td><td class="bad">rejected: certificate</td></tr>
+<tr class="win"><td class="m">S111 Summit Wholesale</td><td class="m">5.27</td><td class="m">25</td><td class="m">3,000</td><td class="m">7 d</td><td class="ok">valid</td><td class="ok">eligible · cheapest total → ORDER</td></tr>
+<tr><td class="m">S114 Falcon Parts</td><td class="m">5.49</td><td class="m">0</td><td class="m">601</td><td class="m">2 d</td><td class="ok">valid</td><td class="bad">rejected: only 601 in stock</td></tr>
+<tr><td class="m">S110 Sterling Source</td><td class="m">7.01</td><td class="m">150</td><td class="m">1,000</td><td class="m">10 d</td><td class="ok">valid</td><td class="bad">rejected: over 6.41</td></tr></table>
+<div class="foot">Optimized run on 0G: picked <b style="color:#22c55e">S111</b>, 4 calls, 0.0042 0G, 28 s · the order step flagged, not executed.<br>
+Verify it: <code>synapse0g/agents/supplier_desk.py</code> (data, policy, <code>right_answer()</code>) · the procurement agent's real documents: <code>synapse0g/agents/procurement_data/PR-*/</code> (PDF, spreadsheet and email quotations, 36 scenarios)</div>
+</div></body></html>
